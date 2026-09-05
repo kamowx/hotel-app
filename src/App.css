@@ -1,0 +1,141 @@
+.hotel-page {
+  min-height: 100vh;
+  background-color: #eeeeee;
+
+  display: flex;
+  justify-content: center;
+}
+
+.mobile-app {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+
+  background-color: white;
+
+  position: relative;
+}
+
+.page-content {
+  padding: 25px 18px;
+  padding-bottom: 100px;
+}
+
+.hotel-input {
+  height: 48px;
+  border-radius: 4px;
+}
+
+.hotel-card {
+  border: 1px solid #dddddd;
+  background-color: white;
+}
+
+.hotel-photo {
+  height: 150px;
+
+  background-color: #eeeeee;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: #777777;
+}
+
+.btn {
+  border-radius: 4px;
+}
+
+.booking-card {
+  border: 1px solid #dddddd;
+  padding: 18px;
+  background-color: white;
+}
+
+.booking-row {
+  display: flex;
+  justify-content: space-between;
+
+  margin-bottom: 12px;
+
+  font-size: 14px;
+}
+
+.booking-status {
+  background-color: #e8f3ff;
+  color: #0d6efd;
+
+  padding: 5px 8px;
+
+  font-size: 13px;
+}
+
+.note-card {
+  border: 1px solid #dddddd;
+  padding: 18px;
+
+  background-color: white;
+}
+
+.section-block {
+  margin-top: 50px;
+}
+
+.bottom-navigation {
+  position: fixed;
+
+  bottom: 0;
+
+  width: 100%;
+  max-width: 430px;
+
+  height: 70px;
+
+  background-color: white;
+
+  border-top: 1px solid #dddddd;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  z-index: 100;
+}
+
+.nav-item {
+  width: 33.33%;
+
+  text-align: center;
+
+  color: #777777;
+
+  cursor: pointer;
+}
+
+.nav-icon {
+  font-size: 20px;
+  line-height: 22px;
+
+  margin-bottom: 3px;
+}
+
+.nav-item.active {
+  color: #0d6efd;
+}
+
+@media (min-width: 431px) {
+  .mobile-app {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+  }
+}
+
+@media (max-width: 430px) {
+  .hotel-page {
+    background-color: white;
+  }
+}
+.i1 {
+  text-decoration: none;
+  color: rgb(79, 78, 78);
+}
