@@ -28,6 +28,13 @@ function Home() {
   const [date1, setDate1] = useState("");
   const [date2, setDate2] = useState("");
 
+  const day1 = date1 ? new Date(date1).getDate() : "";
+  const day2 = date2 ? new Date(date2).getDate() : "";
+
+  const forpriceday = day2 - day1;
+
+  const allprice = selectedHotel ? forpriceday * selectedHotel.price : 0;
+
   const getToday = () => {
     const date = new Date();
 
@@ -81,6 +88,10 @@ function Home() {
       price: selectedHotel.price,
       date1: date1,
       date2: date2,
+      day1: day1,
+      day2: day2,
+      forpriceday: forpriceday,
+      allprice: allprice,
       guests: guests,
     };
 

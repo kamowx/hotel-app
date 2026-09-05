@@ -31,7 +31,12 @@ function Armored() {
                   <p className="text-secondary mb-2">{item.city}</p>
 
                   <p className="mb-1">
-                    <b>Цена:</b> {item.price} сом / ночь
+                    <b>Цена:</b> {item.price} сом / день
+                    <br />
+                    <b>Общая сумма за</b> {item.forpriceday} день
+                    <big>
+                      <b>{item.allprice}</b> сом
+                    </big>
                   </p>
 
                   <p className="mb-1">
