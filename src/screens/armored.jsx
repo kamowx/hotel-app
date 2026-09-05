@@ -1,9 +1,18 @@
 import { useState } from "react";
 
 function Armored() {
-  const [bookings] = useState(
+  const [bookings, setBookings] = useState(
     JSON.parse(localStorage.getItem("bookings")) || [],
   );
+
+  // УДАЛЕНИЯ
+  const RemoveBooking = (index) => {
+    const newBookings = bookings.filter((item, i) => i !== index);
+
+    localStorage.setItem("bookings", JSON.stringify(newBookings));
+
+    setBookings(newBookings);
+  };
 
   return (
     <div className="hotel-page">
@@ -33,9 +42,16 @@ function Armored() {
                     <b>Выезд:</b> {item.date2}
                   </p>
 
-                  <p className="mb-0">
+                  <p className="mb-3">
                     <b>Гостей:</b> {item.guests}
                   </p>
+
+                  <button
+                    className="btn btn-danger w-100"
+                    onClick={() => RemoveBooking(index)}
+                  >
+                    Отменить бронирование
+                  </button>
                 </div>
               </div>
             ))
