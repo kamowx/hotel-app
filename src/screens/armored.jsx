@@ -64,7 +64,7 @@ function Armored() {
         </div>
 
         <div className="bottom-navigation">
-          <div className="nav-item">
+          <div className="nav-item active">
             <a className="i1" href="/">
               <div className="nav-icon">⌂</div>
 
@@ -72,11 +72,17 @@ function Armored() {
             </a>
           </div>
 
-          <div className="nav-item active">
+          <div className="nav-item">
             <a className="i1" href="/armored">
               <div className="nav-icon">▣</div>
 
               <small>Бронирования</small>
+            </a>
+          </div>
+          <div className="nav-item">
+            <a className="i1" href="/favorites">
+              <div className="nav-icon">▢</div>
+              <small>Избранный</small>
             </a>
           </div>
         </div>

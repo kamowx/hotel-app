@@ -9,6 +9,7 @@ import "./App.css";
 
 import Home from "./screens/home";
 import Armored from "./screens/armored";
+import Favorites from "./screens/favorites";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/armored" element={<Armored />} />
+          <Route path="/favorites" element={<Favorites />} />
         </Routes>
       </BrowserRouter>
     </>

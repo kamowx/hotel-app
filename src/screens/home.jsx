@@ -6,21 +6,31 @@ function Home() {
 
   const [selectedHotel, setSelectedHotel] = useState(null);
 
+  const AddFavorite = (hotel) => {
+    const oldFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
+    oldFavorites.push(hotel);
+
+    localStorage.setItem("favorites", JSON.stringify(oldFavorites));
+  };
   const hotels = [
     {
       name: "Grand Hotel",
       city: "Бишкек",
       price: 2500,
+      people: 3,
     },
     {
       name: "Plaza Hotel",
       city: "Бишкек",
       price: 3200,
+      people: 2,
     },
     {
       name: "City Hotel",
       city: "Бишкек",
       price: 2800,
+      people: 4,
     },
   ];
 
@@ -136,6 +146,10 @@ function Home() {
 
                 <p className="text-secondary mb-2">{hotel.city}</p>
 
+                <p>
+                  <small>{hotel.people} местная</small>
+                </p>
+
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
                     <b>{hotel.price} сом</b>
@@ -143,15 +157,24 @@ function Home() {
                     <small className="text-secondary"> / ночь</small>
                   </div>
 
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => {
-                      setSelectedHotel(hotel);
-                      setShowPayModal(true);
-                    }}
-                  >
-                    Забронировать
-                  </button>
+                  <div>
+                    <button
+                      className="btn btn-outline-danger me-2"
+                      onClick={() => AddFavorite(hotel)}
+                    >
+                      ♡
+                    </button>
+
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => {
+                        setSelectedHotel(hotel);
+                        setShowPayModal(true);
+                      }}
+                    >
+                      Забронировать
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -222,10 +245,21 @@ function Home() {
                         value={guests}
                         onChange={(e) => setGuests(e.target.value)}
                       >
-                        <option value="1">1 гость</option>
-                        <option value="2">2 гостя</option>
-                        <option value="3">3 гостя</option>
-                        <option value="4">4 гостя</option>
+                        {selectedHotel?.people >= 1 && (
+                          <option value="1">1 гость</option>
+                        )}
+
+                        {selectedHotel?.people >= 2 && (
+                          <option value="2">2 гостя</option>
+                        )}
+
+                        {selectedHotel?.people >= 3 && (
+                          <option value="3">3 гостя</option>
+                        )}
+
+                        {selectedHotel?.people >= 4 && (
+                          <option value="4">4 гостя</option>
+                        )}
                       </select>
                     </div>
                   </div>
@@ -267,6 +301,12 @@ function Home() {
               <div className="nav-icon">▣</div>
 
               <small>Бронирования</small>
+            </a>
+          </div>
+          <div className="nav-item">
+            <a className="i1" href="/favorites">
+              <div className="nav-icon">▢</div>
+              <small>Избранный</small>
             </a>
           </div>
         </div>
