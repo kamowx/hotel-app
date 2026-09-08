@@ -1,11 +1,19 @@
 import { useState } from "react";
 
 function Favorites() {
-  const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+  const [favorites, setFavorites] = useState(
+    () => JSON.parse(localStorage.getItem("favorites")) || []
+  );
   const [showPayModal, setShowPayModal] = useState(false);
 
   const [selectedHotel, setSelectedHotel] = useState(null);
   const [guests, setGuests] = useState("1");
+
+  const removeFavorite = (hotel) => {
+    const newFavorites = favorites.filter((item) => item.name !== hotel.name);
+    localStorage.setItem("favorites", JSON.stringify(newFavorites));
+    setFavorites(newFavorites);
+  };
 
   //ДАТА МИН МАКСИМАЛЬНО
   const [date1, setDate1] = useState("");
@@ -108,45 +116,54 @@ function Favorites() {
               />
             </div>
 
-            {favorites.map((item, index) => (
-              <div className="hotel-card mb-3" key={index}>
-                <div className="hotel-photo">
-                  <span>Фото отеля</span>
-                </div>
+            {favorites.length === 0 ? (
+              <p className="text-secondary">В избранном пока ничего нет</p>
+            ) : (
+              favorites.map((item, index) => (
+                <div className="hotel-card mb-3" key={index}>
+                  <div className="hotel-photo">
+                    <span>Фото отеля</span>
+                  </div>
 
-                <div className="p-3">
-                  <h5 className="mb-1">{item.name}</h5>
+                  <div className="p-3">
+                    <h5 className="mb-1">{item.name}</h5>
 
-                  <p className="text-secondary mb-2">{item.city}</p>
+                    <p className="text-secondary mb-2">{item.city}</p>
 
-                  <p>
-                    <small>{item.people} местная</small>
-                  </p>
+                    <p>
+                      <small>{item.people} местная</small>
+                    </p>
 
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div>
-                      <b>{item.price} сом</b>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div>
+                        <b>{item.price} сом</b>
 
-                      <small className="text-secondary"> / ночь</small>
-                    </div>
+                        <small className="text-secondary"> / ночь</small>
+                      </div>
 
-                    <div>
-                      <button className="btn btn-outline-danger me-2">♡</button>
+                      <div>
+                        <button
+                          className="btn btn-danger me-2"
+                          onClick={() => removeFavorite(item)}
+                        >
+                          ♥
+                        </button>
 
-                      <button
-                        className="btn btn-primary"
-                        onClick={() => {
-                          setSelectedHotel(item);
-                          setShowPayModal(true);
-                        }}
-                      >
-                        Забронировать
-                      </button>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => {
+                            setSelectedHotel(item);
+                            setShowPayModal(true);
+                          }}
+                        >
+                          Забронировать
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
 
             {showPayModal && (
               <>
@@ -259,7 +276,7 @@ function Favorites() {
         </div>
 
         <div className="bottom-navigation">
-          <div className="nav-item active">
+          <div className="nav-item">
             <a className="i1" href="/">
               <div className="nav-icon">⌂</div>
 
@@ -275,7 +292,7 @@ function Favorites() {
             </a>
           </div>
 
-          <div className="nav-item">
+          <div className="nav-item active">
             <a className="i1" href="/favorites">
               <div className="nav-icon">▢</div>
 

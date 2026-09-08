@@ -5,13 +5,22 @@ function Home() {
   const [guests, setGuests] = useState("1");
 
   const [selectedHotel, setSelectedHotel] = useState(null);
+  const [favorites, setFavorites] = useState(
+    () => JSON.parse(localStorage.getItem("favorites")) || []
+  );
 
-  const AddFavorite = (hotel) => {
-    const oldFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+  const toggleFavorite = (hotel) => {
+    const isFav = favorites.some((item) => item.name === hotel.name);
+    let updated;
 
-    oldFavorites.push(hotel);
+    if (isFav) {
+      updated = favorites.filter((item) => item.name !== hotel.name);
+    } else {
+      updated = [...favorites, hotel];
+    }
 
-    localStorage.setItem("favorites", JSON.stringify(oldFavorites));
+    localStorage.setItem("favorites", JSON.stringify(updated));
+    setFavorites(updated);
   };
   const hotels = [
     {
@@ -135,50 +144,54 @@ function Home() {
           </div>
 
           {/* Отели */}
-          {hotels.map((hotel, index) => (
-            <div className="hotel-card mb-3" key={index}>
-              <div className="hotel-photo">
-                <span>Фото отеля</span>
-              </div>
+          {hotels.map((hotel, index) => {
+            const isFav = favorites.some((item) => item.name === hotel.name);
 
-              <div className="p-3">
-                <h5 className="mb-1">{hotel.name}</h5>
+            return (
+              <div className="hotel-card mb-3" key={index}>
+                <div className="hotel-photo">
+                  <span>Фото отеля</span>
+                </div>
 
-                <p className="text-secondary mb-2">{hotel.city}</p>
+                <div className="p-3">
+                  <h5 className="mb-1">{hotel.name}</h5>
 
-                <p>
-                  <small>{hotel.people} местная</small>
-                </p>
+                  <p className="text-secondary mb-2">{hotel.city}</p>
 
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>
-                    <b>{hotel.price} сом</b>
+                  <p>
+                    <small>{hotel.people} местная</small>
+                  </p>
 
-                    <small className="text-secondary"> / ночь</small>
-                  </div>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <b>{hotel.price} сом</b>
 
-                  <div>
-                    <button
-                      className="btn btn-outline-danger me-2"
-                      onClick={() => AddFavorite(hotel)}
-                    >
-                      ♡
-                    </button>
+                      <small className="text-secondary"> / ночь</small>
+                    </div>
 
-                    <button
-                      className="btn btn-primary"
-                      onClick={() => {
-                        setSelectedHotel(hotel);
-                        setShowPayModal(true);
-                      }}
-                    >
-                      Забронировать
-                    </button>
+                    <div>
+                      <button
+                        className={`btn ${isFav ? "btn-danger" : "btn-outline-danger"} me-2`}
+                        onClick={() => toggleFavorite(hotel)}
+                      >
+                        {isFav ? "♥" : "♡"}
+                      </button>
+
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => {
+                          setSelectedHotel(hotel);
+                          setShowPayModal(true);
+                        }}
+                      >
+                        Забронировать
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {showPayModal && (
