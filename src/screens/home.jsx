@@ -1,12 +1,17 @@
 import { useState } from "react";
+import { hotels } from "../data/hotels";
 
 function Home() {
   const [showPayModal, setShowPayModal] = useState(false);
   const [guests, setGuests] = useState("1");
 
+  //Искать и Категория
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("Все");
+
   const [selectedHotel, setSelectedHotel] = useState(null);
   const [favorites, setFavorites] = useState(
-    () => JSON.parse(localStorage.getItem("favorites")) || []
+    () => JSON.parse(localStorage.getItem("favorites")) || [],
   );
 
   const toggleFavorite = (hotel) => {
@@ -22,26 +27,6 @@ function Home() {
     localStorage.setItem("favorites", JSON.stringify(updated));
     setFavorites(updated);
   };
-  const hotels = [
-    {
-      name: "Grand Hotel",
-      city: "Бишкек",
-      price: 2500,
-      people: 3,
-    },
-    {
-      name: "Plaza Hotel",
-      city: "Бишкек",
-      price: 3200,
-      people: 2,
-    },
-    {
-      name: "City Hotel",
-      city: "Бишкек",
-      price: 2800,
-      people: 4,
-    },
-  ];
 
   //ДАТА МИН МАКСИМАЛЬНО
   const [date1, setDate1] = useState("");
@@ -124,6 +109,18 @@ function Home() {
   };
 
   // ДАТА
+  //Искать и Категория
+
+  const filteredHotels = hotels.filter((hotel) => {
+    const searchResult =
+      hotel.name.toLowerCase().includes(search.toLowerCase()) ||
+      String(hotel.price).includes(search) ||
+      hotel.city.toLowerCase().includes(search.toLowerCase());
+
+    const categoryResult = category === "Все" || hotel.city === category;
+
+    return searchResult && categoryResult;
+  });
   return (
     <div className="hotel-page">
       <div className="mobile-app">
@@ -135,16 +132,45 @@ function Home() {
           </div>
 
           {/* Поиск */}
-          <div className="mb-4">
-            <input
-              type="text"
-              className="form-control hotel-input"
-              placeholder="Поиск отеля"
-            />
+          <input
+            type="text"
+            className="form-control hotel-input"
+            placeholder="Поиск отеля"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <br />
+          <div className="d-flex gap-2 mb-4">
+            <button
+              className={`btn ${
+                category === "Все" ? "btn-primary" : "btn-outline-primary"
+              }`}
+              onClick={() => setCategory("Все")}
+            >
+              Все
+            </button>
+
+            <button
+              className={`btn ${
+                category === "Бишкек" ? "btn-primary" : "btn-outline-primary"
+              }`}
+              onClick={() => setCategory("Бишкек")}
+            >
+              Бишкек
+            </button>
+
+            <button
+              className={`btn ${
+                category === "Ош" ? "btn-primary" : "btn-outline-primary"
+              }`}
+              onClick={() => setCategory("Ош")}
+            >
+              Ош
+            </button>
           </div>
 
           {/* Отели */}
-          {hotels.map((hotel, index) => {
+          {filteredHotels.map((hotel, index) => {
             const isFav = favorites.some((item) => item.name === hotel.name);
 
             return (

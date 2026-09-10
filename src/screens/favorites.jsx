@@ -2,7 +2,7 @@ import { useState } from "react";
 
 function Favorites() {
   const [favorites, setFavorites] = useState(
-    () => JSON.parse(localStorage.getItem("favorites")) || []
+    () => JSON.parse(localStorage.getItem("favorites")) || [],
   );
   const [showPayModal, setShowPayModal] = useState(false);
 
@@ -105,15 +105,6 @@ function Favorites() {
               <h2 className="mb-1">Мои избранные</h2>
 
               <p className="text-secondary mb-0">избранные по отелям</p>
-            </div>
-
-            {/* Поиск */}
-            <div className="mb-4">
-              <input
-                type="text"
-                className="form-control hotel-input"
-                placeholder="Поиск отеля"
-              />
             </div>
 
             {favorites.length === 0 ? (
