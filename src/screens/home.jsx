@@ -67,6 +67,35 @@ function Home() {
     return date.toISOString().split("T")[0];
   };
 
+  // ПРОВЕРКА БРОНИРОВАНИЯ
+  const checkBooking = () => {
+    // Получить старые бронирования
+    const bookings = JSON.parse(localStorage.getItem("bookings")) || [];
+
+    for (let item of bookings) {
+      // Если это другой отель, пропускаем
+      if (item.id !== selectedHotel.id) {
+        continue;
+      }
+
+      // Старые даты
+      const oldDate1 = new Date(item.date1);
+      const oldDate2 = new Date(item.date2);
+
+      // Новые даты
+      const newDate1 = new Date(date1);
+      const newDate2 = new Date(date2);
+
+      // Проверув дату
+      if (newDate1 <= oldDate2 && newDate2 >= oldDate1) {
+        return false;
+      }
+    }
+
+    // Даты свободны
+    return true;
+  };
+
   //  БРОНИРОВАНИЯ
   const SaveBooking = () => {
     if (!selectedHotel) {
@@ -84,9 +113,20 @@ function Home() {
       return;
     }
 
+    // Проверка, свободен ли этот отель
+    const canBooking = checkBooking();
+
+    if (!canBooking) {
+      alert("Этот отель уже забронирован на эти даты");
+      return;
+    }
+
     const oldBooking = JSON.parse(localStorage.getItem("bookings")) || [];
 
     const newBooking = {
+      // ID
+      id: selectedHotel.id,
+
       name: selectedHotel.name,
       city: selectedHotel.city,
       price: selectedHotel.price,
@@ -121,6 +161,7 @@ function Home() {
 
     return searchResult && categoryResult;
   });
+
   return (
     <div className="hotel-page">
       <div className="mobile-app">
@@ -139,7 +180,9 @@ function Home() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+
           <br />
+
           <div className="d-flex gap-2 mb-4">
             <button
               className={`btn ${
@@ -197,7 +240,9 @@ function Home() {
 
                     <div>
                       <button
-                        className={`btn ${isFav ? "btn-danger" : "btn-outline-danger"} me-2`}
+                        className={`btn ${
+                          isFav ? "btn-danger" : "btn-outline-danger"
+                        } me-2`}
                         onClick={() => toggleFavorite(hotel)}
                       >
                         {isFav ? "♥" : "♡"}
@@ -342,9 +387,11 @@ function Home() {
               <small>Бронирования</small>
             </a>
           </div>
+
           <div className="nav-item">
             <a className="i1" href="/favorites">
               <div className="nav-icon">▢</div>
+
               <small>Избранный</small>
             </a>
           </div>
