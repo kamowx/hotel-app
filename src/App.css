@@ -120,7 +120,8 @@
   margin-bottom: 3px;
 }
 
-.nav-item.active {
+.nav-item.active,
+.nav-item.active .i1 {
   color: #0d6efd;
 }
 
@@ -137,5 +138,6 @@
 }
 .i1 {
   text-decoration: none;
-  color: rgb(79, 78, 78);
+  color: inherit;
+  display: block;
 }
