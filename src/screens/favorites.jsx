@@ -8,7 +8,6 @@ function Favorites() {
 
   const [favorites, setFavorites] = useState([]);
 
-
   const getFavorites = async () => {
     const id = localStorage.getItem("id");
 
@@ -41,11 +40,9 @@ function Favorites() {
     }
   };
 
-
   useEffect(() => {
     getFavorites();
   }, []);
-
 
   const removeFavorite = async (hotel) => {
     const id = localStorage.getItem("id");
@@ -96,20 +93,17 @@ function Favorites() {
     <div className="hotel-page">
       <div className="mobile-app">
         <div className="page-content">
-
           <div className="mb-4">
             <h2 className="mb-1">Мои избранные</h2>
 
             <p className="text-secondary mb-0">Сохраненные отели</p>
           </div>
 
-
           {favorites.length === 0 ? (
             <p className="text-secondary">В избранном пока ничего нет</p>
           ) : (
             favorites.map((item, index) => (
               <div className="hotel-card mb-3" key={item.id || index}>
-
                 <div className="hotel-photo">
                   {item.avatarhotels ? (
                     <img src={item.avatarhotels} alt={item.namehotels} />
@@ -117,7 +111,6 @@ function Favorites() {
                     <span>Фото отеля</span>
                   )}
                 </div>
-
 
                 <div className="p-3">
                   <h5 className="mb-1">{item.namehotels}</h5>
@@ -129,13 +122,11 @@ function Favorites() {
                   </p>
 
                   <div className="d-flex justify-content-between align-items-center">
-
                     <div>
                       <b>{item.price} сом</b>
 
                       <small className="text-secondary"> / ночь</small>
                     </div>
-
 
                     <div>
                       <button
@@ -159,7 +150,6 @@ function Favorites() {
           )}
         </div>
 
-
         <Bottomnav />
       </div>
     </div>
@@ -167,3 +157,4 @@ function Favorites() {
 }
 
 export default Favorites;
+/*hotel*/

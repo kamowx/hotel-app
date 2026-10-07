@@ -19,9 +19,7 @@ function EditProfile() {
 
   const [newPhoto, setNewPhoto] = useState("");
 
-
   const id = JSON.parse(localStorage.getItem("id"));
-
 
   const allUser = async () => {
     try {
@@ -54,7 +52,6 @@ function EditProfile() {
     allUser();
   }, []);
 
-
   const openPhotoModal = () => {
     setNewPhoto(photo);
     setShowPhotoModal(true);
@@ -69,7 +66,6 @@ function EditProfile() {
     setNewPhoto(photo);
     setShowPhotoModal(false);
   };
-
 
   const saveProfile = async () => {
     if (!name.trim() || !surname.trim() || !phone.trim() || !email.trim()) {
@@ -138,7 +134,6 @@ function EditProfile() {
 
             <p>Измените свои личные данные</p>
           </div>
-
 
           <div className="edit-photo-box">
             <div className="edit-profile-photo">
@@ -214,7 +209,6 @@ function EditProfile() {
           </div>
         </div>
 
-
         {showPhotoModal && (
           <div className="photo-modal-overlay">
             <div className="photo-modal">
@@ -255,3 +249,4 @@ function EditProfile() {
 }
 
 export default EditProfile;
+/*hotel*/

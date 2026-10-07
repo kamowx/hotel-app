@@ -3,10 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Signin() {
-
-
   const [showPassword, setShowPassword] = useState(false);
-
 
   const [users, setUsers] = useState([]);
 
@@ -14,9 +11,7 @@ function Signin() {
 
   const [password2signin, setPassword2signin] = useState("");
 
-
   const navigate = useNavigate();
-
 
   const allUser = async () => {
     try {
@@ -39,7 +34,6 @@ function Signin() {
     allUser();
   }, []);
 
-
   useEffect(() => {
     const id = localStorage.getItem("id");
 
@@ -47,7 +41,6 @@ function Signin() {
       navigate("/home");
     }
   }, []);
-
 
   const signIn = async () => {
     if (!emailsigin.trim() || !password2signin.trim()) {
@@ -68,9 +61,7 @@ function Signin() {
 
     alert("Вы успешно вошли");
 
-
     localStorage.setItem("id", JSON.stringify(user.id));
-
 
     navigate("/home");
   };
@@ -78,7 +69,6 @@ function Signin() {
   return (
     <div className="app">
       <div className="onboarding">
-
         <div className="onboarding-header">
           <div className="logo-icon">
             <span></span>
@@ -89,14 +79,12 @@ function Signin() {
           <div className="logo-text">FirstHotel</div>
         </div>
 
-
         <div className="login-content">
           <h1>Вход</h1>
 
           <p>Войдите в свой аккаунт EasyPay</p>
 
           <div className="login-form">
-
             <div className="login-input-box">
               <label>Email</label>
 
@@ -107,7 +95,6 @@ function Signin() {
                 value={emailsigin}
               />
             </div>
-
 
             <div className="login-input-box">
               <label>Пароль</label>
@@ -132,13 +119,11 @@ function Signin() {
               </button>
             </div>
 
-
             <button className="login-submit" onClick={signIn}>
               Вход
             </button>
           </div>
         </div>
-
 
         <div className="login-register">
           <span>Нет аккаунта?</span>
@@ -153,3 +138,4 @@ function Signin() {
 }
 
 export default Signin;
+/*hotel*/

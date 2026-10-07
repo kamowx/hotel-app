@@ -13,7 +13,6 @@ function Home() {
 
   const [favorites, setFavorites] = useState([]);
 
-
   const getHotels = async () => {
     try {
       const response = await axios({
@@ -30,7 +29,6 @@ function Home() {
       console.error("GET HOTELS ERROR:", error);
     }
   };
-
 
   const getUser = async () => {
     const id = localStorage.getItem("id");
@@ -71,12 +69,10 @@ function Home() {
     }
   };
 
-
   useEffect(() => {
     getHotels();
     getUser();
   }, []);
-
 
   const toggleFavorite = async (hotel) => {
     const id = localStorage.getItem("id");
@@ -133,7 +129,6 @@ function Home() {
     }
   };
 
-
   const filteredHotels = hotels.filter((hotel) => {
     const hotelName = hotel.namehotels || "";
     const hotelLocation = hotel.location || "";
@@ -152,7 +147,6 @@ function Home() {
   return (
     <div className="app">
       <div className="onboarding home-onboarding">
-
         <div className="home-header">
           <div className="home-logo">
             <div className="logo-icon">
@@ -171,9 +165,7 @@ function Home() {
           </div>
         </div>
 
-
         <div className="home-page">
-
           <div className="home-search">
             <h1>Найдите отель</h1>
 
@@ -190,7 +182,6 @@ function Home() {
               />
             </div>
           </div>
-
 
           <div className="home-categories">
             <button
@@ -215,7 +206,6 @@ function Home() {
             </button>
           </div>
 
-
           <div className="home-hotels">
             <div className="home-section-title">
               <h2>Популярные отели</h2>
@@ -235,14 +225,12 @@ function Home() {
 
                 return (
                   <div className="home-hotel-card" key={hotel.id}>
-
                     <div className="home-hotel-image">
                       {hotel.avatarhotels ? (
                         <img src={hotel.avatarhotels} alt={hotel.namehotels} />
                       ) : (
                         <i className="fa-solid fa-hotel"></i>
                       )}
-
 
                       <button
                         className="home-favorite"
@@ -255,7 +243,6 @@ function Home() {
                         ></i>
                       </button>
                     </div>
-
 
                     <div className="home-hotel-info">
                       <h3>{hotel.namehotels}</h3>
@@ -295,7 +282,6 @@ function Home() {
         <br />
         <br />
 
-
         <Bottomnav />
       </div>
     </div>
@@ -303,3 +289,4 @@ function Home() {
 }
 
 export default Home;
+/*hotel*/

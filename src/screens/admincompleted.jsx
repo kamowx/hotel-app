@@ -67,12 +67,9 @@ function Admincompleted() {
   }, []);
   return (
     <div className="admin-page">
-
       <Adminbottom />
 
-
       <main className="admin-main">
-
         <header className="admin-top">
           <div>
             <h1>Завершенные</h1>
@@ -92,7 +89,6 @@ function Admincompleted() {
           </div>
         </header>
 
-
         <div className="admin-content">
           <div className="admin-section">
             <div className="admin-section-header">
@@ -103,7 +99,6 @@ function Admincompleted() {
               </div>
             </div>
 
-
             <div className="admin-table">
               <div className="admin-table-head">
                 <span>Отель</span>
@@ -113,7 +108,6 @@ function Admincompleted() {
                 <span>Сумма</span>
                 <span>Статус</span>
               </div>
-
 
               {completedBookings.map((item, index) => (
                 <div className="admin-table-row" key={index}>
@@ -137,7 +131,6 @@ function Admincompleted() {
                 </div>
               ))}
 
-
               {completedBookings.length === 0 && (
                 <div className="admin-table-row">
                   <span>Завершенных бронирований пока нет</span>
@@ -152,3 +145,4 @@ function Admincompleted() {
 }
 
 export default Admincompleted;
+/*hotel*/

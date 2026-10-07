@@ -161,12 +161,9 @@ function Adminactive() {
   }, []);
   return (
     <div className="admin-page">
-
       <Adminbottom />
 
-
       <main className="admin-main">
-
         <header className="admin-top">
           <div>
             <h1>Активные</h1>
@@ -186,7 +183,6 @@ function Adminactive() {
           </div>
         </header>
 
-
         <div className="admin-content">
           <div className="admin-section">
             <div className="admin-section-header">
@@ -197,7 +193,6 @@ function Adminactive() {
               </div>
             </div>
 
-
             <div className="admin-table">
               <div className="admin-table-head">
                 <span>Отель</span>
@@ -207,7 +202,6 @@ function Adminactive() {
                 <span>Сумма</span>
                 <span>Статус</span>
               </div>
-
 
               {activeBookings.map((item, index) => (
                 <div className="admin-table-row" key={index}>
@@ -229,14 +223,12 @@ function Adminactive() {
 
                   <span className="admin-status active">{item.status}</span>
 
-
                   <small>
                     <i className="fa-solid fa-calendar-days"></i>{" "}
                     {getCheckoutText(item.date2)}
                   </small>
                 </div>
               ))}
-
 
               {activeBookings.length === 0 && (
                 <div className="admin-table-row">
@@ -252,3 +244,4 @@ function Adminactive() {
 }
 
 export default Adminactive;
+/*hotel*/

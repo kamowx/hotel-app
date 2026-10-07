@@ -8,7 +8,6 @@ function Armored() {
 
   const [bookings, setBookings] = useState([]);
 
-
   const getBookings = async () => {
     try {
       const id = localStorage.getItem("id");
@@ -38,7 +37,6 @@ function Armored() {
     }
   };
 
-
   useEffect(() => {
     const id = localStorage.getItem("id");
 
@@ -49,7 +47,6 @@ function Armored() {
 
     getBookings();
   }, []);
-
 
   const removeBooking = async (hotelId) => {
     try {
@@ -113,7 +110,6 @@ function Armored() {
           ) : (
             bookings.map((item, index) => (
               <div className="hotel-card mb-3" key={item.hotelId || index}>
-
                 <div className="hotel-card-image">
                   {item.avatarhotels ? (
                     <img src={item.avatarhotels} alt={item.name} />
@@ -123,7 +119,6 @@ function Armored() {
                 </div>
 
                 <div className="p-3">
-
                   <h5>{item.name}</h5>
 
                   <p className="text-secondary mb-2">
@@ -164,7 +159,6 @@ function Armored() {
                     <b>Статус:</b> {item.status}
                   </p>
 
-
                   <div className="hotel-card-buttons">
                     <Link
                       className="hotel-details-button"
@@ -179,7 +173,6 @@ function Armored() {
           )}
         </div>
 
-
         <Bottomnav />
       </div>
     </div>
@@ -187,3 +180,4 @@ function Armored() {
 }
 
 export default Armored;
+/*hotel*/

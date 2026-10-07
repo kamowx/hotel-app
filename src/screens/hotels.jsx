@@ -14,7 +14,6 @@ function Hotels() {
   const [date2, setDate2] = useState("");
   const [photoIndex, setPhotoIndex] = useState(0);
 
-
   const getHotel = async () => {
     try {
       const response = await axios({
@@ -32,7 +31,6 @@ function Hotels() {
     }
   };
 
-
   useEffect(() => {
     const userId = localStorage.getItem("id");
 
@@ -44,14 +42,12 @@ function Hotels() {
     getHotel();
   }, [id]);
 
-
   const photos =
     selectedHotel?.images?.length > 0
       ? selectedHotel.images
       : selectedHotel?.avatarhotels
         ? [selectedHotel.avatarhotels]
         : [];
-
 
   const forpriceday =
     date1 && date2
@@ -63,26 +59,21 @@ function Hotels() {
         )
       : 0;
 
-
   const allprice = selectedHotel
     ? forpriceday * Number(selectedHotel.price)
     : 0;
-
 
   const getToday = () => {
     return new Date().toISOString().split("T")[0];
   };
 
-
   const prevPhoto = () => {
     setPhotoIndex((index) => (index === 0 ? photos.length - 1 : index - 1));
   };
 
-
   const nextPhoto = () => {
     setPhotoIndex((index) => (index === photos.length - 1 ? 0 : index + 1));
   };
-
 
   const SaveBooking = async () => {
     const id = localStorage.getItem("id");
@@ -114,7 +105,6 @@ function Hotels() {
       return;
     }
 
-
     const newBooking = {
       userId: userId,
 
@@ -142,7 +132,6 @@ function Hotels() {
     console.log("Новое бронирование:", newBooking);
 
     try {
-
       const userResponse = await axios({
         method: "GET",
         url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
@@ -153,14 +142,11 @@ function Hotels() {
       if (userResponse.status === 200) {
         const currentUser = userResponse.data;
 
-
         const oldBookings = Array.isArray(currentUser.bookhotel)
           ? currentUser.bookhotel
           : [];
 
-
         const newBookings = [...oldBookings, newBooking];
-
 
         const response = await axios({
           method: "PUT",
@@ -191,7 +177,6 @@ function Hotels() {
     }
   };
 
-
   if (!selectedHotel) {
     return (
       <div className="app">
@@ -205,7 +190,6 @@ function Hotels() {
   return (
     <div className="app">
       <div className="onboarding hotel-details-page">
-
         <div className="details-header">
           <Link to="/home" className="details-back">
             <i className="fa-solid fa-arrow-left"></i>
@@ -213,7 +197,6 @@ function Hotels() {
 
           <div className="logo-text">FirstHotel</div>
         </div>
-
 
         <div className="details-gallery">
           {photos.length > 0 ? (
@@ -247,7 +230,6 @@ function Hotels() {
           )}
         </div>
 
-
         <div className="details-content">
           <div className="details-city">
             <i className="fa-solid fa-location-dot"></i>
@@ -271,7 +253,6 @@ function Hotels() {
               `Отель ${selectedHotel.namehotels} находится в городе ${selectedHotel.location}. Здесь вы можете выбрать даты проживания и забронировать номер.`}
           </p>
 
-
           <div className="details-info-row">
             <div className="details-info-icon">
               <i className="fa-solid fa-users"></i>
@@ -284,7 +265,6 @@ function Hotels() {
             </div>
           </div>
 
-
           <div className="details-info-row">
             <div className="details-info-icon">
               <i className="fa-solid fa-calendar-check"></i>
@@ -296,7 +276,6 @@ function Hotels() {
               <p>Выберите даты вашего проживания</p>
             </div>
           </div>
-
 
           <button
             className="details-book-button"
@@ -314,7 +293,6 @@ function Hotels() {
           </button>
         </div>
 
-
         {showPayModal && (
           <>
             <div
@@ -327,7 +305,6 @@ function Hotels() {
                 className="details-modal"
                 onClick={(e) => e.stopPropagation()}
               >
-
                 <div className="details-modal-header">
                   <div>
                     <h2>Бронирование</h2>
@@ -343,9 +320,7 @@ function Hotels() {
                   </button>
                 </div>
 
-
                 <div className="details-modal-body">
-
                   <label>Дата заезда</label>
 
                   <input
@@ -359,7 +334,6 @@ function Hotels() {
                     }}
                   />
 
-
                   <label>Дата выезда</label>
 
                   <input
@@ -369,7 +343,6 @@ function Hotels() {
                     disabled={!date1}
                     onChange={(e) => setDate2(e.target.value)}
                   />
-
 
                   <label>Количество гостей</label>
 
@@ -392,7 +365,6 @@ function Hotels() {
                     ))}
                   </select>
 
-
                   {forpriceday > 0 && date2 > date1 && (
                     <div className="details-total">
                       <div>
@@ -409,7 +381,6 @@ function Hotels() {
                     </div>
                   )}
                 </div>
-
 
                 <div className="details-modal-footer">
                   <button
@@ -436,3 +407,4 @@ function Hotels() {
 }
 
 export default Hotels;
+/*hotel*/

@@ -240,3 +240,4 @@ function AdminSignup() {
 }
 
 export default AdminSignup;
+/*hotel*/

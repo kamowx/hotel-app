@@ -368,7 +368,6 @@ function Admin() {
         </div>
       </main>
 
-
       {showModal && (
         <div className="admin-modal-overlay">
           <div className="admin-modal">
@@ -457,3 +456,4 @@ function Admin() {
 }
 
 export default Admin;
+/*hotel*/

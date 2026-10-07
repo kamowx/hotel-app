@@ -5,7 +5,6 @@ import axios from "axios";
 function Adminneworders() {
   const [users, setUsers] = useState([]);
 
-
   const getUsers = async () => {
     try {
       const response = await axios({
@@ -27,7 +26,6 @@ function Adminneworders() {
     getUsers();
   }, []);
 
-
   const allBookings = users.flatMap((user) =>
     Array.isArray(user.bookhotel)
       ? user.bookhotel.map((booking) => ({
@@ -37,9 +35,7 @@ function Adminneworders() {
       : [],
   );
 
-
   const newBookings = allBookings.filter((item) => item.status == "Новый");
-
 
   const confirmBooking = async (booking) => {
     try {
@@ -91,7 +87,6 @@ function Adminneworders() {
       alert("Ошибка при подтверждении бронирования");
     }
   };
-
 
   const deleteBooking = async (booking) => {
     try {
@@ -167,12 +162,9 @@ function Adminneworders() {
 
   return (
     <div className="admin-page">
-
       <Adminbottom />
 
-
       <main className="admin-main">
-
         <header className="admin-top">
           <div>
             <h1>Новые заказы</h1>
@@ -193,7 +185,6 @@ function Adminneworders() {
           </div>
         </header>
 
-
         <div className="admin-content">
           <div className="admin-section">
             <div className="admin-section-header">
@@ -203,7 +194,6 @@ function Adminneworders() {
                 <p>Заказы, которые ожидают подтверждения</p>
               </div>
             </div>
-
 
             <div className="admin-table">
               <div className="admin-table-head">
@@ -219,7 +209,6 @@ function Adminneworders() {
 
                 <span>Действие</span>
               </div>
-
 
               {newBookings.map((item, index) => (
                 <div className="admin-table-row" key={index}>
@@ -258,7 +247,6 @@ function Adminneworders() {
                 </div>
               ))}
 
-
               {newBookings.length === 0 && (
                 <div className="admin-table-row">
                   <span>Новых заказов пока нет</span>
@@ -273,3 +261,4 @@ function Adminneworders() {
 }
 
 export default Adminneworders;
+/*hotel*/

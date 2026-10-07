@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 function Signup() {
   const navigate = useNavigate();
 
-
   const [showPassword, setShowPassword] = useState(false);
 
   const [users, setUsers] = useState([]);
@@ -123,7 +122,6 @@ function Signup() {
           <p>Зарегистриуйтесь в аккаунт FirstHotel</p>
 
           <div className="login-form">
-
             <div className="login-input-box">
               <label>Имя - Фамилия</label>
 
@@ -155,7 +153,6 @@ function Signup() {
               />
             </div>
 
-
             <div className="login-input-box">
               <label>Номер телефона</label>
 
@@ -166,7 +163,6 @@ function Signup() {
                 value={numberphone}
               />
             </div>
-
 
             <div className="login-input-box">
               <label>Пароль</label>
@@ -221,3 +217,4 @@ function Signup() {
 }
 
 export default Signup;
+/*hotel*/

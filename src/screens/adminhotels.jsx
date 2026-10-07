@@ -15,7 +15,6 @@ function Adminhotels() {
 
   const [editId, setEditId] = useState(null);
 
-
   const getHotels = async () => {
     try {
       const response = await axios({
@@ -36,7 +35,6 @@ function Adminhotels() {
   useEffect(() => {
     getHotels();
   }, []);
-
 
   const addHotel = async () => {
     if (
@@ -86,7 +84,6 @@ function Adminhotels() {
     }
   };
 
-
   const openEdit = (item) => {
     setEditId(item.id);
 
@@ -98,7 +95,6 @@ function Adminhotels() {
 
     setShowModal(true);
   };
-
 
   const editHotel = async () => {
     if (
@@ -148,7 +144,6 @@ function Adminhotels() {
     }
   };
 
-
   const deleteHotel = async (id) => {
     const confirmDelete = window.confirm(
       "Вы действительно хотите удалить этот отель?",
@@ -197,7 +192,6 @@ function Adminhotels() {
     }
   };
 
-
   const closeModal = () => {
     setShowModal(false);
 
@@ -239,12 +233,9 @@ function Adminhotels() {
 
   return (
     <div className="admin-page">
-
       <Adminbottom />
 
-
       <main className="admin-main">
-
         <header className="admin-top">
           <div>
             <h1>Отели</h1>
@@ -263,10 +254,8 @@ function Adminhotels() {
           </div>
         </header>
 
-
         <div className="admin-content">
           <div className="admin-section">
-
             <div className="admin-section-header">
               <div>
                 <h2>Все отели</h2>
@@ -292,11 +281,9 @@ function Adminhotels() {
               </button>
             </div>
 
-
             <div className="admin-hotel-grid">
               {hotels.map((item) => (
                 <div className="admin-hotel-card" key={item.id}>
-
                   <div className="admin-hotel-photo">
                     {item.avatarhotels ? (
                       <img src={item.avatarhotels} alt={item.namehotels} />
@@ -304,7 +291,6 @@ function Adminhotels() {
                       <i className="fa-solid fa-hotel"></i>
                     )}
                   </div>
-
 
                   <div className="admin-hotel-card-content">
                     <h3>{item.namehotels}</h3>
@@ -324,7 +310,6 @@ function Adminhotels() {
                       <i className="fa-solid fa-users"></i> До {item.people}{" "}
                       человек
                     </p>
-
 
                     <div className="admin-hotel-card-buttons">
                       <button
@@ -346,7 +331,6 @@ function Adminhotels() {
                   </div>
                 </div>
               ))}
-
 
               <button
                 className="admin-add-hotel-card"
@@ -373,11 +357,9 @@ function Adminhotels() {
         </div>
       </main>
 
-
       {showModal && (
         <div className="admin-hotel-modal">
           <div className="admin-hotel-modal-content">
-
             <div className="admin-hotel-modal-header">
               <div>
                 <h2>{editId ? "Редактировать отель" : "Добавить отель"}</h2>
@@ -394,7 +376,6 @@ function Adminhotels() {
               </button>
             </div>
 
-
             <div className="admin-hotel-modal-input">
               <label>Название отеля</label>
 
@@ -405,7 +386,6 @@ function Adminhotels() {
                 onChange={(e) => setNamehotels(e.target.value)}
               />
             </div>
-
 
             <div className="admin-hotel-modal-input">
               <label>Место</label>
@@ -420,7 +400,6 @@ function Adminhotels() {
               </select>
             </div>
 
-
             <div className="admin-hotel-modal-input">
               <label>Цена за ночь</label>
 
@@ -432,7 +411,6 @@ function Adminhotels() {
                 onChange={(e) => setPrice(e.target.value)}
               />
             </div>
-
 
             <div className="admin-hotel-modal-input">
               <label>Количество людей</label>
@@ -446,7 +424,6 @@ function Adminhotels() {
               />
             </div>
 
-
             <div className="admin-hotel-modal-input">
               <label>Фото отеля</label>
 
@@ -457,7 +434,6 @@ function Adminhotels() {
                 onChange={(e) => setAvatarhotels(e.target.value)}
               />
             </div>
-
 
             <div className="admin-hotel-modal-buttons">
               <button className="admin-hotel-modal-cancel" onClick={closeModal}>
@@ -483,3 +459,4 @@ function Adminhotels() {
 }
 
 export default Adminhotels;
+/*hotel*/

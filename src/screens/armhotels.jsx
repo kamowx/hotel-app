@@ -8,7 +8,6 @@ function Armhotels() {
 
   const [booking, setBooking] = useState(null);
 
-
   const getBooking = async () => {
     try {
       const userId = localStorage.getItem("id");
@@ -47,7 +46,6 @@ function Armhotels() {
     }
   };
 
-
   useEffect(() => {
     const userId = localStorage.getItem("id");
 
@@ -58,7 +56,6 @@ function Armhotels() {
 
     getBooking();
   }, [id]);
-
 
   const removeBooking = async () => {
     try {
@@ -109,11 +106,9 @@ function Armhotels() {
     }
   };
 
-
   const callCleaning = () => {
     alert("Ожидайте!");
   };
-
 
   if (!booking) {
     return (
@@ -130,7 +125,6 @@ function Armhotels() {
   return (
     <div className="app">
       <div className="onboarding armhotel-page">
-
         <div className="armhotel-header">
           <Link to="/armored" className="armhotel-back">
             <i className="fa-solid fa-arrow-left"></i>
@@ -139,7 +133,6 @@ function Armhotels() {
           <div className="logo-text">FirstHotel</div>
         </div>
 
-
         <div className="armhotel-image">
           {booking.avatarhotels ? (
             <img src={booking.avatarhotels} alt={booking.name} />
@@ -147,7 +140,6 @@ function Armhotels() {
             <i className="fa-solid fa-hotel"></i>
           )}
         </div>
-
 
         <div className="armhotel-content">
           <div className="armhotel-city">
@@ -166,7 +158,6 @@ function Armhotels() {
           <p>Статус: {booking.status}</p>
 
           <div className="armhotel-divider"></div>
-
 
           <h2>Информация о бронировании</h2>
 
@@ -220,13 +211,11 @@ function Armhotels() {
             </div>
           </div>
 
-
           <div className="armhotel-total">
             <span>Общая сумма</span>
 
             <strong>{booking.allprice} сом</strong>
           </div>
-
 
           <button className="armhotel-cancel-button" onClick={removeBooking}>
             <i className="fa-solid fa-trash"></i>
@@ -239,3 +228,4 @@ function Armhotels() {
 }
 
 export default Armhotels;
+/*hotel*/

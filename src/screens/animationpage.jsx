@@ -29,3 +29,4 @@ function Animationpage() {
 }
 
 export default Animationpage;
+/*hotel*/

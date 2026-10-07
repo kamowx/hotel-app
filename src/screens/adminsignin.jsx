@@ -11,9 +11,7 @@ function Adminsignin() {
 
   const [password2signin, setPassword2signin] = useState("");
 
-
   const navigate = useNavigate();
-
 
   const allUser = async () => {
     try {
@@ -35,7 +33,6 @@ function Adminsignin() {
   useEffect(() => {
     allUser();
   }, []);
-
 
   useEffect(() => {
     const id = localStorage.getItem("id");
@@ -60,12 +57,10 @@ function Adminsignin() {
             return;
           }
 
-
           if (currentUser.userstatus == "admin") {
             navigate("/admin");
             return;
           }
-
 
           if (currentUser.userstatus == "user") {
             navigate("/home");
@@ -79,7 +74,6 @@ function Adminsignin() {
 
     checkUser();
   }, []);
-
 
   const signIn = async () => {
     if (!emailsigin.trim() || !password2signin.trim()) {
@@ -96,12 +90,10 @@ function Adminsignin() {
       console.log("USERS ДЛЯ ВХОДА:", response.data);
 
       if (response.status === 200) {
-
         const currentUser = response.data.find(
           (item) =>
             item.email == emailsigin && item.password2 == password2signin,
         );
-
 
         if (!currentUser) {
           alert("Имя пользователя или пароль неправильные");
@@ -112,9 +104,7 @@ function Adminsignin() {
 
         console.log("USERSTATUS:", currentUser.userstatus);
 
-
         localStorage.setItem("id", JSON.stringify(currentUser.id));
-
 
         if (currentUser.userstatus == "user") {
           navigate("/home");
@@ -125,7 +115,6 @@ function Adminsignin() {
           navigate("/admin");
           return;
         }
-
 
         alert("У пользователя не указан правильный статус");
       }
@@ -182,7 +171,6 @@ function Adminsignin() {
             <p>Введите свои данные для входа в панель управления</p>
           </div>
 
-
           <div className="admin-signin-input-box">
             <label>Email</label>
 
@@ -197,7 +185,6 @@ function Adminsignin() {
               />
             </div>
           </div>
-
 
           <div className="admin-signin-input-box">
             <label>Пароль</label>
@@ -226,12 +213,10 @@ function Adminsignin() {
             </div>
           </div>
 
-
           <button className="admin-signin-button" onClick={signIn}>
             <i className="fa-solid fa-right-to-bracket"></i>
             Войти в панель
           </button>
-
 
           <a className="i1" href="/">
             <button className="admin-signin-back">
@@ -246,3 +231,4 @@ function Adminsignin() {
 }
 
 export default Adminsignin;
+/*hotel*/

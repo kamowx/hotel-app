@@ -117,12 +117,9 @@ function Adminconfirmed() {
 
   return (
     <div className="admin-page">
-
       <Adminbottom />
 
-
       <main className="admin-main">
-
         <header className="admin-top">
           <div>
             <h1>Подтвержденные</h1>
@@ -142,7 +139,6 @@ function Adminconfirmed() {
           </div>
         </header>
 
-
         <div className="admin-content">
           <div className="admin-section">
             <div className="admin-section-header">
@@ -153,7 +149,6 @@ function Adminconfirmed() {
               </div>
             </div>
 
-
             <div className="admin-table">
               <div className="admin-table-head">
                 <span>Отель</span>
@@ -163,7 +158,6 @@ function Adminconfirmed() {
                 <span>Сумма</span>
                 <span>Статус</span>
               </div>
-
 
               {confirmedBookings.map((item, index) => (
                 <div className="admin-table-row" key={index}>
@@ -195,7 +189,6 @@ function Adminconfirmed() {
                 </div>
               ))}
 
-
               {confirmedBookings.length === 0 && (
                 <div className="admin-table-row">
                   <span>Подтвержденных заказов пока нет</span>
@@ -210,3 +203,4 @@ function Adminconfirmed() {
 }
 
 export default Adminconfirmed;
+/*hotel*/
