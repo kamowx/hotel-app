@@ -1,34 +1,114 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import Bottomnav from "../components/bottomnav";
 
 function Armored() {
+  const navigate = useNavigate();
+
   const [bookings, setBookings] = useState([]);
 
-  // Получаем только забронированные отели из MockAPI
+  // =========================
+  // Получаем бронирования пользователя
+  // =========================
+
   const getBookings = async () => {
     try {
+      const id = localStorage.getItem("id");
+
+      if (!id) {
+        navigate("/signin");
+        return;
+      }
+
+      // Убираем кавычки
+      const userId = String(id).replaceAll('"', "");
+
       const response = await axios.get(
-        "https://6aae654c606bd915d110c57c.mockapi.io/data",
+        `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
       );
-      setBookings(response.data);
+
+      console.log("GET USER:", response);
+
+      if (response.status === 200) {
+        // Проверяем bookhotel
+        if (Array.isArray(response.data.bookhotel)) {
+          setBookings(response.data.bookhotel);
+        } else {
+          setBookings([]);
+        }
+      }
     } catch (error) {
       console.error("Ошибка при получении бронирований:", error);
     }
   };
 
+  // =========================
+  // Получаем данные при открытии страницы
+  // =========================
+
   useEffect(() => {
+    const id = localStorage.getItem("id");
+
+    if (!id) {
+      navigate("/signin");
+      return;
+    }
+
     getBookings();
   }, []);
 
-  // Отмена бронирования - удаляем запись из MockAPI
-  const removeBooking = async (id) => {
+  // =========================
+  // Отмена бронирования
+  // =========================
+
+  const removeBooking = async (hotelId) => {
     try {
-      await axios.delete(
-        `https://6aae654c606bd915d110c57c.mockapi.io/data/${id}`,
+      const id = localStorage.getItem("id");
+
+      if (!id) {
+        navigate("/signin");
+        return;
+      }
+
+      // Убираем кавычки
+      const userId = String(id).replaceAll('"', "");
+
+      // Получаем актуального пользователя
+      const userResponse = await axios.get(
+        `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
       );
-      setBookings(bookings.filter((item) => item.id !== id));
-      alert("Бронирование отменено!");
+
+      if (userResponse.status === 200) {
+        const currentUser = userResponse.data;
+
+        // Получаем все бронирования
+        const oldBookings = Array.isArray(currentUser.bookhotel)
+          ? currentUser.bookhotel
+          : [];
+
+        // Удаляем выбранное бронирование
+        const newBookings = oldBookings.filter(
+          (item) => String(item.hotelId) !== String(hotelId),
+        );
+
+        // Сохраняем пользователя
+        const response = await axios.put(
+          `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
+          {
+            ...currentUser,
+            bookhotel: newBookings,
+          },
+        );
+
+        console.log("PUT BOOKING:", response);
+
+        if (response.status === 200) {
+          setBookings(newBookings);
+
+          alert("Бронирование отменено!");
+        }
+      }
     } catch (error) {
       console.error("Ошибка при отмене бронирования:", error);
     }
@@ -40,17 +120,35 @@ function Armored() {
         <div className="page-content">
           <div className="mb-4">
             <h2 className="mb-1">Мои бронирования</h2>
+
             <p className="text-secondary mb-0">Список забронированных отелей</p>
           </div>
 
           {bookings.length === 0 ? (
             <p className="text-secondary">Пока нет бронирований</p>
           ) : (
-            bookings.map((item) => (
-              <div className="hotel-card mb-3" key={item.id}>
+            bookings.map((item, index) => (
+              <div className="hotel-card mb-3" key={item.hotelId || index}>
+                {/* ФОТО ОТЕЛЯ */}
+
+                <div className="hotel-card-image">
+                  {item.avatarhotels ? (
+                    <img src={item.avatarhotels} alt={item.name} />
+                  ) : (
+                    <i className="fa-solid fa-hotel"></i>
+                  )}
+                </div>
+
                 <div className="p-3">
+                  {/* ИНФОРМАЦИЯ ОБ ОТЕЛЕ */}
+
                   <h5>{item.name}</h5>
-                  <p className="text-secondary mb-2">{item.city}</p>
+
+                  <p className="text-secondary mb-2">
+                    <i className="fa-solid fa-location-dot me-1"></i>
+
+                    {item.city}
+                  </p>
 
                   <p className="mb-1">
                     <b>Цена:</b> {item.price} сом / ночь
@@ -64,7 +162,7 @@ function Armored() {
 
                   {item.allprice ? (
                     <p className="mb-1">
-                      <b>Общая сумма:</b> <b>{item.allprice}</b> сом
+                      <b>Общая сумма:</b> {item.allprice} сом
                     </p>
                   ) : null}
 
@@ -80,12 +178,20 @@ function Armored() {
                     <b>Гостей:</b> {item.guests}
                   </p>
 
-                  <button
-                    className="btn btn-danger w-100"
-                    onClick={() => removeBooking(item.id)}
-                  >
-                    Отменить бронирование
-                  </button>
+                  <p className="mb-3">
+                    <b>Статус:</b> {item.status}
+                  </p>
+
+                  {/* КНОПКИ */}
+
+                  <div className="hotel-card-buttons">
+                    <Link
+                      className="hotel-details-button"
+                      to={`/armhotels/${index}`}
+                    >
+                      Подробнее
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))
@@ -93,28 +199,8 @@ function Armored() {
         </div>
 
         {/* Навигация */}
-        <div className="bottom-navigation">
-          <div className="nav-item">
-            <Link className="i1" to="/">
-              <div className="nav-icon">⌂</div>
-              <small>Все отели</small>
-            </Link>
-          </div>
 
-          <div className="nav-item active">
-            <Link className="i1" to="/armored">
-              <div className="nav-icon">▣</div>
-              <small>Бронирования</small>
-            </Link>
-          </div>
-
-          <div className="nav-item">
-            <Link className="i1" to="/favorites">
-              <div className="nav-icon">▢</div>
-              <small>Избранные</small>
-            </Link>
-          </div>
-        </div>
+        <Bottomnav />
       </div>
     </div>
   );

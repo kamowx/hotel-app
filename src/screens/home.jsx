@@ -1,345 +1,340 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Bottomnav from "../components/bottomnav";
 import axios from "axios";
-import { hotels } from "../data/hotels";
 
 function Home() {
+  const navigate = useNavigate();
+
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Все");
 
-  const [selectedHotel, setSelectedHotel] = useState(null);
-  const [showPayModal, setShowPayModal] = useState(false);
-  const [guests, setGuests] = useState("1");
+  // Все отели
+  const [hotels, setHotels] = useState([]);
 
-  const [date1, setDate1] = useState("");
-  const [date2, setDate2] = useState("");
+  // Избранное
+  const [favorites, setFavorites] = useState([]);
 
-  // Избранные хранятся в localStorage
-  const [favorites, setFavorites] = useState(
-    JSON.parse(localStorage.getItem("favorites")) || [],
-  );
+  // =========================
+  // GET — получить все отели
+  // =========================
 
-  // Добавление / удаление из избранного
-  const toggleFavorite = (hotel) => {
-    const isFav = favorites.some((item) => item.name === hotel.name);
+  const getHotels = async () => {
+    try {
+      const response = await axios({
+        method: "GET",
+        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/hotels",
+      });
+
+      console.log("GET HOTELS:", response);
+
+      if (response.status === 200) {
+        setHotels(response.data);
+      }
+    } catch (error) {
+      console.error("GET HOTELS ERROR:", error);
+    }
+  };
+
+  // =========================
+  // GET — получить пользователя
+  // =========================
+
+  const getUser = async () => {
+    const id = localStorage.getItem("id");
+
+    // Если пользователь не вошёл
+    if (!id) {
+      navigate("/signin");
+      return;
+    }
+
+    // Получаем настоящий id
+    const userId = String(id).replaceAll('"', "");
+
+    try {
+      const response = await axios({
+        method: "GET",
+        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
+      });
+
+      console.log("GET USER:", response);
+
+      if (response.status === 200) {
+        const currentUser = response.data;
+
+        // Если админ
+        if (currentUser.userstatus == "admin") {
+          navigate("/admin");
+          return;
+        }
+
+        // Если обычный пользователь
+        if (currentUser.userstatus == "user") {
+          // Проверяем, что favorites действительно массив
+          if (Array.isArray(currentUser.favorites)) {
+            setFavorites(currentUser.favorites);
+          } else {
+            setFavorites([]);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("GET USER ERROR:", error);
+    }
+  };
+
+  // =========================
+  // GET при открытии страницы
+  // =========================
+
+  useEffect(() => {
+    getHotels();
+    getUser();
+  }, []);
+
+  // =========================
+  // Избранное
+  // =========================
+
+  const toggleFavorite = async (hotel) => {
+    const id = localStorage.getItem("id");
+
+    if (!id) {
+      navigate("/signin");
+      return;
+    }
+
+    const userId = String(id).replaceAll('"', "");
+
+    // Проверяем, есть ли уже этот отель
+    const isFav = Array.isArray(favorites)
+      ? favorites.some((item) => String(item.id) === String(hotel.id))
+      : false;
+
     let updated;
 
     if (isFav) {
-      updated = favorites.filter((item) => item.name !== hotel.name);
+      // Удаляем из избранного
+      updated = favorites.filter(
+        (item) => String(item.id) !== String(hotel.id),
+      );
     } else {
+      // Добавляем в избранное
       updated = [...favorites, hotel];
     }
 
-    localStorage.setItem("favorites", JSON.stringify(updated));
-    setFavorites(updated);
-  };
-
-  // Расчет дней и суммы
-  const forpriceday =
-    date1 && date2
-      ? Math.max(
-          1,
-          Math.round(
-            (new Date(date2) - new Date(date1)) / (1000 * 60 * 60 * 24),
-          ),
-        )
-      : 0;
-
-  const allprice = selectedHotel ? forpriceday * selectedHotel.price : 0;
-
-  const getToday = () => {
-    return new Date().toISOString().split("T")[0];
-  };
-
-  // Бронирование: отправляем только забронированный отель в MockAPI
-  const SaveBooking = async () => {
-    if (!date1) {
-      alert("Выберите дату заезда");
-      return;
-    }
-
-    if (!date2) {
-      alert("Выберите дату выезда");
-      return;
-    }
-
-    const newBooking = {
-      name: selectedHotel.name,
-      city: selectedHotel.city,
-      price: selectedHotel.price,
-      date1: date1,
-      date2: date2,
-      forpriceday: forpriceday,
-      allprice: allprice,
-      guests: guests,
-    };
-
     try {
-      await axios.post(
-        "https://6aae654c606bd915d110c57c.mockapi.io/data",
-        newBooking,
-      );
-      setShowPayModal(false);
-      alert("Отель успешно забронирован!");
+      // Сначала получаем текущего пользователя
+      const userResponse = await axios({
+        method: "GET",
+        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
+      });
+
+      if (userResponse.status === 200) {
+        const currentUser = userResponse.data;
+
+        // PUT — сохраняем пользователя
+        // и обновляем только favorites
+        const response = await axios({
+          method: "PUT",
+          url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
+          data: {
+            ...currentUser,
+            favorites: updated,
+          },
+        });
+
+        console.log("PUT FAVORITES:", response);
+
+        if (response.status === 200) {
+          setFavorites(updated);
+        }
+      }
     } catch (error) {
-      console.error("Ошибка при бронировании:", error);
-      alert("Ошибка при сохранении на сервере");
+      console.error("PUT FAVORITES ERROR:", error);
+
+      alert("Ошибка при сохранении избранного");
     }
   };
 
-  // Поиск и фильтрация отелей
-  const filteredHotels = hotels.filter((hotel) => {
-    const matchesSearch =
-      hotel.name.toLowerCase().includes(search.toLowerCase()) ||
-      hotel.city.toLowerCase().includes(search.toLowerCase()) ||
-      String(hotel.price).includes(search);
+  // =========================
+  // Поиск и фильтрация
+  // =========================
 
-    const matchesCategory = category === "Все" || hotel.city === category;
+  const filteredHotels = hotels.filter((hotel) => {
+    const hotelName = hotel.namehotels || "";
+    const hotelLocation = hotel.location || "";
+    const hotelPrice = String(hotel.price || "");
+
+    const matchesSearch =
+      hotelName.toLowerCase().includes(search.toLowerCase()) ||
+      hotelLocation.toLowerCase().includes(search.toLowerCase()) ||
+      hotelPrice.includes(search);
+
+    const matchesCategory = category === "Все" || hotelLocation === category;
 
     return matchesSearch && matchesCategory;
   });
 
   return (
-    <div className="hotel-page">
-      <div className="mobile-app">
-        <div className="page-content">
-          {/* Заголовок */}
-          <div className="mb-4">
-            <h2 className="mb-1">Отели</h2>
-            <p className="text-secondary mb-0">Найдите подходящий отель</p>
+    <div className="app">
+      <div className="onboarding home-onboarding">
+        {/* ================= HEADER ================= */}
+
+        <div className="home-header">
+          <div className="home-logo">
+            <div className="logo-icon">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <div className="logo-text">FirstHotel</div>
           </div>
 
-          {/* Поиск */}
-          <input
-            type="text"
-            className="form-control hotel-input"
-            placeholder="Поиск отеля"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <div className="home-user">
+            <div className="home-user-name">Привет!</div>
 
-          <br />
+            <div className="home-user-text">Найдите свой отель</div>
+          </div>
+        </div>
 
-          {/* Категории */}
-          <div className="d-flex gap-2 mb-4">
+        {/* ================= ОСНОВНАЯ СТРАНИЦА ================= */}
+
+        <div className="home-page">
+          {/* ================= ПОИСК ================= */}
+
+          <div className="home-search">
+            <h1>Найдите отель</h1>
+
+            <p>Найдите идеальное место для вашего отдыха</p>
+
+            <div className="home-search-box">
+              <i className="fa-solid fa-magnifying-glass"></i>
+
+              <input
+                type="text"
+                placeholder="Город или название отеля"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* ================= КАТЕГОРИИ ================= */}
+
+          <div className="home-categories">
             <button
-              className={`btn ${
-                category === "Все" ? "btn-primary" : "btn-outline-primary"
-              }`}
+              className={category === "Все" ? "selected" : ""}
               onClick={() => setCategory("Все")}
             >
               Все
             </button>
 
             <button
-              className={`btn ${
-                category === "Бишкек" ? "btn-primary" : "btn-outline-primary"
-              }`}
+              className={category === "Бишкек" ? "selected" : ""}
               onClick={() => setCategory("Бишкек")}
             >
               Бишкек
             </button>
 
             <button
-              className={`btn ${
-                category === "Ош" ? "btn-primary" : "btn-outline-primary"
-              }`}
+              className={category === "Ош" ? "selected" : ""}
               onClick={() => setCategory("Ош")}
             >
               Ош
             </button>
           </div>
 
-          {/* Список отелей */}
-          {filteredHotels.length === 0 ? (
-            <p className="text-secondary text-center my-4">Отели не найдены</p>
-          ) : (
-            filteredHotels.map((hotel) => {
-              const isFav = favorites.some((item) => item.name === hotel.name);
+          {/* ================= СПИСОК ОТЕЛЕЙ ================= */}
 
-              return (
-                <div className="hotel-card mb-3" key={hotel.id}>
-                  <div className="hotel-photo">
-                    <span>Фото отеля</span>
-                  </div>
-
-                  <div className="p-3">
-                    <h5 className="mb-1">{hotel.name}</h5>
-                    <p className="text-secondary mb-2">{hotel.city}</p>
-
-                    <p className="mb-1">
-                      <small>{hotel.people} местная</small>
-                    </p>
-
-                    <div className="d-flex justify-content-between align-items-center">
-                      <div>
-                        <b>{hotel.price} сом</b>
-                        <small className="text-secondary"> / ночь</small>
-                      </div>
-
-                      <div>
-                        <button
-                          className={`btn ${
-                            isFav ? "btn-danger" : "btn-outline-danger"
-                          } me-2`}
-                          onClick={() => toggleFavorite(hotel)}
-                        >
-                          {isFav ? "♥" : "♡"}
-                        </button>
-
-                        <button
-                          className="btn btn-primary"
-                          onClick={() => {
-                            setSelectedHotel(hotel);
-                            setShowPayModal(true);
-                            setDate1("");
-                            setDate2("");
-                            setGuests("1");
-                          }}
-                        >
-                          Забронировать
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-
-        {/* Модальное окно бронирования */}
-        {showPayModal && (
-          <>
-            <div className="modal-backdrop fade show"></div>
-
-            <div
-              className="modal d-block"
-              tabIndex="-1"
-              onClick={() => setShowPayModal(false)}
-            >
-              <div
-                className="modal-dialog modal-dialog-centered"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h5 className="modal-title">
-                      Бронирование отеля {selectedHotel?.name}
-                    </h5>
-
-                    <button
-                      type="button"
-                      className="btn-close"
-                      onClick={() => setShowPayModal(false)}
-                    ></button>
-                  </div>
-
-                  <div className="modal-body">
-                    {/* Дата заезда */}
-                    <div className="mb-3">
-                      <label className="form-label">Дата заезда</label>
-                      <input
-                        type="date"
-                        className="form-control"
-                        min={getToday()}
-                        value={date1}
-                        onChange={(e) => {
-                          setDate1(e.target.value);
-                          setDate2("");
-                        }}
-                      />
-                    </div>
-
-                    {/* Дата выезда */}
-                    <div className="mb-3">
-                      <label className="form-label">Дата выезда</label>
-                      <input
-                        type="date"
-                        className="form-control"
-                        min={date1 || getToday()}
-                        value={date2}
-                        disabled={!date1}
-                        onChange={(e) => setDate2(e.target.value)}
-                      />
-                    </div>
-
-                    {/* Количество гостей */}
-                    <div className="mb-3">
-                      <label className="form-label">Количество гостей</label>
-                      <select
-                        className="form-select"
-                        value={guests}
-                        onChange={(e) => setGuests(e.target.value)}
-                      >
-                        <option value="1">1 гость</option>
-                        <option value="2">2 гостя</option>
-                        <option value="3">3 гостя</option>
-                        <option value="4">4 гостя</option>
-                      </select>
-                    </div>
-
-                    {/* Сумма */}
-                    {forpriceday > 0 && (
-                      <div className="alert alert-light border mt-3 mb-0">
-                        <div className="d-flex justify-content-between mb-1">
-                          <span>Количество ночей:</span>
-                          <strong>{forpriceday}</strong>
-                        </div>
-                        <div className="d-flex justify-content-between">
-                          <span>Итого к оплате:</span>
-                          <strong>{allprice} сом</strong>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="modal-footer">
-                    <button
-                      type="button"
-                      className="btn btn-secondary"
-                      onClick={() => setShowPayModal(false)}
-                    >
-                      Отмена
-                    </button>
-
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={SaveBooking}
-                    >
-                      Забронировать
-                    </button>
-                  </div>
-                </div>
-              </div>
+          <div className="home-hotels">
+            <div className="home-section-title">
+              <h2>Популярные отели</h2>
             </div>
-          </>
-        )}
 
-        {/* Нижняя навигация */}
-        <div className="bottom-navigation">
-          <div className="nav-item active">
-            <Link className="i1" to="/">
-              <div className="nav-icon">⌂</div>
-              <small>Все отели</small>
-            </Link>
-          </div>
+            {filteredHotels.length === 0 ? (
+              <p className="text-secondary text-center my-4">
+                Отели не найдены
+              </p>
+            ) : (
+              filteredHotels.map((hotel) => {
+                // Проверяем избранное
+                const isFav = Array.isArray(favorites)
+                  ? favorites.some(
+                      (item) => String(item.id) === String(hotel.id),
+                    )
+                  : false;
 
-          <div className="nav-item">
-            <Link className="i1" to="/armored">
-              <div className="nav-icon">▣</div>
-              <small>Бронирования</small>
-            </Link>
-          </div>
+                return (
+                  <div className="home-hotel-card" key={hotel.id}>
+                    {/* ================= ФОТО ================= */}
 
-          <div className="nav-item">
-            <Link className="i1" to="/favorites">
-              <div className="nav-icon">▢</div>
-              <small>Избранные</small>
-            </Link>
+                    <div className="home-hotel-image">
+                      {hotel.avatarhotels ? (
+                        <img src={hotel.avatarhotels} alt={hotel.namehotels} />
+                      ) : (
+                        <i className="fa-solid fa-hotel"></i>
+                      )}
+
+                      {/* ИЗБРАННОЕ */}
+
+                      <button
+                        className="home-favorite"
+                        onClick={() => toggleFavorite(hotel)}
+                      >
+                        <i
+                          className={
+                            isFav ? "fa-solid fa-heart" : "fa-regular fa-heart"
+                          }
+                        ></i>
+                      </button>
+                    </div>
+
+                    {/* ================= ИНФОРМАЦИЯ ================= */}
+
+                    <div className="home-hotel-info">
+                      <h3>{hotel.namehotels}</h3>
+
+                      <p>
+                        <i className="fa-solid fa-location-dot"></i>
+
+                        {hotel.location}
+                      </p>
+
+                      <p>
+                        <i className="fa-solid fa-users"></i>
+                        {hotel.people} мест
+                      </p>
+
+                      <div className="home-hotel-bottom">
+                        <div className="home-hotel-price">
+                          {hotel.price} сом
+                          <span>/ ночь</span>
+                        </div>
+
+                        <Link
+                          className="home-hotel-button"
+                          to={`/hotels/${hotel.id}`}
+                        >
+                          Подробнее
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
+
+        <br />
+        <br />
+
+        {/* ================= НИЖНЯЯ НАВИГАЦИЯ ================= */}
+
+        <Bottomnav />
       </div>
     </div>
   );
