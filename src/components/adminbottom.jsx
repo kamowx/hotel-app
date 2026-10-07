@@ -4,7 +4,7 @@ import axios from "axios";
 
 function Adminbottom() {
   const [newOrders, setNewOrders] = useState(0);
-
+  //GET
   const getUsers = async () => {
     try {
       const response = await axios({
