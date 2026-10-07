@@ -11,13 +11,10 @@ function Adminsignin() {
 
   const [password2signin, setPassword2signin] = useState("");
 
-  /* NAVIGATE */
 
   const navigate = useNavigate();
 
-  /* ================= ПОЛУЧАЕМ USERS ================= */
 
-  // Получения getItem
   const allUser = async () => {
     try {
       const response = await axios({
@@ -39,12 +36,10 @@ function Adminsignin() {
     allUser();
   }, []);
 
-  /* ================= ПРОВЕРКА ID ================= */
 
   useEffect(() => {
     const id = localStorage.getItem("id");
 
-    // Если ID нет — остаёмся на странице входа
     if (!id) {
       return;
     }
@@ -65,14 +60,12 @@ function Adminsignin() {
             return;
           }
 
-          /* ЕСЛИ ADMIN */
 
           if (currentUser.userstatus == "admin") {
             navigate("/admin");
             return;
           }
 
-          /* ЕСЛИ USER */
 
           if (currentUser.userstatus == "user") {
             navigate("/home");
@@ -87,9 +80,7 @@ function Adminsignin() {
     checkUser();
   }, []);
 
-  /* ================= SIGN IN ================= */
 
-  // Save и setItem
   const signIn = async () => {
     if (!emailsigin.trim() || !password2signin.trim()) {
       alert("Заполните все поля");
@@ -105,14 +96,12 @@ function Adminsignin() {
       console.log("USERS ДЛЯ ВХОДА:", response.data);
 
       if (response.status === 200) {
-        /* ИЩЕМ ПОЛЬЗОВАТЕЛЯ */
 
         const currentUser = response.data.find(
           (item) =>
             item.email == emailsigin && item.password2 == password2signin,
         );
 
-        /* ЕСЛИ ПОЛЬЗОВАТЕЛЬ НЕ НАЙДЕН */
 
         if (!currentUser) {
           alert("Имя пользователя или пароль неправильные");
@@ -123,11 +112,9 @@ function Adminsignin() {
 
         console.log("USERSTATUS:", currentUser.userstatus);
 
-        /* СОХРАНЯЕМ ID */
 
         localStorage.setItem("id", JSON.stringify(currentUser.id));
 
-        /* ПРОВЕРЯЕМ USERSTATUS */
 
         if (currentUser.userstatus == "user") {
           navigate("/home");
@@ -139,7 +126,6 @@ function Adminsignin() {
           return;
         }
 
-        /* ЕСЛИ USERSTATUS НЕПРАВИЛЬНЫЙ */
 
         alert("У пользователя не указан правильный статус");
       }
@@ -196,7 +182,6 @@ function Adminsignin() {
             <p>Введите свои данные для входа в панель управления</p>
           </div>
 
-          {/* EMAIL */}
 
           <div className="admin-signin-input-box">
             <label>Email</label>
@@ -213,7 +198,6 @@ function Adminsignin() {
             </div>
           </div>
 
-          {/* PASSWORD */}
 
           <div className="admin-signin-input-box">
             <label>Пароль</label>
@@ -242,14 +226,12 @@ function Adminsignin() {
             </div>
           </div>
 
-          {/* BUTTON */}
 
           <button className="admin-signin-button" onClick={signIn}>
             <i className="fa-solid fa-right-to-bracket"></i>
             Войти в панель
           </button>
 
-          {/* BACK */}
 
           <a className="i1" href="/">
             <button className="admin-signin-back">

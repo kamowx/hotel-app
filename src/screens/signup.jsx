@@ -2,14 +2,11 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 function Signup() {
-  /* ЯЗЫК */
   const navigate = useNavigate();
 
-  /* ГЛАЗОК ДЛЯ ПАРОЛЯ */
 
   const [showPassword, setShowPassword] = useState(false);
 
-  //ALL DATA
   const [users, setUsers] = useState([]);
   const [email, setEmail] = useState("");
   const [firstname, setFirstname] = useState("");
@@ -18,7 +15,6 @@ function Signup() {
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
 
-  //Получения getItem
   const allUser = async () => {
     try {
       const response = await axios({
@@ -38,7 +34,6 @@ function Signup() {
   useEffect(() => {
     allUser();
   }, []);
-  //Save и setItem
   const register = async () => {
     if (!email.trim() || !password1.trim() || !password2.trim()) {
       alert("Заполните все поля");
@@ -128,8 +123,6 @@ function Signup() {
           <p>Зарегистриуйтесь в аккаунт FirstHotel</p>
 
           <div className="login-form">
-            {/*Имя Фамилия*/}
-            {/* Имя Фамилия */}
 
             <div className="login-input-box">
               <label>Имя - Фамилия</label>
@@ -150,7 +143,6 @@ function Signup() {
                 />
               </div>
             </div>
-            {/* Email */}
 
             <div className="login-input-box">
               <label>Email</label>
@@ -163,7 +155,6 @@ function Signup() {
               />
             </div>
 
-            {/* Телефон */}
 
             <div className="login-input-box">
               <label>Номер телефона</label>
@@ -176,7 +167,6 @@ function Signup() {
               />
             </div>
 
-            {/* Пароль */}
 
             <div className="login-input-box">
               <label>Пароль</label>

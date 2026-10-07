@@ -5,7 +5,6 @@ import axios from "axios";
 function Adminbottom() {
   const [newOrders, setNewOrders] = useState(0);
 
-  // ================= ПОЛУЧАЕМ ПОЛЬЗОВАТЕЛЕЙ =================
   const getUsers = async () => {
     try {
       const response = await axios({
@@ -16,17 +15,14 @@ function Adminbottom() {
       console.log("GET USERS:", response);
 
       if (response.status === 200) {
-        // Собираем все бронирования всех пользователей
         const allBookings = response.data.flatMap((user) =>
           Array.isArray(user.bookhotel) ? user.bookhotel : [],
         );
 
-        // Оставляем только новые заказы
         const newBookings = allBookings.filter(
           (item) => item.status == "Новый",
         );
 
-        // Сохраняем количество новых заказов
         setNewOrders(newBookings.length);
       }
     } catch (error) {
@@ -34,7 +30,6 @@ function Adminbottom() {
     }
   };
 
-  // ================= ЗАГРУЗКА =================
   useEffect(() => {
     getUsers();
   }, []);
@@ -42,7 +37,6 @@ function Adminbottom() {
   return (
     <div>
       <aside className="admin-sidebar">
-        {/* LOGO */}
         <div className="admin-logo">
           <div className="admin-logo-icon">
             <span></span>
@@ -53,7 +47,6 @@ function Adminbottom() {
           <span>FirstHotel</span>
         </div>
 
-        {/* МЕНЮ */}
         <div className="admin-menu">
           <Link to="/admin" className="admin-menu-item">
             <i className="fa-solid fa-house"></i>
@@ -64,7 +57,6 @@ function Adminbottom() {
             <i className="fa-solid fa-bell"></i>
             <span>Новые заказы</span>
 
-            {/* КОЛИЧЕСТВО НОВЫХ ЗАКАЗОВ */}
             <b>{newOrders}</b>
           </Link>
 
@@ -89,7 +81,6 @@ function Adminbottom() {
           </Link>
         </div>
 
-        {/* НИЖНЯЯ ЧАСТЬ */}
         <div className="admin-sidebar-bottom">
           <button className="admin-menu-item">
             <span>Здравствуйте!</span>

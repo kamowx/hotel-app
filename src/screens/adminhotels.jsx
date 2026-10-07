@@ -15,9 +15,6 @@ function Adminhotels() {
 
   const [editId, setEditId] = useState(null);
 
-  // =========================
-  // GET — получить отели
-  // =========================
 
   const getHotels = async () => {
     try {
@@ -40,9 +37,6 @@ function Adminhotels() {
     getHotels();
   }, []);
 
-  // =========================
-  // POST — добавить отель
-  // =========================
 
   const addHotel = async () => {
     if (
@@ -92,9 +86,6 @@ function Adminhotels() {
     }
   };
 
-  // =========================
-  // Открыть редактирование
-  // =========================
 
   const openEdit = (item) => {
     setEditId(item.id);
@@ -108,9 +99,6 @@ function Adminhotels() {
     setShowModal(true);
   };
 
-  // =========================
-  // PUT — изменить отель
-  // =========================
 
   const editHotel = async () => {
     if (
@@ -160,9 +148,6 @@ function Adminhotels() {
     }
   };
 
-  // =========================
-  // DELETE — удалить отель
-  // =========================
 
   const deleteHotel = async (id) => {
     const confirmDelete = window.confirm(
@@ -174,7 +159,6 @@ function Adminhotels() {
     }
 
     try {
-      // Ищем выбранный отель
       const hotel = hotels.find((item) => String(item.id) === String(id));
       const targetId = hotel ? hotel.id : id;
       const parentId = hotel?.dataId || 1;
@@ -189,7 +173,6 @@ function Adminhotels() {
           url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${parentId}/hotels/${targetId}`,
         });
       } catch (nestedError) {
-        // Запасной запрос по прямому эндпоинту
         response = await axios({
           method: "DELETE",
           url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/hotels/${targetId}`,
@@ -201,7 +184,6 @@ function Adminhotels() {
       if (response.status === 200 || response.status === 204) {
         alert("Отель удалён");
 
-        // Убираем удалённый отель с экрана
         setHotels((prevHotels) =>
           prevHotels.filter((item) => String(item.id) !== String(targetId)),
         );
@@ -215,9 +197,6 @@ function Adminhotels() {
     }
   };
 
-  // =========================
-  // Закрыть модальное окно
-  // =========================
 
   const closeModal = () => {
     setShowModal(false);
@@ -260,14 +239,11 @@ function Adminhotels() {
 
   return (
     <div className="admin-page">
-      {/* SIDEBAR */}
 
       <Adminbottom />
 
-      {/* MAIN */}
 
       <main className="admin-main">
-        {/* HEADER */}
 
         <header className="admin-top">
           <div>
@@ -287,11 +263,9 @@ function Adminhotels() {
           </div>
         </header>
 
-        {/* CONTENT */}
 
         <div className="admin-content">
           <div className="admin-section">
-            {/* SECTION HEADER */}
 
             <div className="admin-section-header">
               <div>
@@ -318,12 +292,10 @@ function Adminhotels() {
               </button>
             </div>
 
-            {/* HOTEL CARDS */}
 
             <div className="admin-hotel-grid">
               {hotels.map((item) => (
                 <div className="admin-hotel-card" key={item.id}>
-                  {/* PHOTO */}
 
                   <div className="admin-hotel-photo">
                     {item.avatarhotels ? (
@@ -333,7 +305,6 @@ function Adminhotels() {
                     )}
                   </div>
 
-                  {/* INFORMATION */}
 
                   <div className="admin-hotel-card-content">
                     <h3>{item.namehotels}</h3>
@@ -354,7 +325,6 @@ function Adminhotels() {
                       человек
                     </p>
 
-                    {/* BUTTONS */}
 
                     <div className="admin-hotel-card-buttons">
                       <button
@@ -377,7 +347,6 @@ function Adminhotels() {
                 </div>
               ))}
 
-              {/* ADD CARD */}
 
               <button
                 className="admin-add-hotel-card"
@@ -404,14 +373,10 @@ function Adminhotels() {
         </div>
       </main>
 
-      {/* ========================= */}
-      {/* MODAL */}
-      {/* ========================= */}
 
       {showModal && (
         <div className="admin-hotel-modal">
           <div className="admin-hotel-modal-content">
-            {/* MODAL HEADER */}
 
             <div className="admin-hotel-modal-header">
               <div>
@@ -429,7 +394,6 @@ function Adminhotels() {
               </button>
             </div>
 
-            {/* NAME */}
 
             <div className="admin-hotel-modal-input">
               <label>Название отеля</label>
@@ -442,7 +406,6 @@ function Adminhotels() {
               />
             </div>
 
-            {/* LOCATION */}
 
             <div className="admin-hotel-modal-input">
               <label>Место</label>
@@ -457,7 +420,6 @@ function Adminhotels() {
               </select>
             </div>
 
-            {/* PRICE */}
 
             <div className="admin-hotel-modal-input">
               <label>Цена за ночь</label>
@@ -471,7 +433,6 @@ function Adminhotels() {
               />
             </div>
 
-            {/* PEOPLE */}
 
             <div className="admin-hotel-modal-input">
               <label>Количество людей</label>
@@ -485,7 +446,6 @@ function Adminhotels() {
               />
             </div>
 
-            {/* PHOTO */}
 
             <div className="admin-hotel-modal-input">
               <label>Фото отеля</label>
@@ -498,7 +458,6 @@ function Adminhotels() {
               />
             </div>
 
-            {/* MODAL BUTTONS */}
 
             <div className="admin-hotel-modal-buttons">
               <button className="admin-hotel-modal-cancel" onClick={closeModal}>

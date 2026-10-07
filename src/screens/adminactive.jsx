@@ -5,7 +5,6 @@ import axios from "axios";
 function Adminactive() {
   const [users, setUsers] = useState([]);
 
-  // GET пользователей
   const getUsers = async () => {
     try {
       const response = await axios({
@@ -26,7 +25,6 @@ function Adminactive() {
   useEffect(() => {
     getUsers();
 
-    // Проверяем дату каждую минуту
     const interval = setInterval(() => {
       getUsers();
     }, 60000);
@@ -36,7 +34,6 @@ function Adminactive() {
     };
   }, []);
 
-  // Все бронирования
   const allBookings = users.flatMap((user) =>
     Array.isArray(user.bookhotel)
       ? user.bookhotel.map((booking) => ({
@@ -46,10 +43,8 @@ function Adminactive() {
       : [],
   );
 
-  // Только активные
   const activeBookings = allBookings.filter((item) => item.status == "Активно");
 
-  // Проверяем дату выезда
   useEffect(() => {
     const checkBookings = async () => {
       const now = new Date();
@@ -70,13 +65,10 @@ function Adminactive() {
             return booking;
           }
 
-          // Дата выезда
           const checkoutDate = new Date(booking.date2);
 
-          // Конец дня выезда
           checkoutDate.setHours(23, 59, 59, 999);
 
-          // Если срок закончился
           if (now > checkoutDate) {
             changed = true;
 
@@ -89,7 +81,6 @@ function Adminactive() {
           return booking;
         });
 
-        // Сохраняем изменённый статус
         if (changed) {
           try {
             const response = await axios({
@@ -116,7 +107,6 @@ function Adminactive() {
     }
   }, [users]);
 
-  // Показываем, сколько осталось до выезда
   const getCheckoutText = (date2) => {
     if (!date2) {
       return "";
@@ -171,14 +161,11 @@ function Adminactive() {
   }, []);
   return (
     <div className="admin-page">
-      {/* SIDEBAR */}
 
       <Adminbottom />
 
-      {/* MAIN */}
 
       <main className="admin-main">
-        {/* TOP HEADER */}
 
         <header className="admin-top">
           <div>
@@ -199,7 +186,6 @@ function Adminactive() {
           </div>
         </header>
 
-        {/* CONTENT */}
 
         <div className="admin-content">
           <div className="admin-section">
@@ -211,7 +197,6 @@ function Adminactive() {
               </div>
             </div>
 
-            {/* TABLE */}
 
             <div className="admin-table">
               <div className="admin-table-head">
@@ -223,7 +208,6 @@ function Adminactive() {
                 <span>Статус</span>
               </div>
 
-              {/* АКТИВНЫЕ ЗАКАЗЫ */}
 
               {activeBookings.map((item, index) => (
                 <div className="admin-table-row" key={index}>
@@ -245,7 +229,6 @@ function Adminactive() {
 
                   <span className="admin-status active">{item.status}</span>
 
-                  {/* ТЕКСТ О ВЫЕЗДЕ */}
 
                   <small>
                     <i className="fa-solid fa-calendar-days"></i>{" "}
@@ -254,7 +237,6 @@ function Adminactive() {
                 </div>
               ))}
 
-              {/* ЕСЛИ НЕТ АКТИВНЫХ */}
 
               {activeBookings.length === 0 && (
                 <div className="admin-table-row">

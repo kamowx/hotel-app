@@ -8,9 +8,6 @@ function Favorites() {
 
   const [favorites, setFavorites] = useState([]);
 
-  // =========================
-  // GET — получить избранное
-  // =========================
 
   const getFavorites = async () => {
     const id = localStorage.getItem("id");
@@ -33,7 +30,6 @@ function Favorites() {
       if (response.status === 200) {
         const currentUser = response.data;
 
-        // Проверяем, что favorites является массивом
         if (Array.isArray(currentUser.favorites)) {
           setFavorites(currentUser.favorites);
         } else {
@@ -45,17 +41,11 @@ function Favorites() {
     }
   };
 
-  // =========================
-  // GET при открытии страницы
-  // =========================
 
   useEffect(() => {
     getFavorites();
   }, []);
 
-  // =========================
-  // Удаление из избранного
-  // =========================
 
   const removeFavorite = async (hotel) => {
     const id = localStorage.getItem("id");
@@ -72,7 +62,6 @@ function Favorites() {
     );
 
     try {
-      // Сначала получаем текущего пользователя
       const userResponse = await axios({
         method: "GET",
         url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
@@ -81,7 +70,6 @@ function Favorites() {
       if (userResponse.status === 200) {
         const currentUser = userResponse.data;
 
-        // PUT — обновляем избранное
         const response = await axios({
           method: "PUT",
           url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
@@ -108,7 +96,6 @@ function Favorites() {
     <div className="hotel-page">
       <div className="mobile-app">
         <div className="page-content">
-          {/* ================= ЗАГОЛОВОК ================= */}
 
           <div className="mb-4">
             <h2 className="mb-1">Мои избранные</h2>
@@ -116,14 +103,12 @@ function Favorites() {
             <p className="text-secondary mb-0">Сохраненные отели</p>
           </div>
 
-          {/* ================= ИЗБРАННЫЕ ОТЕЛИ ================= */}
 
           {favorites.length === 0 ? (
             <p className="text-secondary">В избранном пока ничего нет</p>
           ) : (
             favorites.map((item, index) => (
               <div className="hotel-card mb-3" key={item.id || index}>
-                {/* ФОТО */}
 
                 <div className="hotel-photo">
                   {item.avatarhotels ? (
@@ -133,7 +118,6 @@ function Favorites() {
                   )}
                 </div>
 
-                {/* ИНФОРМАЦИЯ */}
 
                 <div className="p-3">
                   <h5 className="mb-1">{item.namehotels}</h5>
@@ -145,7 +129,6 @@ function Favorites() {
                   </p>
 
                   <div className="d-flex justify-content-between align-items-center">
-                    {/* ЦЕНА */}
 
                     <div>
                       <b>{item.price} сом</b>
@@ -153,7 +136,6 @@ function Favorites() {
                       <small className="text-secondary"> / ночь</small>
                     </div>
 
-                    {/* КНОПКИ */}
 
                     <div>
                       <button
@@ -177,7 +159,6 @@ function Favorites() {
           )}
         </div>
 
-        {/* ================= НАВИГАЦИЯ ================= */}
 
         <Bottomnav />
       </div>

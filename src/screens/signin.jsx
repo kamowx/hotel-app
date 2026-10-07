@@ -3,13 +3,10 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Signin() {
-  /* ЯЗЫК */
 
-  /* ГЛАЗОК ДЛЯ ПАРОЛЯ */
 
   const [showPassword, setShowPassword] = useState(false);
 
-  /* ALL USERS */
 
   const [users, setUsers] = useState([]);
 
@@ -17,13 +14,10 @@ function Signin() {
 
   const [password2signin, setPassword2signin] = useState("");
 
-  /* NAVIGATE */
 
   const navigate = useNavigate();
 
-  /* ================= ПОЛУЧАЕМ USERS ================= */
 
-  // Получения getItem
   const allUser = async () => {
     try {
       const response = await axios({
@@ -45,7 +39,6 @@ function Signin() {
     allUser();
   }, []);
 
-  /* ================= ПРОВЕРКА ВХОДА ================= */
 
   useEffect(() => {
     const id = localStorage.getItem("id");
@@ -55,9 +48,7 @@ function Signin() {
     }
   }, []);
 
-  /* ================= SIGN IN ================= */
 
-  // Save и setItem
   const signIn = async () => {
     if (!emailsigin.trim() || !password2signin.trim()) {
       alert("Заполните все поля");
@@ -77,11 +68,9 @@ function Signin() {
 
     alert("Вы успешно вошли");
 
-    /* СОХРАНЯЕМ ID */
 
     localStorage.setItem("id", JSON.stringify(user.id));
 
-    /* ПЕРЕХОД НА HOME */
 
     navigate("/home");
   };
@@ -89,7 +78,6 @@ function Signin() {
   return (
     <div className="app">
       <div className="onboarding">
-        {/* ================= HEADER ================= */}
 
         <div className="onboarding-header">
           <div className="logo-icon">
@@ -101,7 +89,6 @@ function Signin() {
           <div className="logo-text">FirstHotel</div>
         </div>
 
-        {/* ================= CONTENT ================= */}
 
         <div className="login-content">
           <h1>Вход</h1>
@@ -109,7 +96,6 @@ function Signin() {
           <p>Войдите в свой аккаунт EasyPay</p>
 
           <div className="login-form">
-            {/* ================= EMAIL ================= */}
 
             <div className="login-input-box">
               <label>Email</label>
@@ -122,7 +108,6 @@ function Signin() {
               />
             </div>
 
-            {/* ================= ПАРОЛЬ ================= */}
 
             <div className="login-input-box">
               <label>Пароль</label>
@@ -147,7 +132,6 @@ function Signin() {
               </button>
             </div>
 
-            {/* ================= BUTTON ================= */}
 
             <button className="login-submit" onClick={signIn}>
               Вход
@@ -155,7 +139,6 @@ function Signin() {
           </div>
         </div>
 
-        {/* ================= SIGNUP ================= */}
 
         <div className="login-register">
           <span>Нет аккаунта?</span>

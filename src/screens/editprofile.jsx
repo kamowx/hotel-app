@@ -13,20 +13,15 @@ function EditProfile() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
 
-  // Состояние модального окна
   const [showPhotoModal, setShowPhotoModal] = useState(false);
 
-  // Ссылка на фото
   const [photo, setPhoto] = useState("");
 
-  // Временная ссылка на фото в модальном окне
   const [newPhoto, setNewPhoto] = useState("");
 
-  /* ================= ID ================= */
 
   const id = JSON.parse(localStorage.getItem("id"));
 
-  /* ================= GET USER ======================= */
 
   const allUser = async () => {
     try {
@@ -59,7 +54,6 @@ function EditProfile() {
     allUser();
   }, []);
 
-  /* ================= PHOTO MODAL ================= */
 
   const openPhotoModal = () => {
     setNewPhoto(photo);
@@ -76,7 +70,6 @@ function EditProfile() {
     setShowPhotoModal(false);
   };
 
-  /* ================= SAVE PROFILE =================== */
 
   const saveProfile = async () => {
     if (!name.trim() || !surname.trim() || !phone.trim() || !email.trim()) {
@@ -146,7 +139,6 @@ function EditProfile() {
             <p>Измените свои личные данные</p>
           </div>
 
-          {/* ================= PHOTO ================= */}
 
           <div className="edit-photo-box">
             <div className="edit-profile-photo">
@@ -222,7 +214,6 @@ function EditProfile() {
           </div>
         </div>
 
-        {/* ================= PHOTO MODAL ================= */}
 
         {showPhotoModal && (
           <div className="photo-modal-overlay">

@@ -23,7 +23,6 @@ function Profile() {
     }
   }, []);
 
-  // Получения getItem
   const allUser = async () => {
     try {
       const response = await axios({
@@ -63,7 +62,6 @@ function Profile() {
   return (
     <div className="app">
       <div className="onboarding profile-page">
-        {/* HEADER */}
         <div className="profile-header">
           <Link to="/home" className="profile-back">
             <i className="fa-solid fa-arrow-left"></i>
@@ -164,14 +162,12 @@ function Profile() {
             </button>
           </Link>
 
-          {/* ВЫХОД */}
           <button className="profile-logout" onClick={logout}>
             <i className="fa-solid fa-right-from-bracket"></i>
             Выйти из аккаунта
           </button>
         </div>
 
-        {/* НИЖНЯЯ НАВИГАЦИЯ */}
         <Bottomnav />
       </div>
     </div>

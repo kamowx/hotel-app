@@ -15,7 +15,6 @@ body {
   background: #ffffff;
 }
 
-/* ================= APP ================= */
 
 .app {
   width: 100%;
@@ -27,7 +26,6 @@ body {
   overflow-x: hidden;
 }
 
-/* ================= ONBOARDING ================= */
 
 .onboarding {
   width: 100dvw;
@@ -43,7 +41,6 @@ body {
   padding-bottom: 25px;
 }
 
-/* ================= HEADER ================= */
 
 .onboarding-header {
   width: 100%;
@@ -69,15 +66,14 @@ body {
 @keyframes popIn {
   0% {
     opacity: 0;
-    transform: translate(100px, 250px) scale(0.5); /* Уменьшена в 2 раза */
+    transform: translate(100px, 250px) scale(0.5);
   }
   100% {
     opacity: 1;
-    transform: translate(100px, 250px) scale(1); /* Обычный размер */
+    transform: translate(100px, 250px) scale(1);
   }
 }
 
-/* ================= LOGO ================= */
 
 .logo-icon {
   width: 14px;
@@ -126,7 +122,6 @@ body {
   color: #0b0a0a;
 }
 
-/* ================= ONBOARDING IMAGE ================= */
 
 .payment-image {
   width: 80%;
@@ -192,7 +187,6 @@ body {
   width: 30px;
 }
 
-/* ================= INDICATOR ================= */
 
 .onboarding-indicator {
   display: flex;
@@ -221,7 +215,6 @@ body {
   background: #d0d3d8;
 }
 
-/* ================= ONBOARDING CONTENT ================= */
 
 .onboarding-content {
   width: 90%;
@@ -257,7 +250,6 @@ body {
   color: #595f67;
 }
 
-/* ================= ONBOARDING BUTTONS ================= */
 
 .onboarding-buttons {
   width: calc(100% - 32px);
@@ -303,7 +295,6 @@ body {
   border-radius: 3px;
 }
 
-/* ================= LOGIN / REGISTRATION ================= */
 
 .login-content {
   width: calc(100% - 32px);
@@ -331,7 +322,6 @@ body {
   color: #595f67;
 }
 
-/* ================= FORM ================= */
 
 .login-form {
   width: 100%;
@@ -389,7 +379,6 @@ body {
   border-color: #0b0a0a;
 }
 
-/* ================= NAME + SURNAME ================= */
 
 .name-surname {
   width: 100%;
@@ -403,7 +392,6 @@ body {
   width: 50%;
 }
 
-/* ================= LOGIN BUTTON ================= */
 
 .login-submit {
   width: 100%;
@@ -424,7 +412,6 @@ body {
   cursor: pointer;
 }
 
-/* ================= PASSWORD EYE ================= */
 
 .login-input-box button {
   color: #595f67;
@@ -440,7 +427,6 @@ body {
   color: #000;
 }
 
-/* ================= REGISTER LINK ================= */
 
 .login-register {
   width: calc(100% - 32px);
@@ -477,7 +463,6 @@ body {
   cursor: pointer;
 }
 
-/* ================= DESKTOP ================= */
 
 @media (min-width: 768px) {
   .app {
@@ -507,7 +492,6 @@ body {
   }
 }
 
-/* ================= HOME PAGE ===================== */
 
 .home-onboarding {
   overflow: hidden;
@@ -523,7 +507,6 @@ body {
   background: #f8f8f8;
 }
 
-/* ================= HEADER ================= */
 
 .home-header {
   width: 100%;
@@ -574,7 +557,6 @@ body {
   text-align: right;
 }
 
-/* ================= HOME PAGE ================= */
 
 .home-onboarding {
   padding-bottom: 0;
@@ -592,7 +574,6 @@ body {
   background: #f8f8f8;
 }
 
-/* ================= HEADER ================= */
 
 .home-header {
   width: 100%;
@@ -632,7 +613,6 @@ body {
   text-align: right;
 }
 
-/* ================= SEARCH ================= */
 
 .home-search {
   margin: 10px 16px 0;
@@ -697,7 +677,6 @@ body {
   color: #9a9a9a;
 }
 
-/* ================= CATEGORIES ================= */
 
 .home-categories {
   display: flex;
@@ -733,7 +712,6 @@ body {
   color: #ffffff;
 }
 
-/* ================= HOTELS ================= */
 
 .home-hotels {
   padding: 24px 16px 20px;
@@ -756,7 +734,6 @@ body {
   color: #0b0a0a;
 }
 
-/* ================= HOTEL CARD ================= */
 
 .home-hotel-card {
   width: 100%;
@@ -772,7 +749,6 @@ body {
   border-radius: 7px;
 }
 
-/* ================= HOTEL IMAGE ================= */
 
 .home-hotel-image {
   width: 100%;
@@ -793,7 +769,6 @@ body {
   color: #aaaaaa;
 }
 
-/* ================= FAVORITE ================= */
 
 .home-favorite {
   width: 32px;
@@ -823,7 +798,6 @@ body {
   font-size: 14px;
 }
 
-/* ================= HOTEL INFO ================= */
 
 .home-hotel-info {
   padding: 14px;
@@ -859,7 +833,6 @@ body {
   text-align: center;
 }
 
-/* ================= PRICE + BUTTON ================= */
 
 .home-hotel-bottom {
   display: flex;
@@ -917,7 +890,6 @@ body {
   background: #222222;
 }
 
-/* ================= BOTTOM NAVIGATION ================= */
 
 .home-bottom-nav {
   width: 100%;
@@ -972,7 +944,6 @@ body {
   font-weight: 700;
 }
 
-/* ================= SMALL SCREENS ================= */
 
 @media (max-width: 350px) {
   .home-header {
@@ -1014,7 +985,6 @@ body {
   }
 }
 
-/* ================= ARMОRED / BOOKINGS ================= */
 
 .hotel-page {
   width: 100%;
@@ -1036,7 +1006,6 @@ body {
   background: #f8f8f8;
 }
 
-/* ================= CONTENT ================= */
 
 .page-content {
   width: 100%;
@@ -1048,7 +1017,6 @@ body {
   padding: 22px 16px 90px;
 }
 
-/* ================= TITLE ================= */
 
 .page-content h2 {
   margin: 0;
@@ -1065,7 +1033,6 @@ body {
   color: #777777 !important;
 }
 
-/* ================= BOOKING CARD ================= */
 
 .hotel-card {
   width: 100%;
@@ -1079,7 +1046,6 @@ body {
   overflow: hidden;
 }
 
-/* Информация внутри отеля */
 
 .hotel-card .p-3 {
   padding: 16px !important;
@@ -1104,7 +1070,6 @@ body {
   color: #0b0a0a;
 }
 
-/* ================= BOOKING INFO ================= */
 
 .hotel-card .mb-1 {
   margin-bottom: 7px !important;
@@ -1114,7 +1079,6 @@ body {
   margin-bottom: 15px !important;
 }
 
-/* ================= CANCEL BUTTON ================= */
 
 .hotel-card .btn-danger {
   width: 100%;
@@ -1143,7 +1107,6 @@ body {
   color: #ffffff;
 }
 
-/* ================= BOTTOM NAVIGATION ================= */
 
 .bottom-navigation {
   width: 100%;
@@ -1203,7 +1166,6 @@ body {
   font-weight: 700;
 }
 
-/* ================= DESKTOP ================= */
 
 @media (min-width: 768px) {
   .hotel-page {
@@ -1231,7 +1193,6 @@ body {
   }
 }
 
-/* ================= HOTEL DETAILS ================= */
 
 .hotel-details-page {
   padding-bottom: 20px;
@@ -1266,7 +1227,6 @@ body {
   font-size: 18px;
 }
 
-/* ФОТО */
 
 .details-gallery {
   height: 235px;
@@ -1339,7 +1299,6 @@ body {
   font-size: 11px;
 }
 
-/* ИНФОРМАЦИЯ */
 
 .details-content {
   padding: 22px 16px 0;
@@ -1419,7 +1378,6 @@ body {
   font-size: 11px;
 }
 
-/* КНОПКА БРОНИ */
 
 .details-book-button {
   width: 100%;
@@ -1434,7 +1392,6 @@ body {
   cursor: pointer;
 }
 
-/* МОДАЛЬНОЕ ОКНО */
 
 .details-modal-backdrop {
   position: fixed;
@@ -1570,7 +1527,6 @@ body {
   border: none;
 }
 
-/* МОБИЛЬНЫЙ РАЗМЕР */
 
 @media (max-width: 350px) {
   .details-gallery {
@@ -1587,7 +1543,6 @@ body {
     font-size: 22px;
   }
 }
-/* ================= ARMОRED / BOOKINGS ================= */
 
 .hotel-page {
   width: 100%;
@@ -1605,7 +1560,6 @@ body {
   background: #f8f8f8;
 }
 
-/* ================= CONTENT ================= */
 
 .page-content {
   width: 100%;
@@ -1626,7 +1580,6 @@ body {
   color: #777777 !important;
 }
 
-/* ================= HOTEL CARD ================= */
 
 .hotel-card {
   width: 100%;
@@ -1637,7 +1590,6 @@ body {
   border-radius: 7px;
 }
 
-/* Фото отеля */
 
 .hotel-card-image {
   width: 100%;
@@ -1653,7 +1605,6 @@ body {
   color: #aaaaaa;
 }
 
-/* Информация */
 
 .hotel-card .p-3 {
   padding: 16px !important;
@@ -1683,7 +1634,6 @@ body {
   margin-bottom: 15px !important;
 }
 
-/* ================= BUTTONS ================= */
 
 .hotel-card-buttons {
   width: 100%;
@@ -1691,7 +1641,6 @@ body {
   gap: 8px;
 }
 
-/* Подробнее */
 
 .hotel-details-button {
   width: 50%;
@@ -1713,7 +1662,6 @@ body {
   color: #ffffff;
 }
 
-/* Отменить */
 
 .hotel-card-buttons .btn-danger {
   width: 50%;
@@ -1731,7 +1679,6 @@ body {
   color: #ffffff;
 }
 
-/* ================= BOTTOM NAVIGATION ================= */
 
 .bottom-navigation {
   width: 100%;
@@ -1776,7 +1723,6 @@ body {
   font-weight: 700;
 }
 
-/* ================= DESKTOP ================= */
 
 @media (min-width: 768px) {
   .hotel-page {
@@ -1798,7 +1744,6 @@ body {
   }
 }
 
-/* ================= SMALL SCREEN ================= */
 
 @media (max-width: 350px) {
   .page-content {
@@ -1815,7 +1760,6 @@ body {
     width: 100%;
   }
 }
-/* ================= ARMHOTELS ================= */
 
 .armhotel-page {
   padding-bottom: 30px;
@@ -1823,7 +1767,6 @@ body {
   overflow-y: auto;
 }
 
-/* ================= HEADER ================= */
 
 .armhotel-header {
   width: 100%;
@@ -1856,7 +1799,6 @@ body {
   font-size: 17px;
 }
 
-/* ================= IMAGE ================= */
 
 .armhotel-image {
   width: 100%;
@@ -1872,7 +1814,6 @@ body {
   color: #aaaaaa;
 }
 
-/* ================= CONTENT ================= */
 
 .armhotel-content {
   padding: 20px 16px 30px;
@@ -1925,7 +1866,6 @@ body {
   color: #0b0a0a;
 }
 
-/* ================= INFO ================= */
 
 .armhotel-info {
   width: 100%;
@@ -1963,7 +1903,6 @@ body {
   color: #777777;
 }
 
-/* ================= TOTAL ================= */
 
 .armhotel-total {
   width: 100%;
@@ -1987,7 +1926,6 @@ body {
   color: #0b0a0a;
 }
 
-/* ================= BUTTONS ================= */
 
 .armhotel-cleaning-button {
   width: 100%;
@@ -2032,7 +1970,6 @@ body {
   color: #ffffff;
 }
 
-/* ================= LOADING ================= */
 
 .armhotel-loading {
   width: 100%;
@@ -2047,7 +1984,6 @@ body {
   color: #777777;
 }
 
-/* ================= ARMORЕD CARD LINK ================= */
 
 .hotel-card-link {
   display: block;
@@ -2059,7 +1995,6 @@ body {
   color: inherit;
 }
 
-/* ================= DESKTOP ================= */
 
 @media (min-width: 768px) {
   .armhotel-page {
@@ -2075,7 +2010,6 @@ body {
     height: 230px;
   }
 }
-/* ================= FAVORITES ================= */
 
 .hotel-page {
   width: 100%;
@@ -2093,7 +2027,6 @@ body {
   background: #f8f8f8;
 }
 
-/* ================= CONTENT ================= */
 
 .page-content {
   width: 100%;
@@ -2114,7 +2047,6 @@ body {
   color: #777777 !important;
 }
 
-/* ================= HOTEL CARD ================= */
 
 .hotel-card {
   width: 100%;
@@ -2125,7 +2057,6 @@ body {
   border-radius: 7px;
 }
 
-/* ================= PHOTO ================= */
 
 .hotel-photo {
   width: 100%;
@@ -2141,7 +2072,6 @@ body {
   color: #999999;
 }
 
-/* ================= CARD INFO ================= */
 
 .hotel-card .p-3 {
   padding: 16px !important;
@@ -2169,7 +2099,6 @@ body {
   color: #0b0a0a;
 }
 
-/* ================= BUTTONS ================= */
 
 .hotel-card .d-flex {
   gap: 8px;
@@ -2181,7 +2110,6 @@ body {
   gap: 7px;
 }
 
-/* Кнопка удалить из избранного */
 
 .hotel-card .btn-danger {
   width: 38px;
@@ -2204,7 +2132,6 @@ body {
   color: #ffffff;
 }
 
-/* Кнопка бронирования */
 
 .hotel-card .btn-primary {
   height: 38px;
@@ -2222,7 +2149,6 @@ body {
   border-color: #222222;
 }
 
-/* ================= MODAL ================= */
 
 .modal-backdrop {
   background: rgba(0, 0, 0, 0.45);
@@ -2302,7 +2228,6 @@ body {
   font-weight: 600;
 }
 
-/* Отмена */
 
 .modal-footer .btn-secondary {
   width: 35%;
@@ -2311,7 +2236,6 @@ body {
   color: #0b0a0a;
 }
 
-/* Забронировать */
 
 .modal-footer .btn-primary {
   width: 65%;
@@ -2320,7 +2244,6 @@ body {
   color: #ffffff;
 }
 
-/* ================= BOTTOM NAVIGATION ================= */
 
 .bottom-navigation {
   width: 100%;
@@ -2365,7 +2288,6 @@ body {
   font-weight: 700;
 }
 
-/* ================= DESKTOP ================= */
 
 @media (min-width: 768px) {
   .hotel-page {
@@ -2387,7 +2309,6 @@ body {
   }
 }
 
-/* ================= SMALL SCREEN ================= */
 
 @media (max-width: 350px) {
   .page-content {
@@ -2408,7 +2329,6 @@ body {
     font-size: 10px;
   }
 }
-/* ================= PROFILE ================= */
 
 .profile-page {
   padding-bottom: 0;
@@ -2482,7 +2402,6 @@ body {
   color: #777777;
 }
 
-/* ================= PROFILE CARD ================= */
 
 .profile-card {
   width: 100%;
@@ -2531,7 +2450,6 @@ body {
   color: #0b0a0a;
 }
 
-/* ================= ACTIONS ================= */
 
 .profile-actions {
   margin-top: 18px;
@@ -2594,7 +2512,6 @@ body {
   font-size: 12px;
 }
 
-/* ================= LOGOUT ================= */
 
 .profile-logout {
   width: 100%;
@@ -2618,7 +2535,6 @@ body {
   color: #ffffff;
 }
 
-/* ================= DESKTOP ================= */
 
 @media (min-width: 768px) {
   .profile-page {
@@ -2631,7 +2547,6 @@ body {
   }
 }
 
-/* ================= ADMIN ================= */
 
 .admin-page {
   width: 100%;
@@ -2641,7 +2556,6 @@ body {
   color: #0b0a0a;
 }
 
-/* ================= SIDEBAR ================= */
 
 .admin-sidebar {
   width: 250px;
@@ -2690,7 +2604,6 @@ body {
   height: 17px;
 }
 
-/* ================= MENU ================= */
 
 .admin-menu {
   padding: 20px 12px;
@@ -2756,14 +2669,12 @@ body {
   border-top: 1px solid #eeeeee;
 }
 
-/* ================= MAIN ================= */
 
 .admin-main {
   flex: 1;
   min-width: 0;
 }
 
-/* ================= TOP ================= */
 
 .admin-top {
   width: 100%;
@@ -2818,13 +2729,11 @@ body {
   color: #858585;
 }
 
-/* ================= CONTENT ================= */
 
 .admin-content {
   padding: 30px 35px 50px;
 }
 
-/* ================= STATISTICS ================= */
 
 .admin-stat-grid {
   display: grid;
@@ -2866,7 +2775,6 @@ body {
   font-size: 25px;
 }
 
-/* ================= SECTION ================= */
 
 .admin-section {
   margin-bottom: 25px;
@@ -2895,7 +2803,6 @@ body {
   font-size: 11px;
 }
 
-/* ================= BUTTONS ================= */
 
 .admin-view-button,
 .admin-add-button {
@@ -2924,7 +2831,6 @@ body {
   background: #222222;
 }
 
-/* ================= TABLE ================= */
 
 .admin-table {
   width: 100%;
@@ -2990,7 +2896,6 @@ body {
   color: #628000;
 }
 
-/* ================= HOTEL GRID ================= */
 
 .admin-hotel-grid {
   display: grid;
@@ -3048,7 +2953,6 @@ body {
   font-size: 10px;
 }
 
-/* ================= ADD HOTEL ================= */
 
 .admin-add-hotel-card {
   min-height: 250px;
@@ -3081,7 +2985,6 @@ body {
   background: #f2f2f2;
 }
 
-/* ================= EMPTY ================= */
 
 .admin-empty {
   min-height: 300px;
@@ -3109,7 +3012,6 @@ body {
   font-size: 11px;
 }
 
-/* ================= ADAPTATION ================= */
 
 @media (max-width: 1100px) {
   .admin-sidebar {
@@ -3153,7 +3055,6 @@ body {
     min-width: 750px;
   }
 }
-/* ================= ADMIN ================= */
 
 .admin-page {
   width: 100%;
@@ -3164,7 +3065,6 @@ body {
   overflow: hidden;
 }
 
-/* ================= SIDEBAR ================= */
 
 .admin-sidebar {
   width: 250px;
@@ -3177,7 +3077,6 @@ body {
   background: #ffffff;
   border-right: 1px solid #e6e6e6;
 
-  /* ВАЖНО */
   position: fixed;
   left: 0;
   top: 0;
@@ -3185,17 +3084,14 @@ body {
   overflow: hidden;
 }
 
-/* ================= MAIN ================= */
 
 .admin-main {
   flex: 1;
   min-width: 0;
   height: 100vh;
 
-  /* Оставляем место под sidebar */
   margin-left: 250px;
 
-  /* Скролл только здесь */
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -3216,7 +3112,6 @@ body {
   color: white;
 }
 
-/* ================= EDIT PROFILE ================= */
 
 .edit-profile-page {
   min-height: 100vh;
@@ -3225,7 +3120,6 @@ body {
   padding-bottom: 90px;
 }
 
-/* ================= HEADER ================= */
 
 .edit-profile-page .back-button {
   position: absolute;
@@ -3250,7 +3144,6 @@ body {
   padding-top: 22px;
 }
 
-/* ================= LOGO ================= */
 
 .edit-profile-page .logo-icon {
   width: 28px;
@@ -3285,7 +3178,6 @@ body {
   color: #222222;
 }
 
-/* ================= CONTENT ================= */
 
 .edit-profile-content {
   width: 100%;
@@ -3294,7 +3186,6 @@ body {
   padding: 35px 25px 30px;
 }
 
-/* ================= TITLE ================= */
 
 .edit-profile-title {
   text-align: center;
@@ -3314,7 +3205,6 @@ body {
   color: #777777;
 }
 
-/* ================= PHOTO ================= */
 
 .edit-photo-box {
   display: flex;
@@ -3351,7 +3241,6 @@ body {
   color: #146c43;
 }
 
-/* ================= FORM ================= */
 
 .edit-profile-form {
   width: 100%;
@@ -3388,7 +3277,6 @@ body {
   color: #aaaaaa;
 }
 
-/* ================= SAVE BUTTON ================= */
 
 .edit-save-button {
   width: 100%;
@@ -3410,7 +3298,6 @@ body {
   background: #157347;
 }
 
-/* ================= CANCEL BUTTON ================= */
 
 .edit-save-button.dark {
   background: #222222;
@@ -3421,7 +3308,6 @@ body {
   background: #000000;
 }
 
-/* ================= BOTTOM NAV ================= */
 
 .edit-profile-page .home-bottom-nav {
   position: fixed;
@@ -3458,7 +3344,6 @@ body {
   color: #222222;
 }
 
-/* ================= MOBILE ================= */
 
 @media (max-width: 500px) {
   .edit-profile-content {
@@ -3473,7 +3358,6 @@ body {
     left: 15px;
   }
 }
-/* ================= PHOTO MODAL ================= */
 
 .photo-modal-overlay {
   position: fixed;
@@ -3503,7 +3387,6 @@ body {
   border: 1px solid #dddddd;
 }
 
-/* Заголовок */
 
 .photo-modal-header {
   height: 60px;
@@ -3545,7 +3428,6 @@ body {
   background: #dddddd;
 }
 
-/* Тело */
 
 .photo-modal-body {
   padding: 20px;
@@ -3578,7 +3460,6 @@ body {
   border-color: #198754;
 }
 
-/* Кнопки */
 
 .photo-modal-actions {
   padding: 0 20px 20px;
@@ -3621,7 +3502,6 @@ body {
   background: #157347;
 }
 
-/* ================= PHOTO ================= */
 
 .edit-profile-photo {
   overflow: hidden;
@@ -3634,7 +3514,6 @@ body {
   object-fit: cover;
 }
 
-/* ================= ADMIN SIGNUP ================= */
 
 .admin-signup-page {
   width: 100%;
@@ -3644,7 +3523,6 @@ body {
   color: #222222;
 }
 
-/* ================= LEFT ================= */
 
 .admin-signup-left {
   width: 38%;
@@ -3699,7 +3577,6 @@ body {
   color: #777777;
 }
 
-/* ================= RIGHT ================= */
 
 .admin-signup-right {
   flex: 1;
@@ -3719,7 +3596,6 @@ body {
   padding: 40px;
 }
 
-/* ================= HEADER ================= */
 
 .admin-signup-header {
   margin-bottom: 30px;
@@ -3737,7 +3613,6 @@ body {
   font-size: 14px;
 }
 
-/* ================= INPUT ROW ================= */
 
 .admin-signup-row {
   width: 100%;
@@ -3772,7 +3647,6 @@ body {
   border-color: #198754;
 }
 
-/* ================= BUTTON ================= */
 
 .admin-signup-button {
   width: 100%;
@@ -3794,7 +3668,6 @@ body {
   background: #157347;
 }
 
-/* ================= BACK ================= */
 
 .admin-signup-back {
   display: flex;
@@ -3811,7 +3684,6 @@ body {
   color: #198754;
 }
 
-/* ================= ADAPTATION ================= */
 
 @media (max-width: 1000px) {
   .admin-signup-left {
@@ -3875,7 +3747,6 @@ body {
   flex-direction: column;
 }
 
-/* LOGO */
 
 .admin-signin-logo {
   display: flex;
@@ -3901,7 +3772,6 @@ body {
   background: #198754;
 }
 
-/* INFO */
 
 .admin-signin-info {
   margin: auto 0;
@@ -3935,7 +3805,6 @@ body {
   line-height: 1.6;
 }
 
-/* LEFT BOTTOM */
 
 .admin-signin-left-bottom {
   color: #777777;
@@ -3962,7 +3831,6 @@ body {
   padding: 50px;
 }
 
-/* FORM */
 
 .admin-signin-form {
   width: 100%;
@@ -4045,7 +3913,6 @@ body {
   color: #198754;
 }
 
-/* PASSWORD EYE */
 
 .admin-password-button {
   width: 50px;
@@ -4150,9 +4017,6 @@ body {
   text-decoration: none;
 }
 
-/* =========================
-   HOTEL MODAL
-========================= */
 
 .admin-hotel-modal {
   position: fixed;
@@ -4269,7 +4133,6 @@ body {
   background: #157347;
 }
 
-/* ФОТО ИЗ MOCKAPI */
 
 .admin-hotel-photo img {
   width: 100%;
@@ -4277,7 +4140,6 @@ body {
   object-fit: cover;
 }
 
-/* АДАПТИВ */
 
 @media (max-width: 600px) {
   .admin-hotel-modal {
@@ -4293,9 +4155,6 @@ body {
   }
 }
 
-/* =========================
-   HOTEL CARD BUTTONS
-========================= */
 
 .admin-hotel-card-buttons {
   display: flex;
@@ -4334,7 +4193,6 @@ body {
   background: #fff1f1;
   border-color: #dc3545;
 }
-/* ================= НАСТРОЙКИ ================= */
 
 .admin-settings {
   display: flex;
@@ -4373,7 +4231,6 @@ body {
   font-size: 14px;
 }
 
-/* ================= MODAL ================= */
 
 .admin-modal-overlay {
   position: fixed;
@@ -4399,7 +4256,6 @@ body {
   border: 1px solid #e5e5e5;
 }
 
-/* ================= MODAL HEADER ================= */
 
 .admin-modal-header {
   display: flex;
@@ -4442,7 +4298,6 @@ body {
   background: #eeeeee;
 }
 
-/* ================= MODAL BODY ================= */
 
 .admin-modal-body {
   padding: 24px;
@@ -4484,7 +4339,6 @@ body {
   border-color: #2f7d52;
 }
 
-/* ================= MODAL FOOTER ================= */
 
 .admin-modal-footer {
   display: flex;
@@ -4532,7 +4386,6 @@ body {
   background: #256542;
 }
 
-/* ================= МОБИЛЬНЫЙ ЭКРАН ================= */
 
 @media (max-width: 600px) {
   .admin-modal-overlay {
@@ -4564,7 +4417,6 @@ body {
     width: 100%;
   }
 }
-/* ================= КАРТОЧКИ ОТЕЛЕЙ ================= */
 
 .admin-hotel-grid {
   display: grid;
@@ -4578,7 +4430,6 @@ body {
   overflow: hidden;
 }
 
-/* ================= ФОТО ================= */
 
 .admin-hotel-card-image {
   width: 100%;
@@ -4604,7 +4455,6 @@ body {
   color: #aaaaaa;
 }
 
-/* ================= ИНФОРМАЦИЯ ================= */
 
 .admin-hotel-card-info {
   padding: 18px;
@@ -4634,7 +4484,6 @@ body {
   color: #2f7d52;
 }
 
-/* ================= ЦЕНА И ГОСТИ ================= */
 
 .admin-hotel-card-info > div {
   display: flex;
@@ -4660,7 +4509,6 @@ body {
   color: #777;
 }
 
-/* ================= АДАПТИВ ================= */
 
 @media (max-width: 1100px) {
   .admin-hotel-grid {

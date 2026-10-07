@@ -5,7 +5,6 @@ import axios from "axios";
 function Admincompleted() {
   const [users, setUsers] = useState([]);
 
-  // GET пользователей
   const getUsers = async () => {
     try {
       const response = await axios({
@@ -27,7 +26,6 @@ function Admincompleted() {
     getUsers();
   }, []);
 
-  // Все бронирования
   const allBookings = users.flatMap((user) =>
     Array.isArray(user.bookhotel)
       ? user.bookhotel.map((booking) => ({
@@ -37,7 +35,6 @@ function Admincompleted() {
       : [],
   );
 
-  // Только завершенные
   const completedBookings = allBookings.filter(
     (item) => item.status == "Завершено",
   );
@@ -70,14 +67,11 @@ function Admincompleted() {
   }, []);
   return (
     <div className="admin-page">
-      {/* SIDEBAR */}
 
       <Adminbottom />
 
-      {/* MAIN */}
 
       <main className="admin-main">
-        {/* TOP HEADER */}
 
         <header className="admin-top">
           <div>
@@ -98,7 +92,6 @@ function Admincompleted() {
           </div>
         </header>
 
-        {/* CONTENT */}
 
         <div className="admin-content">
           <div className="admin-section">
@@ -110,7 +103,6 @@ function Admincompleted() {
               </div>
             </div>
 
-            {/* TABLE */}
 
             <div className="admin-table">
               <div className="admin-table-head">
@@ -122,7 +114,6 @@ function Admincompleted() {
                 <span>Статус</span>
               </div>
 
-              {/* ЗАВЕРШЕННЫЕ ЗАКАЗЫ */}
 
               {completedBookings.map((item, index) => (
                 <div className="admin-table-row" key={index}>
@@ -146,7 +137,6 @@ function Admincompleted() {
                 </div>
               ))}
 
-              {/* ЕСЛИ НЕТ ЗАВЕРШЕННЫХ */}
 
               {completedBookings.length === 0 && (
                 <div className="admin-table-row">

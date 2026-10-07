@@ -12,11 +12,9 @@ function AdminSignup() {
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
 
-  // ПРОВЕРКА СОХРАНЁННОГО ID
   useEffect(() => {
     const id = localStorage.getItem("id");
 
-    // Если ID нет — остаёмся на странице регистрации
     if (!id) {
       return;
     }
@@ -37,13 +35,11 @@ function AdminSignup() {
             return;
           }
 
-          // Если администратор
           if (currentUser.userstatus == "admin") {
             navigate("/admin");
             return;
           }
 
-          // Если обычный пользователь
           if (currentUser.userstatus == "user") {
             navigate("/home");
             return;
@@ -127,7 +123,6 @@ function AdminSignup() {
 
   return (
     <div className="admin-signup-page">
-      {/* ЛЕВАЯ ЧАСТЬ */}
       <div className="admin-signup-left">
         <div className="admin-signup-logo">
           <div className="admin-logo-icon">
@@ -149,7 +144,6 @@ function AdminSignup() {
         </div>
       </div>
 
-      {/* ПРАВАЯ ЧАСТЬ */}
       <div className="admin-signup-right">
         <div className="admin-signup-form">
           <div className="admin-signup-header">

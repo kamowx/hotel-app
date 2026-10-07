@@ -8,9 +8,6 @@ function Armored() {
 
   const [bookings, setBookings] = useState([]);
 
-  // =========================
-  // Получаем бронирования пользователя
-  // =========================
 
   const getBookings = async () => {
     try {
@@ -21,7 +18,6 @@ function Armored() {
         return;
       }
 
-      // Убираем кавычки
       const userId = String(id).replaceAll('"', "");
 
       const response = await axios.get(
@@ -31,7 +27,6 @@ function Armored() {
       console.log("GET USER:", response);
 
       if (response.status === 200) {
-        // Проверяем bookhotel
         if (Array.isArray(response.data.bookhotel)) {
           setBookings(response.data.bookhotel);
         } else {
@@ -43,9 +38,6 @@ function Armored() {
     }
   };
 
-  // =========================
-  // Получаем данные при открытии страницы
-  // =========================
 
   useEffect(() => {
     const id = localStorage.getItem("id");
@@ -58,9 +50,6 @@ function Armored() {
     getBookings();
   }, []);
 
-  // =========================
-  // Отмена бронирования
-  // =========================
 
   const removeBooking = async (hotelId) => {
     try {
@@ -71,10 +60,8 @@ function Armored() {
         return;
       }
 
-      // Убираем кавычки
       const userId = String(id).replaceAll('"', "");
 
-      // Получаем актуального пользователя
       const userResponse = await axios.get(
         `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
       );
@@ -82,17 +69,14 @@ function Armored() {
       if (userResponse.status === 200) {
         const currentUser = userResponse.data;
 
-        // Получаем все бронирования
         const oldBookings = Array.isArray(currentUser.bookhotel)
           ? currentUser.bookhotel
           : [];
 
-        // Удаляем выбранное бронирование
         const newBookings = oldBookings.filter(
           (item) => String(item.hotelId) !== String(hotelId),
         );
 
-        // Сохраняем пользователя
         const response = await axios.put(
           `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
           {
@@ -129,7 +113,6 @@ function Armored() {
           ) : (
             bookings.map((item, index) => (
               <div className="hotel-card mb-3" key={item.hotelId || index}>
-                {/* ФОТО ОТЕЛЯ */}
 
                 <div className="hotel-card-image">
                   {item.avatarhotels ? (
@@ -140,7 +123,6 @@ function Armored() {
                 </div>
 
                 <div className="p-3">
-                  {/* ИНФОРМАЦИЯ ОБ ОТЕЛЕ */}
 
                   <h5>{item.name}</h5>
 
@@ -182,7 +164,6 @@ function Armored() {
                     <b>Статус:</b> {item.status}
                   </p>
 
-                  {/* КНОПКИ */}
 
                   <div className="hotel-card-buttons">
                     <Link
@@ -198,7 +179,6 @@ function Armored() {
           )}
         </div>
 
-        {/* Навигация */}
 
         <Bottomnav />
       </div>

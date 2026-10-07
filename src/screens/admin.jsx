@@ -8,7 +8,6 @@ function Admin() {
   const [hotels, setHotels] = useState([]);
   const [users, setUsers] = useState([]);
 
-  // ================= MODAL =================
   const [showModal, setShowModal] = useState(false);
 
   const [adminData, setAdminData] = useState({
@@ -19,7 +18,6 @@ function Admin() {
     password2: "",
   });
 
-  // ================= GET HOTELS =================
   const getHotels = async () => {
     try {
       const response = await axios({
@@ -37,7 +35,6 @@ function Admin() {
     }
   };
 
-  // ================= GET USERS =================
   const getUsers = async () => {
     try {
       const response = await axios({
@@ -50,7 +47,6 @@ function Admin() {
       if (response.status === 200) {
         setUsers(response.data);
 
-        // Находим администратора
         const admin = response.data.find((item) => item.userstatus == "admin");
 
         if (admin) {
@@ -68,32 +64,26 @@ function Admin() {
     }
   };
 
-  // ================= ЗАГРУЗКА =================
   useEffect(() => {
     getHotels();
     getUsers();
   }, []);
 
-  // ================= ВСЕ БРОНИРОВАНИЯ =================
   const allBookings = users.flatMap((user) =>
     Array.isArray(user.bookhotel) ? user.bookhotel : [],
   );
 
-  // ================= АКТИВНЫЕ =================
   const activeBookings = allBookings.filter((item) => item.status == "Активно");
 
-  // ================= ЗАВЕРШЕННЫЕ =================
   const completedBookings = allBookings.filter(
     (item) => item.status == "Завершено",
   );
 
-  // ================= ОБЩИЙ ДОХОД =================
   const totalIncome = allBookings.reduce(
     (total, item) => total + Number(item.allprice || 0),
     0,
   );
 
-  // ================= ИЗМЕНЕНИЕ ДАННЫХ АДМИНА =================
   const handleAdminChange = (e) => {
     setAdminData({
       ...adminData,
@@ -101,7 +91,6 @@ function Admin() {
     });
   };
 
-  // ================= СОХРАНЕНИЕ ДАННЫХ АДМИНА =================
   const saveAdminData = async () => {
     try {
       if (
@@ -130,10 +119,8 @@ function Admin() {
       if (response.status === 200) {
         alert("Данные администратора изменены!");
 
-        // Обновляем список пользователей
         getUsers();
 
-        // Закрываем модальное окно
         setShowModal(false);
       }
     } catch (error) {
@@ -174,7 +161,6 @@ function Admin() {
       <Adminbottom />
 
       <main className="admin-main">
-        {/* ================= HEADER ================= */}
         <header className="admin-top">
           <div>
             <h1>{page}</h1>
@@ -194,9 +180,7 @@ function Admin() {
         </header>
 
         <div className="admin-content">
-          {/* ================= СТАТИСТИКА ================= */}
           <div className="admin-stat-grid">
-            {/* Всего отелей */}
             <div className="admin-stat-card">
               <div className="admin-stat-icon">
                 <i className="fa-solid fa-hotel"></i>
@@ -208,7 +192,6 @@ function Admin() {
               </div>
             </div>
 
-            {/* Всего заказов */}
             <div className="admin-stat-card">
               <div className="admin-stat-icon">
                 <i className="fa-solid fa-calendar-check"></i>
@@ -220,7 +203,6 @@ function Admin() {
               </div>
             </div>
 
-            {/* Активные */}
             <div className="admin-stat-card">
               <div className="admin-stat-icon">
                 <i className="fa-solid fa-bed"></i>
@@ -232,7 +214,6 @@ function Admin() {
               </div>
             </div>
 
-            {/* Завершенные */}
             <div className="admin-stat-card">
               <div className="admin-stat-icon">
                 <i className="fa-solid fa-circle-check"></i>
@@ -244,7 +225,6 @@ function Admin() {
               </div>
             </div>
 
-            {/* Общий доход */}
             <div className="admin-stat-card">
               <div className="admin-stat-icon">
                 <i className="fa-solid fa-money-bill-wave"></i>
@@ -257,7 +237,6 @@ function Admin() {
             </div>
           </div>
 
-          {/* ================= НОВЫЕ ЗАКАЗЫ ================= */}
           <div className="admin-section">
             <div className="admin-section-header">
               <div>
@@ -311,7 +290,6 @@ function Admin() {
             </div>
           </div>
 
-          {/* ================= ОТЕЛИ ================= */}
           <div className="admin-section">
             <div className="admin-section-header">
               <div>
@@ -360,7 +338,6 @@ function Admin() {
             </div>
           </div>
 
-          {/* ================= НАСТРОЙКИ ================= */}
           <div className="admin-section">
             <div className="admin-section-header">
               <div>
@@ -391,14 +368,10 @@ function Admin() {
         </div>
       </main>
 
-      {/* ================================================= */}
-      {/* ================= MODAL АДМИНА ================== */}
-      {/* ================================================= */}
 
       {showModal && (
         <div className="admin-modal-overlay">
           <div className="admin-modal">
-            {/* Заголовок */}
             <div className="admin-modal-header">
               <div>
                 <h2>Редактирование данных</h2>
@@ -413,9 +386,7 @@ function Admin() {
               </button>
             </div>
 
-            {/* Форма */}
             <div className="admin-modal-body">
-              {/* Имя */}
               <div className="admin-form-group">
                 <label>Имя</label>
 
@@ -428,7 +399,6 @@ function Admin() {
                 />
               </div>
 
-              {/* Email */}
               <div className="admin-form-group">
                 <label>Email</label>
 
@@ -441,7 +411,6 @@ function Admin() {
                 />
               </div>
 
-              {/* Телефон */}
               <div className="admin-form-group">
                 <label>Телефон</label>
 
@@ -454,7 +423,6 @@ function Admin() {
                 />
               </div>
 
-              {/* Пароль */}
               <div className="admin-form-group">
                 <label>Пароль</label>
 
@@ -468,7 +436,6 @@ function Admin() {
               </div>
             </div>
 
-            {/* Кнопки */}
             <div className="admin-modal-footer">
               <button
                 className="admin-modal-cancel"

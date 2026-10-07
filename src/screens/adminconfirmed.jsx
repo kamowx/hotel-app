@@ -5,7 +5,6 @@ import axios from "axios";
 function Adminconfirmed() {
   const [users, setUsers] = useState([]);
 
-  // GET пользователей
   const getUsers = async () => {
     try {
       const response = await axios({
@@ -27,7 +26,6 @@ function Adminconfirmed() {
     getUsers();
   }, []);
 
-  // Получаем все бронирования пользователей
   const allBookings = users.flatMap((user) =>
     Array.isArray(user.bookhotel)
       ? user.bookhotel.map((booking) => ({
@@ -37,12 +35,10 @@ function Adminconfirmed() {
       : [],
   );
 
-  // Берём только подтверждённые
   const confirmedBookings = allBookings.filter(
     (item) => item.status == "Подтверждено",
   );
 
-  // Перевести Подтверждено -> Активно
   const activateBooking = async (booking) => {
     try {
       const user = users.find(
@@ -121,14 +117,11 @@ function Adminconfirmed() {
 
   return (
     <div className="admin-page">
-      {/* SIDEBAR */}
 
       <Adminbottom />
 
-      {/* MAIN */}
 
       <main className="admin-main">
-        {/* TOP HEADER */}
 
         <header className="admin-top">
           <div>
@@ -149,7 +142,6 @@ function Adminconfirmed() {
           </div>
         </header>
 
-        {/* CONTENT */}
 
         <div className="admin-content">
           <div className="admin-section">
@@ -161,7 +153,6 @@ function Adminconfirmed() {
               </div>
             </div>
 
-            {/* TABLE */}
 
             <div className="admin-table">
               <div className="admin-table-head">
@@ -173,7 +164,6 @@ function Adminconfirmed() {
                 <span>Статус</span>
               </div>
 
-              {/* ПОДТВЕРЖДЕННЫЕ ЗАКАЗЫ */}
 
               {confirmedBookings.map((item, index) => (
                 <div className="admin-table-row" key={index}>
@@ -205,7 +195,6 @@ function Adminconfirmed() {
                 </div>
               ))}
 
-              {/* ЕСЛИ НЕТ ЗАКАЗОВ */}
 
               {confirmedBookings.length === 0 && (
                 <div className="admin-table-row">

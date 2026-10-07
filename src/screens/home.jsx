@@ -9,15 +9,10 @@ function Home() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("Все");
 
-  // Все отели
   const [hotels, setHotels] = useState([]);
 
-  // Избранное
   const [favorites, setFavorites] = useState([]);
 
-  // =========================
-  // GET — получить все отели
-  // =========================
 
   const getHotels = async () => {
     try {
@@ -36,20 +31,15 @@ function Home() {
     }
   };
 
-  // =========================
-  // GET — получить пользователя
-  // =========================
 
   const getUser = async () => {
     const id = localStorage.getItem("id");
 
-    // Если пользователь не вошёл
     if (!id) {
       navigate("/signin");
       return;
     }
 
-    // Получаем настоящий id
     const userId = String(id).replaceAll('"', "");
 
     try {
@@ -63,15 +53,12 @@ function Home() {
       if (response.status === 200) {
         const currentUser = response.data;
 
-        // Если админ
         if (currentUser.userstatus == "admin") {
           navigate("/admin");
           return;
         }
 
-        // Если обычный пользователь
         if (currentUser.userstatus == "user") {
-          // Проверяем, что favorites действительно массив
           if (Array.isArray(currentUser.favorites)) {
             setFavorites(currentUser.favorites);
           } else {
@@ -84,18 +71,12 @@ function Home() {
     }
   };
 
-  // =========================
-  // GET при открытии страницы
-  // =========================
 
   useEffect(() => {
     getHotels();
     getUser();
   }, []);
 
-  // =========================
-  // Избранное
-  // =========================
 
   const toggleFavorite = async (hotel) => {
     const id = localStorage.getItem("id");
@@ -107,7 +88,6 @@ function Home() {
 
     const userId = String(id).replaceAll('"', "");
 
-    // Проверяем, есть ли уже этот отель
     const isFav = Array.isArray(favorites)
       ? favorites.some((item) => String(item.id) === String(hotel.id))
       : false;
@@ -115,17 +95,14 @@ function Home() {
     let updated;
 
     if (isFav) {
-      // Удаляем из избранного
       updated = favorites.filter(
         (item) => String(item.id) !== String(hotel.id),
       );
     } else {
-      // Добавляем в избранное
       updated = [...favorites, hotel];
     }
 
     try {
-      // Сначала получаем текущего пользователя
       const userResponse = await axios({
         method: "GET",
         url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
@@ -134,8 +111,6 @@ function Home() {
       if (userResponse.status === 200) {
         const currentUser = userResponse.data;
 
-        // PUT — сохраняем пользователя
-        // и обновляем только favorites
         const response = await axios({
           method: "PUT",
           url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
@@ -158,9 +133,6 @@ function Home() {
     }
   };
 
-  // =========================
-  // Поиск и фильтрация
-  // =========================
 
   const filteredHotels = hotels.filter((hotel) => {
     const hotelName = hotel.namehotels || "";
@@ -180,7 +152,6 @@ function Home() {
   return (
     <div className="app">
       <div className="onboarding home-onboarding">
-        {/* ================= HEADER ================= */}
 
         <div className="home-header">
           <div className="home-logo">
@@ -200,10 +171,8 @@ function Home() {
           </div>
         </div>
 
-        {/* ================= ОСНОВНАЯ СТРАНИЦА ================= */}
 
         <div className="home-page">
-          {/* ================= ПОИСК ================= */}
 
           <div className="home-search">
             <h1>Найдите отель</h1>
@@ -222,7 +191,6 @@ function Home() {
             </div>
           </div>
 
-          {/* ================= КАТЕГОРИИ ================= */}
 
           <div className="home-categories">
             <button
@@ -247,7 +215,6 @@ function Home() {
             </button>
           </div>
 
-          {/* ================= СПИСОК ОТЕЛЕЙ ================= */}
 
           <div className="home-hotels">
             <div className="home-section-title">
@@ -260,7 +227,6 @@ function Home() {
               </p>
             ) : (
               filteredHotels.map((hotel) => {
-                // Проверяем избранное
                 const isFav = Array.isArray(favorites)
                   ? favorites.some(
                       (item) => String(item.id) === String(hotel.id),
@@ -269,7 +235,6 @@ function Home() {
 
                 return (
                   <div className="home-hotel-card" key={hotel.id}>
-                    {/* ================= ФОТО ================= */}
 
                     <div className="home-hotel-image">
                       {hotel.avatarhotels ? (
@@ -278,7 +243,6 @@ function Home() {
                         <i className="fa-solid fa-hotel"></i>
                       )}
 
-                      {/* ИЗБРАННОЕ */}
 
                       <button
                         className="home-favorite"
@@ -292,7 +256,6 @@ function Home() {
                       </button>
                     </div>
 
-                    {/* ================= ИНФОРМАЦИЯ ================= */}
 
                     <div className="home-hotel-info">
                       <h3>{hotel.namehotels}</h3>
@@ -332,7 +295,6 @@ function Home() {
         <br />
         <br />
 
-        {/* ================= НИЖНЯЯ НАВИГАЦИЯ ================= */}
 
         <Bottomnav />
       </div>

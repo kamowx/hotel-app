@@ -5,9 +5,6 @@ import axios from "axios";
 function Adminneworders() {
   const [users, setUsers] = useState([]);
 
-  // =========================
-  // GET — получить пользователей
-  // =========================
 
   const getUsers = async () => {
     try {
@@ -30,9 +27,6 @@ function Adminneworders() {
     getUsers();
   }, []);
 
-  // =========================
-  // Все бронирования
-  // =========================
 
   const allBookings = users.flatMap((user) =>
     Array.isArray(user.bookhotel)
@@ -43,19 +37,12 @@ function Adminneworders() {
       : [],
   );
 
-  // =========================
-  // Только новые заказы
-  // =========================
 
   const newBookings = allBookings.filter((item) => item.status == "Новый");
 
-  // =========================
-  // ПОДТВЕРДИТЬ ЗАКАЗ
-  // =========================
 
   const confirmBooking = async (booking) => {
     try {
-      // Находим пользователя
       const user = users.find(
         (item) => String(item.id) === String(booking.userId),
       );
@@ -65,10 +52,8 @@ function Adminneworders() {
         return;
       }
 
-      // Получаем его бронирования
       const oldBookings = Array.isArray(user.bookhotel) ? user.bookhotel : [];
 
-      // Меняем статус только у нужного бронирования
       const newBookings = oldBookings.map((item) => {
         if (
           String(item.hotelId) === String(booking.hotelId) &&
@@ -84,7 +69,6 @@ function Adminneworders() {
         return item;
       });
 
-      // PUT — сохраняем изменения пользователю
       const response = await axios({
         method: "PUT",
         url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${booking.userId}`,
@@ -99,7 +83,6 @@ function Adminneworders() {
       if (response.status === 200) {
         alert("Бронирование подтверждено!");
 
-        // Обновляем данные
         getUsers();
       }
     } catch (error) {
@@ -109,13 +92,9 @@ function Adminneworders() {
     }
   };
 
-  // =========================
-  // УДАЛИТЬ ЗАКАЗ
-  // =========================
 
   const deleteBooking = async (booking) => {
     try {
-      // Находим пользователя
       const user = users.find(
         (item) => String(item.id) === String(booking.userId),
       );
@@ -125,10 +104,8 @@ function Adminneworders() {
         return;
       }
 
-      // Получаем бронирования
       const oldBookings = Array.isArray(user.bookhotel) ? user.bookhotel : [];
 
-      // Убираем только нужное бронирование
       const newBookings = oldBookings.filter(
         (item) =>
           !(
@@ -138,7 +115,6 @@ function Adminneworders() {
           ),
       );
 
-      // PUT — сохраняем новый список
       const response = await axios({
         method: "PUT",
         url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${booking.userId}`,
@@ -153,7 +129,6 @@ function Adminneworders() {
       if (response.status === 200) {
         alert("Бронирование удалено!");
 
-        // Обновляем данные
         getUsers();
       }
     } catch (error) {
@@ -192,14 +167,11 @@ function Adminneworders() {
 
   return (
     <div className="admin-page">
-      {/* ================= SIDEBAR ================= */}
 
       <Adminbottom />
 
-      {/* ================= MAIN ================= */}
 
       <main className="admin-main">
-        {/* ================= TOP HEADER ================= */}
 
         <header className="admin-top">
           <div>
@@ -221,7 +193,6 @@ function Adminneworders() {
           </div>
         </header>
 
-        {/* ================= CONTENT ================= */}
 
         <div className="admin-content">
           <div className="admin-section">
@@ -233,7 +204,6 @@ function Adminneworders() {
               </div>
             </div>
 
-            {/* ================= TABLE ================= */}
 
             <div className="admin-table">
               <div className="admin-table-head">
@@ -250,7 +220,6 @@ function Adminneworders() {
                 <span>Действие</span>
               </div>
 
-              {/* ================= ЗАКАЗЫ ================= */}
 
               {newBookings.map((item, index) => (
                 <div className="admin-table-row" key={index}>
@@ -289,7 +258,6 @@ function Adminneworders() {
                 </div>
               ))}
 
-              {/* ================= ЕСЛИ НЕТ ЗАКАЗОВ ================= */}
 
               {newBookings.length === 0 && (
                 <div className="admin-table-row">
