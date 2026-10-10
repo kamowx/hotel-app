@@ -124,7 +124,7 @@ function Armhotels() {
 
   return (
     <div className="app">
-      <div className="onboarding armhotel-page">
+      <div className="onboarding home-onboarding">
         <div className="armhotel-header">
           <Link to="/armored" className="armhotel-back">
             <i className="fa-solid fa-arrow-left"></i>
@@ -141,7 +141,7 @@ function Armhotels() {
           )}
         </div>
 
-        <div className="armhotel-content">
+        <div className="armhotel-content p-2">
           <div className="armhotel-city">
             <i className="fa-solid fa-location-dot"></i>
 
@@ -221,6 +221,8 @@ function Armhotels() {
             <i className="fa-solid fa-trash"></i>
             Отменить бронирование
           </button>
+          <br />
+          <br />
         </div>
       </div>
     </div>

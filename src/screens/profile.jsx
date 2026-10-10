@@ -61,13 +61,11 @@ function Profile() {
 
   return (
     <div className="app">
-      <div className="onboarding profile-page">
-        <div className="profile-header">
+      <div className="onboarding home-onboarding">
+        <div className="home-header">
           <Link to="/home" className="profile-back">
             <i className="fa-solid fa-arrow-left"></i>
           </Link>
-
-          <div className="logo-text">FirstHotel</div>
         </div>
 
         <div className="profile-content">
@@ -167,6 +165,8 @@ function Profile() {
             Выйти из аккаунта
           </button>
         </div>
+        <br />
+        <br />
 
         <Bottomnav />
       </div>

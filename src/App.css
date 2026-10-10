@@ -882,7 +882,22 @@ body {
 
   z-index: 100;
 }
+@media (min-width: 768px) {
+  .home-bottom-nav {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+    background: #ffffff;
+  }
 
+  .home-page {
+    padding-bottom: 80px !important;
+  }
+}
 .home-nav-item {
   display: flex;
 
@@ -1593,7 +1608,7 @@ body {
 }
 
 .hotel-details-button {
-  width: 50%;
+  width: 100%;
   height: 42px;
   display: flex;
   align-items: center;
@@ -4389,3 +4404,469 @@ body {
   }
 }
 /*hotel*/
+
+@media (min-width: 768px) {
+  html,
+  body,
+  #root {
+    width: 100%;
+    min-height: 100%;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  .app {
+    width: 100%;
+    min-height: 100vh;
+    padding: 0;
+    align-items: stretch;
+    justify-content: center;
+  }
+
+  .onboarding:not(.home-onboarding) {
+    width: min(100%, 620px);
+    min-height: 100vh;
+    max-height: none;
+    margin: 0 auto;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 35px 40px;
+  }
+
+  .onboarding:not(.home-onboarding) .login-content,
+  .onboarding:not(.home-onboarding) .login-register {
+    width: 100%;
+    max-width: 520px;
+  }
+
+  .onboarding:not(.home-onboarding) .onboarding-content {
+    max-width: 520px;
+  }
+
+  .home-onboarding {
+    width: 100%;
+    min-height: 100vh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .home-page {
+    width: 100%;
+    min-height: 100vh;
+    height: auto;
+    overflow: visible;
+  }
+
+  .home-header {
+    padding: 24px 5%;
+  }
+
+  .home-search {
+    width: 90%;
+    max-width: 1400px;
+    margin: 15px auto 0;
+    padding: 28px 30px;
+  }
+
+  .home-search h1 {
+    font-size: 30px;
+  }
+
+  .home-search > p {
+    font-size: 14px;
+  }
+
+  .home-search-box {
+    max-width: 850px;
+  }
+
+  .home-categories {
+    width: 90%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 0 0;
+    flex-wrap: wrap;
+  }
+
+  .home-categories button {
+    min-width: 100px;
+    height: 40px;
+    font-size: 13px;
+  }
+
+  .home-hotels {
+    width: 90%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px 0 100px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+  }
+
+  .home-section-title {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+  }
+
+  .home-section-title h2 {
+    font-size: 23px;
+  }
+
+  .home-hotel-card {
+    min-width: 0;
+    margin-bottom: 0;
+    border-radius: 4px;
+  }
+
+  .home-hotel-image {
+    height: 220px;
+  }
+
+  .home-hotel-info {
+    padding: 20px;
+  }
+
+  .home-hotel-info h3 {
+    font-size: 19px;
+  }
+
+  .home-hotel-info > p {
+    font-size: 14px;
+  }
+
+  .home-hotel-price {
+    font-size: 17px;
+  }
+
+  .home-hotel-button {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  .home-bottom-nav {
+    position: static;
+    min-height: 70px;
+    margin-top: auto;
+    border-top: 1px solid #eeeeee;
+  }
+
+  .home-nav-item {
+    max-width: 180px;
+    font-size: 12px;
+  }
+
+  .hotel-page {
+    width: 100%;
+    min-height: 100vh;
+    justify-content: stretch;
+    align-items: stretch;
+    background: #f8f8f8;
+  }
+
+  .mobile-app {
+    width: 100%;
+    max-width: 1440px;
+    min-height: 100vh;
+    max-height: none;
+    margin: 0 auto;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .page-content {
+    width: 100%;
+    padding: 35px 5% 45px;
+    overflow: visible;
+  }
+
+  .page-content h2 {
+    font-size: 30px;
+  }
+
+  .page-content .text-secondary {
+    font-size: 14px;
+  }
+
+  .hotel-card {
+    height: 100%;
+    margin-bottom: 24px;
+    border-radius: 4px;
+  }
+
+  .hotel-card-image,
+  .hotel-photo {
+    height: 220px;
+  }
+
+  .hotel-card h5 {
+    font-size: 19px;
+  }
+
+  .hotel-card p {
+    font-size: 14px;
+  }
+
+  .hotel-card .btn-primary,
+  .hotel-card-buttons .btn-danger,
+  .hotel-details-button {
+    height: 44px;
+    font-size: 13px;
+  }
+
+  .bottom-navigation {
+    min-height: 72px;
+    padding: 12px 5%;
+  }
+
+  .bottom-navigation small {
+    font-size: 12px;
+  }
+
+  .bottom-navigation .nav-icon {
+    font-size: 20px;
+  }
+
+  /* Страница подробной информации об отеле */
+  .hotel-details-page {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 35px 50px;
+  }
+
+  .details-header {
+    height: 75px;
+    padding: 0;
+  }
+
+  .details-gallery {
+    height: 420px;
+    margin: 0;
+    border-radius: 4px;
+  }
+
+  .details-content {
+    padding: 30px 0 0;
+    max-width: 1000px;
+  }
+
+  .details-content h1 {
+    font-size: 34px;
+  }
+
+  .details-content h2 {
+    font-size: 22px;
+  }
+
+  .details-description {
+    font-size: 15px;
+    max-width: 900px;
+  }
+
+  .details-price {
+    font-size: 24px;
+  }
+
+  .details-book-button {
+    max-width: 360px;
+    height: 50px;
+    font-size: 15px;
+  }
+
+  .details-modal {
+    max-width: 520px;
+  }
+
+  .details-modal-header h2 {
+    font-size: 22px;
+  }
+
+  .details-modal-body label,
+  .details-total span,
+  .details-modal-footer button {
+    font-size: 14px;
+  }
+
+  .armhotel-page {
+    width: 100%;
+    max-width: 1200px;
+    min-height: 100vh;
+    max-height: none;
+    margin: 0 auto;
+    padding: 0 35px 50px;
+    overflow: visible;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .armhotel-header {
+    height: 75px;
+    justify-content: flex-start;
+    padding: 0;
+  }
+
+  .armhotel-back {
+    position: static;
+    margin-right: 18px;
+  }
+
+  .armhotel-image {
+    height: 380px;
+  }
+
+  .armhotel-content {
+    padding: 30px 0;
+    max-width: 900px;
+  }
+
+  .armhotel-content h1 {
+    font-size: 32px;
+  }
+
+  .armhotel-content h2 {
+    font-size: 21px;
+  }
+
+  .armhotel-info-row strong,
+  .armhotel-info-row p {
+    font-size: 14px;
+  }
+
+  .armhotel-total {
+    max-width: 600px;
+    padding: 20px;
+  }
+
+  .armhotel-cleaning-button,
+  .armhotel-cancel-button {
+    max-width: 600px;
+    height: 48px;
+    font-size: 14px;
+  }
+
+  /* Профиль */
+  .profile-page {
+    width: 100%;
+    max-width: 1440px;
+    min-height: 100vh;
+    max-height: none;
+    margin: 0 auto;
+    overflow: visible;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .profile-header {
+    height: 75px;
+  }
+
+  .profile-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 35px 35px 50px;
+  }
+
+  .profile-content h1 {
+    font-size: 30px;
+  }
+
+  .profile-subtitle {
+    font-size: 14px;
+  }
+
+  .profile-card {
+    border-radius: 4px;
+  }
+
+  .profile-row {
+    min-height: 80px;
+    padding: 16px 20px;
+  }
+
+  .profile-row span {
+    font-size: 12px;
+  }
+
+  .edit-profile-page {
+    width: 100%;
+    max-width: 1000px;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 35px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .admin-page {
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  .admin-main {
+    min-width: 0;
+    width: calc(100% - 260px);
+  }
+
+  .admin-content {
+    width: 100%;
+    padding: 30px 35px;
+  }
+
+  .admin-stat-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .admin-hotel-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .admin-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .admin-table {
+    min-width: 760px;
+  }
+}
+
+/* Средние экраны: ноутбуки и небольшие окна */
+@media (min-width: 768px) and (max-width: 1100px) {
+  .home-hotels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-hotel-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-content {
+    padding: 24px;
+  }
+
+  .details-gallery {
+    height: 320px;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-hotels {
+    display: block;
+  }
+
+  .home-section-title {
+    display: flex;
+  }
+}
