@@ -51,8 +51,8 @@ function Home() {
       if (response.status === 200) {
         const currentUser = response.data;
 
-        if (currentUser.userstatus == "admin") {
-          navigate("/admin");
+        if (currentUser.userstatus == "......") {
+          navigate("/");
           return;
         }
 

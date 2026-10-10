@@ -168,10 +168,11 @@ function Admin() {
           </div>
 
           <div className="admin-profile">
-            <div className="admin-profile-icon">
-              <i className="fa-solid fa-user"></i>
-            </div>
-
+            <a href="/profile" className="i1">
+              <div className="admin-profile-icon">
+                <i className="fa-solid fa-user"></i>
+              </div>
+            </a>{" "}
             <div>
               <strong>Администратор</strong>
               <span>Панель управления</span>

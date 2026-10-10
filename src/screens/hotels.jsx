@@ -14,7 +14,7 @@ function Hotels() {
   const [date2, setDate2] = useState("");
   const [photoIndex, setPhotoIndex] = useState(0);
 
-  // Занятые даты этого отеля
+  // Бронирования только текущего пользователя
   const [bookedDates, setBookedDates] = useState([]);
 
   const getHotel = async () => {
@@ -34,26 +34,33 @@ function Hotels() {
     }
   };
 
+  // Загружаем бронирования только текущего пользователя
   const getBookings = async () => {
     try {
+      const userId = String(localStorage.getItem("id")).replaceAll('"', "");
+
+      if (!userId) {
+        return;
+      }
+
       const response = await axios({
         method: "GET",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
+        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
       });
 
       if (response.status === 200) {
-        const allBookings = response.data.flatMap((user) =>
-          Array.isArray(user.bookhotel) ? user.bookhotel : [],
-        );
+        const bookings = Array.isArray(response.data.bookhotel)
+          ? response.data.bookhotel
+          : [];
 
-        const hotelBookings = allBookings.filter(
+        const myHotelBookings = bookings.filter(
           (booking) =>
             String(booking.hotelId) === String(id) &&
             booking.status !== "Отменен" &&
             booking.status !== "Отменено",
         );
 
-        setBookedDates(hotelBookings);
+        setBookedDates(myHotelBookings);
       }
     } catch (error) {
       console.error("Ошибка загрузки бронирований:", error);
@@ -102,9 +109,16 @@ function Hotels() {
     return `${year}-${month}-${day}`;
   };
 
+  // Проверяем пересечение дат только с бронированиями этого пользователя
   const checkBookedDates = (startDate, endDate) => {
     return bookedDates.some(
       (booking) => startDate < booking.date2 && endDate > booking.date1,
+    );
+  };
+
+  const isDateBooked = (date) => {
+    return bookedDates.some(
+      (booking) => date >= booking.date1 && date < booking.date2,
     );
   };
 
@@ -117,14 +131,14 @@ function Hotels() {
   };
 
   const SaveBooking = async () => {
-    const id = localStorage.getItem("id");
+    const storedId = localStorage.getItem("id");
 
-    if (!id) {
+    if (!storedId) {
       navigate("/signin");
       return;
     }
 
-    const userId = String(id).replaceAll('"', "");
+    const userId = String(storedId).replaceAll('"', "");
 
     if (!date1) {
       alert("Выберите дату заезда");
@@ -146,37 +160,42 @@ function Hotels() {
       return;
     }
 
+    // Проверяем только бронирования текущего пользователя
     try {
       const bookingsResponse = await axios({
         method: "GET",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
+        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
       });
 
-      const allBookings = bookingsResponse.data.flatMap((user) =>
-        Array.isArray(user.bookhotel) ? user.bookhotel : [],
-      );
+      const myBookings = Array.isArray(bookingsResponse.data.bookhotel)
+        ? bookingsResponse.data.bookhotel
+        : [];
 
-      const currentHotelBookings = allBookings.filter(
+      const hasConflict = myBookings.some(
         (booking) =>
           String(booking.hotelId) === String(selectedHotel.id) &&
           booking.status !== "Отменен" &&
-          booking.status !== "Отменено",
-      );
-
-      const hasConflict = currentHotelBookings.some(
-        (booking) => date1 < booking.date2 && date2 > booking.date1,
+          booking.status !== "Отменено" &&
+          date1 < booking.date2 &&
+          date2 > booking.date1,
       );
 
       if (hasConflict) {
-        setBookedDates(currentHotelBookings);
-        alert("Эти даты уже забронированы! Выберите другие даты.");
-        setDate1("");
-        setDate2("");
+        setBookedDates(
+          myBookings.filter(
+            (booking) =>
+              String(booking.hotelId) === String(selectedHotel.id) &&
+              booking.status !== "Отменен" &&
+              booking.status !== "Отменено",
+          ),
+        );
+
+        alert("Вы уже бронировали этот отель на эти даты!");
         return;
       }
     } catch (error) {
-      console.error("Ошибка проверки занятых дат:", error);
-      alert("Не удалось проверить занятость дат. Попробуйте ещё раз.");
+      console.error("Ошибка проверки дат:", error);
+      alert("Не удалось проверить бронирования. Попробуйте ещё раз.");
       return;
     }
 
@@ -201,8 +220,6 @@ function Hotels() {
         method: "GET",
         url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
       });
-
-      console.log("GET USER:", userResponse);
 
       if (userResponse.status === 200) {
         const currentUser = userResponse.data;
@@ -237,7 +254,6 @@ function Hotels() {
       }
     } catch (error) {
       console.error("Ошибка при бронировании:", error);
-
       alert("Ошибка при сохранении на сервере");
     }
   };
@@ -387,14 +403,8 @@ function Hotels() {
                     onChange={(e) => {
                       const selectedDate = e.target.value;
 
-                      const isBooked = bookedDates.some(
-                        (booking) =>
-                          selectedDate >= booking.date1 &&
-                          selectedDate < booking.date2,
-                      );
-
-                      if (isBooked) {
-                        alert("На эту дату отель уже забронирован!");
+                      if (isDateBooked(selectedDate)) {
+                        alert("Вы уже бронировали этот день в этом отеле!");
                         setDate1("");
                         setDate2("");
                         return;
@@ -422,7 +432,7 @@ function Hotels() {
                       }
 
                       if (checkBookedDates(date1, selectedDate)) {
-                        alert("Эти даты пересекаются с другим бронированием!");
+                        alert("Вы уже бронировали этот период!");
                         setDate2("");
                         return;
                       }
