@@ -83,7 +83,9 @@ function Profile() {
 
           <h1>Мой профиль</h1>
 
-          <p className="profile-subtitle">Управление вашим аккаунтом</p>
+          <a className="i1" href="/adminsignin">
+            <p className="profile-subtitle">Управление вашим аккаунтом</p>
+          </a>
 
           <div className="profile-card">
             <div className="profile-row">
