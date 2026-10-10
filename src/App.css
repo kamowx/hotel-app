@@ -4870,3 +4870,241 @@ body {
     display: flex;
   }
 }
+
+.admin-password-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000;
+  padding: 15px;
+}
+
+.admin-password-modal {
+  background: #ffffff;
+  width: 400px;
+  max-width: 100%;
+  padding: 30px;
+  text-align: center;
+  border-radius: 6px;
+}
+
+.admin-password-icon {
+  width: 60px;
+  height: 60px;
+  background: #f0f3f8;
+  color: #244b80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 25px;
+  border-radius: 50%;
+}
+
+.admin-password-modal h2 {
+  font-size: 23px;
+  margin-bottom: 12px;
+  color: #222222;
+}
+
+.admin-password-modal > p {
+  color: #777777;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.admin-password-modal input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #dddddd;
+  outline: none;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+.admin-password-modal input:focus {
+  border-color: #244b80;
+}
+
+.admin-password-modal form button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: #244b80;
+  color: white;
+  cursor: pointer;
+}
+
+.admin-password-modal form button:hover {
+  background: #19385f;
+}
+
+.admin-password-error {
+  color: #dc3545;
+  font-size: 14px;
+  text-align: left;
+  margin: 0 0 12px;
+}
+
+.admin-password-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000;
+  padding: 15px;
+}
+
+.admin-password-modal {
+  background: #ffffff;
+  width: 400px;
+  max-width: 100%;
+  padding: 30px;
+  text-align: center;
+  border-radius: 6px;
+}
+
+.admin-password-icon {
+  width: 60px;
+  height: 60px;
+  background: #f0f3f8;
+  color: #244b80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 25px;
+  border-radius: 50%;
+}
+
+.admin-password-modal h2 {
+  font-size: 23px;
+  margin-bottom: 12px;
+  color: #222222;
+}
+
+.admin-password-modal > p {
+  color: #777777;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.admin-password-modal input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #dddddd;
+  outline: none;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+.admin-password-modal input:focus {
+  border-color: #244b80;
+}
+
+.admin-password-modal form button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: #244b80;
+  color: white;
+  cursor: pointer;
+}
+
+.admin-password-modal form button:hover {
+  background: #19385f;
+}
+
+.admin-password-error {
+  color: #dc3545;
+  font-size: 14px;
+  text-align: left;
+  margin: 0 0 12px;
+}
+
+.admin-password-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.admin-password-modal {
+  background: #fff;
+  width: 400px;
+  max-width: 100%;
+  padding: 30px;
+  text-align: center;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.admin-password-icon {
+  width: 60px;
+  height: 60px;
+  background: #f0f3f8;
+  color: #244b80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 25px;
+  border-radius: 50%;
+}
+
+.admin-password-modal h2 {
+  font-size: 23px;
+  margin-bottom: 12px;
+  color: #222;
+}
+
+.admin-password-modal > p {
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.admin-password-modal input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  outline: none;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+.admin-password-modal input:focus {
+  border-color: #244b80;
+}
+
+.admin-password-modal form button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: #244b80;
+  color: white;
+  cursor: pointer;
+}
+
+.admin-password-error {
+  color: #dc3545;
+  font-size: 14px;
+  text-align: left;
+  margin: 0 0 12px;
+}
