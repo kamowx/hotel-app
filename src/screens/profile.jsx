@@ -8,19 +8,26 @@ function Profile() {
 
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
-
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [passwordInput, setPasswordInput] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-
-  const [password2signin, setPassword2signin] = useState("");
-
   const logout = () => {
-    localStorage.removeItem("id");
-    alert("Вы вышли из аккаунта");
-    navigate("/signin");
-  };
+    const adminId = localStorage.getItem("adminId");
 
+    if (adminId) {
+      localStorage.setItem("id", adminId);
+
+      localStorage.removeItem("userId");
+
+      alert("Вы вышли из аккаунта пользователя");
+
+      navigate("/admin");
+    } else {
+      localStorage.removeItem("id");
+      localStorage.removeItem("userId");
+
+      alert("Вы вышли из аккаунта");
+
+      navigate("/signin");
+    }
+  };
   useEffect(() => {
     const id = localStorage.getItem("id");
 
@@ -36,6 +43,8 @@ function Profile() {
         url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
       });
 
+      console.log("ВСЕ ДАННЫЕ:", response.data);
+
       if (response.status === 200) {
         setUsers(response.data);
 
@@ -45,16 +54,16 @@ function Profile() {
           (item) => String(item.id) === String(id).replaceAll('"', ""),
         );
 
+        console.log("НАЙДЕННЫЙ USER:", currentUser);
+
         if (currentUser) {
           setUser(currentUser);
-
-          if (currentUser.userstatusplus === "adminplus") {
-            setShowPasswordModal(true);
-          }
+        } else {
+          setUser(null);
         }
       }
     } catch (error) {
-      console.error("ОШИБКА ПОЛЬЗОВАТЕЛЕЙ:", error);
+      console.error("ОШИБКА ПОЛУЧЕНИЯ ПОЛЬЗОВАТЕЛЯ:", error);
     }
   };
 
@@ -62,73 +71,12 @@ function Profile() {
     allUser();
   }, []);
 
-  const plus = async (e) => {
-    e.preventDefault();
+  const returnToAdmin = () => {
+    const adminId = localStorage.getItem("adminId");
 
-    if (!password2signin.trim()) {
-      setPasswordError("Введите пароль!");
-      return;
-    }
-
-    try {
-      const id = localStorage.getItem("id");
-
-      if (!id) {
-        navigate("/signin");
-        return;
-      }
-
-      const userId = String(id).replaceAll('"', "");
-
-      const response = await axios({
-        method: "GET",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
-      });
-
-      if (response.status === 200) {
-        const currentUser = response.data;
-
-        if (currentUser.userstatusplus !== "adminplus") {
-          setPasswordError("Нет доступа!");
-          return;
-        }
-
-        if (
-          String(currentUser.password2 ?? "").trim() !== password2signin.trim()
-        ) {
-          setPasswordError("Неправильный пароль!");
-          return;
-        }
-
-        const updateResponse = await axios({
-          method: "PUT",
-          url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
-          data: {
-            ...currentUser,
-            userstatusplus: "useradminplus",
-          },
-        });
-
-        if (updateResponse.status === 200) {
-          setUser(updateResponse.data);
-
-          setUsers((prevUsers) =>
-            prevUsers.map((item) =>
-              String(item.id) === userId ? updateResponse.data : item,
-            ),
-          );
-
-          setShowPasswordModal(false);
-          setPassword2signin("");
-          setPasswordInput("");
-          setPasswordError("");
-
-          alert("Пароль подтверждён! Статус изменён на useradminplus.");
-        }
-      }
-    } catch (error) {
-      console.error("ОШИБКА ПРОВЕРКИ ПАРОЛЯ:", error);
-      setPasswordError("Ошибка проверки. Попробуйте ещё раз.");
+    if (adminId) {
+      localStorage.setItem("id", adminId);
+      navigate("/admin");
     }
   };
 
@@ -156,9 +104,9 @@ function Profile() {
 
           <h1>Мой профиль</h1>
 
-          <a className="i1" href="/adminsignin">
+          <Link to="/adminsignin" className="i1">
             <p className="profile-subtitle">Управление вашим аккаунтом</p>
-          </a>
+          </Link>
 
           <div className="profile-card">
             <div className="profile-row">
@@ -170,7 +118,9 @@ function Profile() {
                 <span>Имя пользователя</span>
 
                 <strong>
-                  {user ? `${user.firstname} ${user.lastname}` : "Загрузка..."}
+                  {user
+                    ? `${user.firstname || ""} ${user.lastname || ""}`.trim()
+                    : "Загрузка..."}
                 </strong>
               </div>
             </div>
@@ -235,6 +185,13 @@ function Profile() {
             </button>
           </Link>
 
+          {localStorage.getItem("adminId") && (
+            <button className="profile-logout" onClick={returnToAdmin}>
+              <i className="fa-solid fa-arrow-left"></i>
+              Вернуться в админку
+            </button>
+          )}
+
           <button className="profile-logout" onClick={logout}>
             <i className="fa-solid fa-right-from-bracket"></i>
             Выйти из аккаунта
@@ -246,42 +203,6 @@ function Profile() {
 
         <Bottomnav />
       </div>
-
-      {/* Модальное  */}
-      {showPasswordModal && (
-        <div className="admin-password-overlay">
-          <div className="admin-password-modal">
-            <div className="admin-password-icon">
-              <i className="fa-solid fa-lock"></i>
-            </div>
-
-            <h2>Подтверждение доступа</h2>
-
-            <p>Введите пароль для продолжения.</p>
-
-            <form onSubmit={plus}>
-              <input
-                type="password"
-                value={password2signin}
-                onChange={(e) => {
-                  setPassword2signin(e.target.value);
-                  setPasswordError("");
-                }}
-                placeholder="Введите пароль"
-                autoComplete="current-password"
-                required
-                autoFocus
-              />
-
-              {passwordError && (
-                <p className="admin-password-error">{passwordError}</p>
-              )}
-
-              <button type="submit">Подтвердить</button>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -105,7 +105,6 @@ function AdminSignup() {
             password1: password1,
             password2: password2,
             userstatus: "admin",
-            userstatusplus: "adminplus",
           },
         });
 
@@ -113,7 +112,7 @@ function AdminSignup() {
 
         if (newUser.status === 201) {
           alert("Администратор зарегистрирован");
-          navigate("/admin");
+          navigate("/adminsignin");
         }
       }
     } catch (error) {

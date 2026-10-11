@@ -5108,3 +5108,42 @@ body {
   text-align: left;
   margin: 0 0 12px;
 }
+.account-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  color: #334155;
+  text-align: left;
+  cursor: pointer;
+}
+
+.account-option > span {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.account-option strong {
+  font-size: 13px;
+}
+
+.account-option small {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.account-option.active {
+  border-color: #3157a4;
+  background: #f5f7ff;
+  color: #3157a4;
+}
+
+.account-option:hover {
+  background: #f8fafc;
+}

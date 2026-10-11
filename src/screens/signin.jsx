@@ -53,7 +53,6 @@ function Signin() {
         item.email == emailsigin &&
         item.password2 == password2signin &&
         item.userstatus == "user",
-      item.userstatusplus == "userp",
     );
     if (!user) {
       alert("Имя пользователя или пароль неправильные");

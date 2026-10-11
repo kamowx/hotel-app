@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Adminbottom() {
+  const navigate = useNavigate();
+
   const [newOrders, setNewOrders] = useState(0);
-  //GET-User
+
+  // GET Users
   const getUsers = async () => {
     try {
       const response = await axios({
@@ -20,7 +23,7 @@ function Adminbottom() {
         );
 
         const newBookings = allBookings.filter(
-          (item) => item.status == "Новый",
+          (item) => item.status === "Новый",
         );
 
         setNewOrders(newBookings.length);
@@ -33,6 +36,27 @@ function Adminbottom() {
   useEffect(() => {
     getUsers();
   }, []);
+
+  const logout1 = () => {
+    const userId = localStorage.getItem("userId");
+
+    if (userId) {
+      localStorage.setItem("id", userId);
+
+      localStorage.removeItem("adminId");
+
+      alert("Вы вышли из аккаунта пользователя");
+
+      navigate("/profile");
+    } else {
+      localStorage.removeItem("id");
+      localStorage.removeItem("adminId");
+
+      alert("Вы вышли из аккаунта");
+
+      navigate("/signin");
+    }
+  };
 
   return (
     <div>
@@ -56,7 +80,6 @@ function Adminbottom() {
           <Link to="/adminneworders" className="admin-menu-item">
             <i className="fa-solid fa-bell"></i>
             <span>Новые заказы</span>
-
             <b>{newOrders}</b>
           </Link>
 
@@ -84,6 +107,11 @@ function Adminbottom() {
         <div className="admin-sidebar-bottom">
           <button className="admin-menu-item">
             <span>Здравствуйте!</span>
+            <br />
+
+            <span onClick={logout1}>
+              <b>Выйти</b>
+            </span>
           </button>
         </div>
       </aside>

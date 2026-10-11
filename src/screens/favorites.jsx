@@ -106,7 +106,11 @@ function Favorites() {
               <div className="hotel-card mb-3" key={item.id || index}>
                 <div className="hotel-photo">
                   {item.avatarhotels ? (
-                    <img src={item.avatarhotels} alt={item.namehotels} />
+                    <img
+                      className="home-hotel-image"
+                      src={item.avatarhotels}
+                      alt={item.namehotels}
+                    />
                   ) : (
                     <span>Фото отеля</span>
                   )}

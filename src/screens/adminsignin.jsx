@@ -4,11 +4,8 @@ import axios from "axios";
 
 function Adminsignin() {
   const [showPassword, setShowPassword] = useState(false);
-
   const [users, setUsers] = useState([]);
-
   const [emailsigin, setEmailsigin] = useState("");
-
   const [password2signin, setPassword2signin] = useState("");
 
   const navigate = useNavigate();
@@ -24,6 +21,16 @@ function Adminsignin() {
 
       if (response.status === 200) {
         setUsers(response.data);
+
+        const id = JSON.parse(localStorage.getItem("id"));
+
+        const currentUser = response.data.find(
+          (item) => String(item.id) === String(id),
+        );
+
+        if (currentUser && currentUser.userstatus === "user") {
+          window.location.href = "/home";
+        }
       }
     } catch (error) {
       console.error(error);
@@ -32,47 +39,6 @@ function Adminsignin() {
 
   useEffect(() => {
     allUser();
-  }, []);
-
-  useEffect(() => {
-    const id = localStorage.getItem("id");
-
-    if (!id) {
-      return;
-    }
-
-    const checkUser = async () => {
-      try {
-        const response = await axios({
-          method: "GET",
-          url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
-        });
-
-        if (response.status === 200) {
-          const currentUser = response.data.find(
-            (item) => String(item.id) === String(id).replaceAll('"', ""),
-          );
-
-          if (!currentUser) {
-            return;
-          }
-
-          if (currentUser.userstatus == "admin") {
-            navigate("/admin");
-            return;
-          }
-
-          if (currentUser.userstatus == "user") {
-            navigate("/home");
-            return;
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    checkUser();
   }, []);
 
   const signIn = async () => {
@@ -92,7 +58,7 @@ function Adminsignin() {
       if (response.status === 200) {
         const currentUser = response.data.find(
           (item) =>
-            item.email == emailsigin && item.password2 == password2signin,
+            item.email === emailsigin && item.password2 === password2signin,
         );
 
         if (!currentUser) {
@@ -101,17 +67,26 @@ function Adminsignin() {
         }
 
         console.log("НАЙДЕННЫЙ ПОЛЬЗОВАТЕЛЬ:", currentUser);
-
         console.log("USERSTATUS:", currentUser.userstatus);
 
-        localStorage.setItem("id", JSON.stringify(currentUser.id));
+        if (currentUser.userstatus === "user") {
+          localStorage.removeItem("adminId");
 
-        if (currentUser.userstatus == "user") {
+          localStorage.setItem("userId", JSON.stringify(currentUser.id));
+
+          localStorage.setItem("id", JSON.stringify(currentUser.id));
+
           navigate("/home");
           return;
         }
 
-        if (currentUser.userstatus == "admin") {
+        if (currentUser.userstatus === "admin") {
+          localStorage.removeItem("userId");
+
+          localStorage.setItem("adminId", JSON.stringify(currentUser.id));
+
+          localStorage.setItem("id", JSON.stringify(currentUser.id));
+
           navigate("/admin");
           return;
         }
@@ -213,13 +188,17 @@ function Adminsignin() {
             </div>
           </div>
 
-          <button className="admin-signin-button" onClick={signIn}>
+          <button
+            type="button"
+            className="admin-signin-button"
+            onClick={signIn}
+          >
             <i className="fa-solid fa-right-to-bracket"></i>
             Войти в панель
           </button>
 
           <a className="i1" href="/">
-            <button className="admin-signin-back">
+            <button type="button" className="admin-signin-back">
               <i className="fa-solid fa-arrow-left"></i>
               Вернуться назад
             </button>
@@ -231,4 +210,3 @@ function Adminsignin() {
 }
 
 export default Adminsignin;
-/*hotel*/

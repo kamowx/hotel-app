@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Adminbottom from "../components/adminbottom";
 import axios from "axios";
 
 function Admin() {
+  const navigate = useNavigate();
+
   const [page, setPage] = useState("Главная");
 
   const [hotels, setHotels] = useState([]);
   const [users, setUsers] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
-
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [passwordInput, setPasswordInput] = useState("");
-  const [passwordError, setPasswordError] = useState("");
 
   const [adminData, setAdminData] = useState({
     id: "",
@@ -35,7 +34,7 @@ function Admin() {
         setHotels(response.data);
       }
     } catch (error) {
-      console.error("GET ERROR:", error);
+      console.error("GET HOTELS ERROR:", error);
     }
   };
 
@@ -51,10 +50,14 @@ function Admin() {
       if (response.status === 200) {
         setUsers(response.data);
 
-        const storedId = localStorage.getItem("id");
-        const id = storedId ? String(JSON.parse(storedId)) : "";
+        const savedAdminId = localStorage.getItem("adminId");
+        const adminId = savedAdminId
+          ? String(savedAdminId).replaceAll('"', "")
+          : "";
 
-        const admin = response.data.find((item) => String(item.id) === id);
+        const admin =
+          response.data.find((item) => String(item.id) === adminId) ||
+          response.data.find((item) => item.userstatus === "admin");
 
         if (admin) {
           setAdminData({
@@ -71,9 +74,53 @@ function Admin() {
     }
   };
 
+  const checkUser = async () => {
+    const savedId = localStorage.getItem("id");
+
+    if (!savedId) {
+      navigate("/signin", { replace: true });
+      return;
+    }
+
+    const id = String(savedId).replaceAll('"', "");
+
+    try {
+      const response = await axios({
+        method: "GET",
+        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${id}`,
+      });
+
+      if (response.status === 200) {
+        const currentUser = response.data;
+
+        if (currentUser.userstatus === "user") {
+          localStorage.setItem("userId", JSON.stringify(currentUser.id));
+
+          localStorage.setItem("id", JSON.stringify(currentUser.id));
+
+          navigate("/home", { replace: true });
+          return;
+        }
+
+        if (currentUser.userstatus === "admin") {
+          getHotels();
+          getUsers();
+          return;
+        }
+
+        localStorage.removeItem("id");
+        navigate("/signin", { replace: true });
+      }
+    } catch (error) {
+      console.error("CHECK USER ERROR:", error);
+
+      localStorage.removeItem("id");
+      navigate("/signin", { replace: true });
+    }
+  };
+
   useEffect(() => {
-    getHotels();
-    getUsers();
+    checkUser();
   }, []);
 
   const allBookings = users.flatMap((user) =>
@@ -103,10 +150,10 @@ function Admin() {
   const saveAdminData = async () => {
     try {
       if (
-        adminData.lastname === "" ||
-        adminData.email === "" ||
-        adminData.numberphone === "" ||
-        adminData.password2 === ""
+        !adminData.lastname.trim() ||
+        !adminData.email.trim() ||
+        !adminData.numberphone.trim() ||
+        !adminData.password2.trim()
       ) {
         alert("Заполните все поля");
         return;
@@ -116,6 +163,7 @@ function Admin() {
         method: "PUT",
         url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${adminData.id}`,
         data: {
+          ...users.find((item) => String(item.id) === String(adminData.id)),
           lastname: adminData.lastname,
           email: adminData.email,
           numberphone: adminData.numberphone,
@@ -127,117 +175,14 @@ function Admin() {
 
       if (response.status === 200) {
         alert("Данные администратора изменены!");
-        getUsers();
+
+        await getUsers();
+
         setShowModal(false);
       }
     } catch (error) {
       console.error("UPDATE ADMIN ERROR:", error);
       alert("Ошибка при изменении данных");
-    }
-  };
-
-  // Проверка
-  const checkUser = async () => {
-    try {
-      const storedId = localStorage.getItem("id");
-
-      if (!storedId) {
-        window.location.href = "/signin";
-        return;
-      }
-
-      const id = JSON.parse(storedId);
-
-      const response = await axios({
-        method: "GET",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${id}`,
-      });
-
-      if (response.status === 200) {
-        const user = response.data;
-
-        if (user.userstatus === "user") {
-          window.location.href = "/home";
-          return;
-        }
-
-        if (user.userstatus === "admin") {
-          console.log("Это администратор");
-          console.log("USERSTATUSPLUS:", user.userstatusplus);
-
-          if (user.userstatusplus === "useradminplus") {
-            setShowPasswordModal(true);
-          }
-        }
-      }
-    } catch (error) {
-      console.error("CHECK USER ERROR:", error);
-    }
-  };
-
-  useEffect(() => {
-    checkUser();
-  }, []);
-
-  const checkPassword2 = async (e) => {
-    e.preventDefault();
-
-    try {
-      const storedId = localStorage.getItem("id");
-
-      if (!storedId) {
-        window.location.href = "/signin";
-        return;
-      }
-
-      const id = JSON.parse(storedId);
-
-      const response = await axios({
-        method: "GET",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${id}`,
-      });
-
-      if (response.status === 200) {
-        const user = response.data;
-
-        if (
-          user.userstatus !== "admin" ||
-          user.userstatusplus !== "useradminplus"
-        ) {
-          setPasswordError("Нет доступа!");
-          return;
-        }
-
-        const savedPassword = String(user.password2 ?? "").trim();
-        const enteredPassword = String(passwordInput).trim();
-
-        if (savedPassword !== enteredPassword) {
-          setPasswordError("Неправильный пароль!");
-          return;
-        }
-
-        const updateResponse = await axios({
-          method: "PUT",
-          url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${id}`,
-          data: {
-            ...user,
-            userstatusplus: "adminplus",
-          },
-        });
-
-        if (updateResponse.status === 200) {
-          setShowPasswordModal(false);
-          setPasswordInput("");
-          setPasswordError("");
-
-          alert("Доступ подтверждён! Статус изменён на adminplus.");
-
-          getUsers();
-        }
-      }
-    } catch (error) {
-      console.error("PASSWORD CHECK ERROR:", error);
-      setPasswordError("Ошибка проверки. Попробуйте ещё раз.");
     }
   };
 
@@ -253,11 +198,10 @@ function Admin() {
           </div>
 
           <div className="admin-profile">
-            <a href="/profile" className="i1">
-              <div className="admin-profile-icon">
-                <i className="fa-solid fa-user"></i>
-              </div>
-            </a>{" "}
+            <div className="admin-profile-icon">
+              <i className="fa-solid fa-user"></i>
+            </div>
+
             <div>
               <strong>Администратор</strong>
               <span>Панель управления</span>
@@ -265,12 +209,36 @@ function Admin() {
           </div>
         </header>
 
+        <button
+          className="account-option"
+          onClick={() => {
+            const userId = localStorage.getItem("userId");
+
+            if (userId) {
+              localStorage.setItem("id", userId);
+              window.location.href = "/home";
+            } else {
+              window.location.href = "/adminuplususer";
+            }
+          }}
+        >
+          <i className="fa-solid fa-user"></i>
+
+          <span>
+            <strong>Пользователь</strong>
+            <small>Перейти в пользовательский аккаунт</small>
+          </span>
+
+          <i className="fa-solid fa-arrow-right"></i>
+        </button>
+
         <div className="admin-content">
           <div className="admin-stat-grid">
             <div className="admin-stat-card">
               <div className="admin-stat-icon">
                 <i className="fa-solid fa-hotel"></i>
               </div>
+
               <div>
                 <span>Всего отелей</span>
                 <strong>{hotels.length}</strong>
@@ -281,6 +249,7 @@ function Admin() {
               <div className="admin-stat-icon">
                 <i className="fa-solid fa-calendar-check"></i>
               </div>
+
               <div>
                 <span>Всего заказов</span>
                 <strong>{allBookings.length}</strong>
@@ -291,6 +260,7 @@ function Admin() {
               <div className="admin-stat-icon">
                 <i className="fa-solid fa-bed"></i>
               </div>
+
               <div>
                 <span>Активные</span>
                 <strong>{activeBookings.length}</strong>
@@ -301,6 +271,7 @@ function Admin() {
               <div className="admin-stat-icon">
                 <i className="fa-solid fa-circle-check"></i>
               </div>
+
               <div>
                 <span>Завершенные</span>
                 <strong>{completedBookings.length}</strong>
@@ -311,6 +282,7 @@ function Admin() {
               <div className="admin-stat-icon">
                 <i className="fa-solid fa-money-bill-wave"></i>
               </div>
+
               <div>
                 <span>Общий доход</span>
                 <strong>{totalIncome} сом</strong>
@@ -349,15 +321,20 @@ function Admin() {
                     <div className="admin-hotel-icon">
                       <i className="fa-solid fa-hotel"></i>
                     </div>
+
                     <span>{item.name}</span>
                   </div>
 
                   <span>{item.city}</span>
+
                   <span>
                     {item.date1} — {item.date2}
                   </span>
+
                   <span>{item.guests}</span>
+
                   <span>{item.allprice} сом</span>
+
                   <span className={`admin-status ${item.status}`}>
                     {item.status}
                   </span>
@@ -396,14 +373,16 @@ function Admin() {
                     <h3>{item.namehotels}</h3>
 
                     <p>
-                      <i className="fa-solid fa-location-dot"></i>{" "}
+                      <i className="fa-solid fa-location-dot"></i>
                       {item.location}
                     </p>
 
                     <div>
                       <strong>{item.price} сом</strong>
+
                       <span>
-                        <i className="fa-solid fa-user"></i> {item.people}
+                        <i className="fa-solid fa-user"></i>
+                        {item.people}
                       </span>
                     </div>
                   </div>
@@ -442,43 +421,6 @@ function Admin() {
         </div>
       </main>
 
-      {/* Модальное окно проверки пароля */}
-      {showPasswordModal && (
-        <div className="admin-password-overlay">
-          <div className="admin-password-modal">
-            <div className="admin-password-icon">
-              <i className="fa-solid fa-lock"></i>
-            </div>
-
-            <h2>Подтверждение доступа</h2>
-
-            <p>Для продолжения работы введите пароль администратора.</p>
-
-            <form onSubmit={checkPassword2}>
-              <input
-                type="password"
-                value={passwordInput}
-                onChange={(e) => {
-                  setPasswordInput(e.target.value);
-                  setPasswordError("");
-                }}
-                placeholder="Введите пароль"
-                autoComplete="current-password"
-                required
-                autoFocus
-              />
-
-              {passwordError && (
-                <p className="admin-password-error">{passwordError}</p>
-              )}
-
-              <button type="submit">Подтвердить</button>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Окно редактирования  */}
       {showModal && (
         <div className="admin-modal-overlay">
           <div className="admin-modal">
@@ -498,18 +440,20 @@ function Admin() {
 
             <div className="admin-modal-body">
               <div className="admin-form-group">
-                <label>Фамилия</label>
+                <label>Имя</label>
+
                 <input
                   type="text"
                   name="lastname"
                   value={adminData.lastname}
                   onChange={handleAdminChange}
-                  placeholder="Введите фамилию"
+                  placeholder="Введите имя"
                 />
               </div>
 
               <div className="admin-form-group">
                 <label>Email</label>
+
                 <input
                   type="email"
                   name="email"
@@ -521,6 +465,7 @@ function Admin() {
 
               <div className="admin-form-group">
                 <label>Телефон</label>
+
                 <input
                   type="text"
                   name="numberphone"
@@ -532,6 +477,7 @@ function Admin() {
 
               <div className="admin-form-group">
                 <label>Пароль</label>
+
                 <input
                   type="password"
                   name="password2"

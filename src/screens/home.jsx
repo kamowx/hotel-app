@@ -51,8 +51,8 @@ function Home() {
       if (response.status === 200) {
         const currentUser = response.data;
 
-        if (currentUser.userstatus == "......") {
-          navigate("/");
+        if (currentUser.userstatus == "admin") {
+          navigate("/admin");
           return;
         }
 
@@ -227,7 +227,11 @@ function Home() {
                   <div className="home-hotel-card" key={hotel.id}>
                     <div className="home-hotel-image">
                       {hotel.avatarhotels ? (
-                        <img src={hotel.avatarhotels} alt={hotel.namehotels} />
+                        <img
+                          className="home-hotel-image"
+                          src={hotel.avatarhotels}
+                          alt={hotel.namehotels}
+                        />
                       ) : (
                         <i className="fa-solid fa-hotel"></i>
                       )}
