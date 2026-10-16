@@ -151,6 +151,23 @@ function Profile() {
           </div>
 
           <div className="profile-actions">
+            <Link className="profile-action">
+              <div className="profile-action-icon">
+                <i className="fa-solid fa-dollar-sign"></i>
+              </div>
+
+              <div>
+                <strong>
+                  Счёт:
+                  <i>
+                    <h4 className="ii1">
+                      <b>{user ? user.check : "Загрузка..."}сом</b>
+                    </h4>
+                  </i>{" "}
+                </strong>
+                <span>Мои денги</span>
+              </div>
+            </Link>
             <Link to="/armored" className="profile-action">
               <div className="profile-action-icon">
                 <i className="fa-solid fa-calendar-check"></i>

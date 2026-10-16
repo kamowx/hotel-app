@@ -72,36 +72,48 @@ function Armhotels() {
         `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${cleanUserId}`,
       );
 
-      if (userResponse.status === 200) {
-        const currentUser = userResponse.data;
+      const currentUser = userResponse.data;
 
-        const oldBookings = Array.isArray(currentUser.bookhotel)
-          ? currentUser.bookhotel
-          : [];
+      const oldBookings = Array.isArray(currentUser.bookhotel)
+        ? currentUser.bookhotel
+        : [];
 
-        const newBookings = oldBookings.filter(
-          (_, index) => index !== Number(id),
+      const index = Number(id);
+      const currentBooking = oldBookings[index];
+
+      if (!currentBooking) {
+        alert("Бронирование не найдено");
+        navigate("/armored");
+        return;
+      }
+
+      const refundAmount = Number(currentBooking.allprice) || 0;
+      const balance = Number(currentUser.check) || 0;
+
+      const newBalance = Number((balance + refundAmount).toFixed(2));
+
+      const updatedBookings = oldBookings.filter(
+        (_, itemIndex) => itemIndex !== index,
+      );
+
+      const response = await axios.put(
+        `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${cleanUserId}`,
+        {
+          ...currentUser,
+          check: newBalance,
+          bookhotel: updatedBookings,
+        },
+      );
+
+      if (response.status === 200) {
+        alert(
+          `Бронирование отменено! Возвращено ${refundAmount} сом. Баланс: ${newBalance} сом.`,
         );
 
-        const response = await axios.put(
-          `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${cleanUserId}`,
-          {
-            ...currentUser,
-            bookhotel: newBookings,
-          },
-        );
-
-        console.log("PUT BOOKING:", response);
-
-        if (response.status === 200) {
-          alert("Бронирование отменено!");
-
-          navigate("/armored");
-        }
+        navigate("/armored");
       }
     } catch (error) {
       console.error("Ошибка при отмене бронирования:", error);
-
       alert("Не удалось отменить бронирование");
     }
   };

@@ -102,6 +102,10 @@ function Adminbottom() {
             <i className="fa-solid fa-hotel"></i>
             <span>Отели</span>
           </Link>
+          <Link to="/adminuser" className="admin-menu-item">
+            <i class="fa-solid fa-person"></i>
+            <span>Пользователи</span>
+          </Link>
         </div>
 
         <div className="admin-sidebar-bottom">

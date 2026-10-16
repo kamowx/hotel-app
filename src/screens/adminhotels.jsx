@@ -12,8 +12,11 @@ function Adminhotels() {
   const [price, setPrice] = useState("");
   const [people, setPeople] = useState("");
   const [avatarhotels, setAvatarhotels] = useState("");
+  const [discount, setDiscount] = useState("0");
 
   const [editId, setEditId] = useState(null);
+
+  const discountPrice = Number(price) * (1 - Number(discount || 0) / 100);
 
   const getHotels = async () => {
     try {
@@ -36,6 +39,16 @@ function Adminhotels() {
     getHotels();
   }, []);
 
+  const resetForm = () => {
+    setNamehotels("");
+    setLocation("Бишкек");
+    setPrice("");
+    setPeople("");
+    setAvatarhotels("");
+    setDiscount("0");
+    setEditId(null);
+  };
+
   const addHotel = async () => {
     if (
       !namehotels.trim() ||
@@ -45,6 +58,16 @@ function Adminhotels() {
       !avatarhotels.trim()
     ) {
       alert("Заполните все поля");
+      return;
+    }
+
+    if (
+      Number(price) <= 0 ||
+      Number(people) <= 0 ||
+      Number(discount) < 0 ||
+      Number(discount) > 100
+    ) {
+      alert("Проверьте цену, количество людей и скидку от 0 до 100%");
       return;
     }
 
@@ -58,6 +81,7 @@ function Adminhotels() {
           price: price,
           people: people,
           avatarhotels: avatarhotels,
+          discount: discount,
         },
       });
 
@@ -67,15 +91,7 @@ function Adminhotels() {
         alert("Отель успешно добавлен");
 
         setShowModal(false);
-
-        setNamehotels("");
-        setLocation("Бишкек");
-        setPrice("");
-        setPeople("");
-        setAvatarhotels("");
-
-        setEditId(null);
-
+        resetForm();
         getHotels();
       }
     } catch (error) {
@@ -87,11 +103,12 @@ function Adminhotels() {
   const openEdit = (item) => {
     setEditId(item.id);
 
-    setNamehotels(item.namehotels);
-    setLocation(item.location);
-    setPrice(item.price);
-    setPeople(item.people);
-    setAvatarhotels(item.avatarhotels);
+    setNamehotels(item.namehotels || "");
+    setLocation(item.location || "Бишкек");
+    setPrice(String(item.price ?? ""));
+    setPeople(String(item.people ?? ""));
+    setAvatarhotels(item.avatarhotels || "");
+    setDiscount(String(item.discount ?? "0"));
 
     setShowModal(true);
   };
@@ -108,6 +125,16 @@ function Adminhotels() {
       return;
     }
 
+    if (
+      Number(price) <= 0 ||
+      Number(people) <= 0 ||
+      Number(discount) < 0 ||
+      Number(discount) > 100
+    ) {
+      alert("Проверьте цену, количество людей и скидку от 0 до 100%");
+      return;
+    }
+
     try {
       const response = await axios({
         method: "PUT",
@@ -118,6 +145,7 @@ function Adminhotels() {
           price: price,
           people: people,
           avatarhotels: avatarhotels,
+          discount: discount,
         },
       });
 
@@ -127,15 +155,7 @@ function Adminhotels() {
         alert("Отель изменён");
 
         setShowModal(false);
-
-        setNamehotels("");
-        setLocation("Бишкек");
-        setPrice("");
-        setPeople("");
-        setAvatarhotels("");
-
-        setEditId(null);
-
+        resetForm();
         getHotels();
       }
     } catch (error) {
@@ -155,19 +175,23 @@ function Adminhotels() {
 
     try {
       const hotel = hotels.find((item) => String(item.id) === String(id));
+
       const targetId = hotel ? hotel.id : id;
       const parentId = hotel?.dataId || 1;
 
       console.log("Выбранный отель:", hotel);
-      console.log("ID:", targetId);
+      console.log("ID отеля:", targetId);
 
       let response;
+
       try {
         response = await axios({
           method: "DELETE",
           url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${parentId}/hotels/${targetId}`,
         });
       } catch (nestedError) {
+        console.log("Первый запрос не сработал:", nestedError);
+
         response = await axios({
           method: "DELETE",
           url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/hotels/${targetId}`,
@@ -188,24 +212,27 @@ function Adminhotels() {
       console.error("DELETE STATUS:", error.response?.status);
       console.error("DELETE DATA:", error.response?.data);
 
-      alert(`Ошибка при удалении. Status: ${error.response?.status || "нет"}`);
+      alert(
+        `Ошибка при удалении. Status: ${
+          error.response?.status || "нет ответа от сервера"
+        }`,
+      );
     }
   };
 
   const closeModal = () => {
     setShowModal(false);
-
-    setNamehotels("");
-    setLocation("Бишкек");
-    setPrice("");
-    setPeople("");
-    setAvatarhotels("");
-
-    setEditId(null);
+    resetForm();
   };
+
   const checkUser = async () => {
     try {
       const id = JSON.parse(localStorage.getItem("id"));
+
+      if (!id) {
+        window.location.href = "/signin";
+        return;
+      }
 
       const response = await axios({
         method: "GET",
@@ -215,11 +242,11 @@ function Adminhotels() {
       if (response.status === 200) {
         const user = response.data;
 
-        if (user.userstatus == "user") {
+        if (user.userstatus === "user") {
           window.location.href = "/home";
         }
 
-        if (user.userstatus == "admin") {
+        if (user.userstatus === "admin") {
           console.log("Это администратор");
         }
       }
@@ -227,6 +254,7 @@ function Adminhotels() {
       console.error("CHECK USER ERROR:", error);
     }
   };
+
   useEffect(() => {
     checkUser();
   }, []);
@@ -265,14 +293,7 @@ function Adminhotels() {
               <button
                 className="admin-add-button"
                 onClick={() => {
-                  setEditId(null);
-
-                  setNamehotels("");
-                  setLocation("Бишкек");
-                  setPrice("");
-                  setPeople("");
-                  setAvatarhotels("");
-
+                  resetForm();
                   setShowModal(true);
                 }}
               >
@@ -282,74 +303,105 @@ function Adminhotels() {
             </div>
 
             <div className="admin-hotel-grid">
-              {hotels.map((item) => (
-                <div className="admin-hotel-card" key={item.id}>
-                  <div className="admin-hotel-photo">
-                    {item.avatarhotels ? (
-                      <img src={item.avatarhotels} alt={item.namehotels} />
-                    ) : (
-                      <i className="fa-solid fa-hotel"></i>
-                    )}
-                  </div>
+              {hotels.map((item) => {
+                const hotelPrice = Number(item.price) || 0;
+                const hotelDiscount = Math.min(
+                  100,
+                  Math.max(0, Number(item.discount) || 0),
+                );
 
-                  <div className="admin-hotel-card-content">
-                    <h3>{item.namehotels}</h3>
+                const finalPrice = hotelPrice * (1 - hotelDiscount / 100);
 
-                    <p>
-                      <i className="fa-solid fa-location-dot"></i>{" "}
-                      {item.location}
-                    </p>
-
-                    <div>
-                      <strong>{item.price} сом</strong>
-
-                      <span> / ночь</span>
+                return (
+                  <div className="admin-hotel-card" key={item.id}>
+                    <div className="admin-hotel-photo">
+                      {item.avatarhotels ? (
+                        <img src={item.avatarhotels} alt={item.namehotels} />
+                      ) : (
+                        <i className="fa-solid fa-hotel"></i>
+                      )}
                     </div>
 
-                    <p>
-                      <i className="fa-solid fa-users"></i> До {item.people}{" "}
-                      человек
-                    </p>
+                    <div className="admin-hotel-card-content">
+                      <h3>{item.namehotels}</h3>
 
-                    <div className="admin-hotel-card-buttons">
-                      <button
-                        className="admin-hotel-edit-button"
-                        onClick={() => openEdit(item)}
-                      >
-                        <i className="fa-solid fa-pen"></i>
-                        Изменить
-                      </button>
+                      <p>
+                        <i className="fa-solid fa-location-dot"></i>{" "}
+                        {item.location}
+                      </p>
 
-                      <button
-                        className="admin-hotel-delete-button"
-                        onClick={() => deleteHotel(item.id)}
-                      >
-                        <i className="fa-solid fa-trash"></i>
-                        Удалить
-                      </button>
+                      <div>
+                        {hotelDiscount > 0 ? (
+                          <>
+                            <strong>
+                              {finalPrice.toLocaleString("ru-RU")} сом
+                            </strong>
+
+                            <span
+                              style={{
+                                textDecoration: "line-through",
+                                marginLeft: "8px",
+                                color: "#888",
+                              }}
+                            >
+                              {hotelPrice.toLocaleString("ru-RU")} сом
+                            </span>
+
+                            <span
+                              style={{
+                                marginLeft: "8px",
+                                color: "#e53935",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              -{hotelDiscount}%
+                            </span>
+                          </>
+                        ) : (
+                          <strong>
+                            {hotelPrice.toLocaleString("ru-RU")} сом
+                          </strong>
+                        )}
+
+                        <span> / ночь</span>
+                      </div>
+
+                      <p>
+                        <i className="fa-solid fa-users"></i> До {item.people}{" "}
+                        человек
+                      </p>
+
+                      <div className="admin-hotel-card-buttons">
+                        <button
+                          className="admin-hotel-edit-button"
+                          onClick={() => openEdit(item)}
+                        >
+                          <i className="fa-solid fa-pen"></i>
+                          Изменить
+                        </button>
+
+                        <button
+                          className="admin-hotel-delete-button"
+                          onClick={() => deleteHotel(item.id)}
+                        >
+                          <i className="fa-solid fa-trash"></i>
+                          Удалить
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               <button
                 className="admin-add-hotel-card"
                 onClick={() => {
-                  setEditId(null);
-
-                  setNamehotels("");
-                  setLocation("Бишкек");
-                  setPrice("");
-                  setPeople("");
-                  setAvatarhotels("");
-
+                  resetForm();
                   setShowModal(true);
                 }}
               >
                 <i className="fa-solid fa-plus"></i>
-
                 <strong>Добавить отель</strong>
-
                 <span>Создать новый отель</span>
               </button>
             </div>
@@ -395,17 +447,16 @@ function Adminhotels() {
                 onChange={(e) => setLocation(e.target.value)}
               >
                 <option value="Бишкек">Бишкек</option>
-
                 <option value="Ош">Ош</option>
               </select>
             </div>
 
             <div className="admin-hotel-modal-input">
-              <label>Цена за ночь</label>
+              <label>Цена за ночь (сом)</label>
 
               <input
                 type="number"
-                placeholder="2500"
+                placeholder="1000"
                 min="1"
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
@@ -435,6 +486,64 @@ function Adminhotels() {
               />
             </div>
 
+            <div className="admin-hotel-modal-input">
+              <label>Скидка (%)</label>
+
+              <input
+                type="number"
+                placeholder="Например: 20"
+                min="0"
+                max="100"
+                value={discount}
+                onChange={(e) => {
+                  const value = e.target.value;
+
+                  if (
+                    value === "" ||
+                    (Number(value) >= 0 && Number(value) <= 100)
+                  ) {
+                    setDiscount(value);
+                  }
+                }}
+              />
+            </div>
+
+            {/* Расчёт цены со скидкой 
+            <div
+              className="admin-hotel-modal-input"
+              style={{
+                padding: "15px",
+                background: "#f5f8f2",
+                borderRadius: "8px",
+              }}
+            >
+              <label>Расчёт цены со скидкой</label>
+
+              {Number(price) > 0 &&
+              Number(discount) >= 0 &&
+              Number(discount) <= 100 ? (
+                <>
+                  <p style={{ margin: "8px 0", color: "#666" }}>
+                    {Number(price).toLocaleString("ru-RU")} × (1 −{" "}
+                    {Number(discount)} / 100)
+                  </p>
+
+                  <h3 style={{ margin: "8px 0", color: "#2e7d32" }}>
+                    {discountPrice.toLocaleString("ru-RU")} сом / ночь
+                  </h3>
+
+                  <p style={{ margin: 0, color: "#666" }}>
+                    Экономия:{" "}
+                    {(Number(price) - discountPrice).toLocaleString("ru-RU")}{" "}
+                    сом за ночь
+                  </p>
+                </>
+              ) : (
+                <p>Введите цену и скидку от 0 до 100%</p>
+              )}
+            </div>
+            */}
+
             <div className="admin-hotel-modal-buttons">
               <button className="admin-hotel-modal-cancel" onClick={closeModal}>
                 Отмена
@@ -459,4 +568,3 @@ function Adminhotels() {
 }
 
 export default Adminhotels;
-/*hotel*/

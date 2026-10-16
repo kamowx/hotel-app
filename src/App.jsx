@@ -22,6 +22,7 @@ import Adminsignup from "./screens/adminsignup";
 import Adminsignin from "./screens/adminsignin";
 import Editprofile from "./screens/editprofile";
 import Adminuplususer from "./screens/adminuplususer";
+import Adminuser from "./screens/adminuser";
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
         <Route path="/adminsignin" element={<Adminsignin />} />
         <Route path="/editprofile" element={<Editprofile />} />
         <Route path="/adminuplususer" element={<Adminuplususer />} />
+        <Route path="/adminuser" element={<Adminuser />} />
       </Routes>
     </BrowserRouter>
   );

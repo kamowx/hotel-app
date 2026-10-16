@@ -13,6 +13,7 @@ function Signup() {
   const [numberphone, setNumberphone] = useState("");
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
+  const [check, setCheck] = useState("");
 
   const allUser = async () => {
     try {
@@ -73,6 +74,7 @@ function Signup() {
           password1: password1,
           password2: password2,
           userstatus: "user",
+          check: "0",
         },
       });
 

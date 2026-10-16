@@ -14,10 +14,14 @@ function EditProfile() {
   const [email, setEmail] = useState("");
 
   const [showPhotoModal, setShowPhotoModal] = useState(false);
-
   const [photo, setPhoto] = useState("");
-
   const [newPhoto, setNewPhoto] = useState("");
+
+  // Смена пароля
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
   const id = JSON.parse(localStorage.getItem("id"));
 
@@ -52,21 +56,25 @@ function EditProfile() {
     allUser();
   }, []);
 
+  // Открыть изменение фото
   const openPhotoModal = () => {
     setNewPhoto(photo);
     setShowPhotoModal(true);
   };
 
+  // Сохранить фото
   const savePhoto = () => {
     setPhoto(newPhoto);
     setShowPhotoModal(false);
   };
 
+  // Отменить изменение фото
   const cancelPhoto = () => {
     setNewPhoto(photo);
     setShowPhotoModal(false);
   };
 
+  // Сохранить данные профиля
   const saveProfile = async () => {
     if (!name.trim() || !surname.trim() || !phone.trim() || !email.trim()) {
       alert("Заполните все поля");
@@ -77,7 +85,7 @@ function EditProfile() {
       (item) => item.email == email && item.id != id,
     );
 
-    if (checkEmail == true) {
+    if (checkEmail) {
       alert("Такой пользователь уже существует");
       return;
     }
@@ -86,7 +94,7 @@ function EditProfile() {
       (item) => item.numberphone == phone && item.id != id,
     );
 
-    if (checkNumberphone == true) {
+    if (checkNumberphone) {
       alert("Пользователь с таким номером уже зарегистрирован");
       return;
     }
@@ -96,6 +104,7 @@ function EditProfile() {
         method: "PUT",
         url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${id}`,
         data: {
+          ...user,
           firstname: name,
           lastname: surname,
           numberphone: phone,
@@ -107,13 +116,65 @@ function EditProfile() {
       console.log("PUT", response);
 
       if (response.status === 200) {
+        setUser(response.data);
         alert("Данные сохранены");
         navigate("/profile");
       }
     } catch (error) {
       console.error(error);
-
       alert("Ошибка при сохранении");
+    }
+  };
+
+  // Изменить пароль
+  const changePassword = async () => {
+    if (!oldPassword || !newPassword || !repeatPassword) {
+      alert("Заполните все поля пароля");
+      return;
+    }
+
+    // Проверяем старый пароль
+    if (oldPassword !== user?.password1 && oldPassword !== user?.password2) {
+      alert("Старый пароль неправильный");
+      return;
+    }
+
+    // Проверяем совпадение новых паролей
+    if (newPassword !== repeatPassword) {
+      alert("Новые пароли не совпадают");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      alert("Новый пароль должен содержать минимум 6 символов");
+      return;
+    }
+
+    try {
+      const response = await axios({
+        method: "PUT",
+        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${id}`,
+        data: {
+          ...user,
+          password1: newPassword,
+          password2: newPassword,
+        },
+      });
+
+      console.log("PUT PASSWORD", response);
+
+      if (response.status === 200) {
+        setUser(response.data);
+
+        setOldPassword("");
+        setNewPassword("");
+        setRepeatPassword("");
+
+        alert("Пароль успешно изменён");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Ошибка при смене пароля");
     }
   };
 
@@ -131,10 +192,10 @@ function EditProfile() {
         <div className="edit-profile-content">
           <div className="edit-profile-title">
             <h1>Редактирование</h1>
-
             <p>Измените свои личные данные</p>
           </div>
 
+          {/* Фото пользователя */}
           <div className="edit-photo-box">
             <div className="edit-profile-photo">
               {photo ? (
@@ -151,9 +212,9 @@ function EditProfile() {
           </div>
 
           <div className="edit-profile-form">
+            {/* Имя */}
             <div className="edit-input-box">
               <label>Имя</label>
-
               <input
                 type="text"
                 value={name}
@@ -162,9 +223,9 @@ function EditProfile() {
               />
             </div>
 
+            {/* Фамилия */}
             <div className="edit-input-box">
               <label>Фамилия</label>
-
               <input
                 type="text"
                 value={surname}
@@ -173,9 +234,9 @@ function EditProfile() {
               />
             </div>
 
+            {/* Телефон */}
             <div className="edit-input-box">
               <label>Номер телефона</label>
-
               <input
                 type="tel"
                 value={phone}
@@ -184,9 +245,9 @@ function EditProfile() {
               />
             </div>
 
+            {/* Email */}
             <div className="edit-input-box">
               <label>Email</label>
-
               <input
                 type="email"
                 value={email}
@@ -206,9 +267,68 @@ function EditProfile() {
             >
               Отмена
             </button>
+
+            {/* Смена пароля */}
+            <div className="edit-profile-title">
+              <h1>Смена пароля</h1>
+              <p>Введите старый пароль и придумайте новый</p>
+            </div>
+
+            <div className="edit-input-box">
+              <label>Старый пароль</label>
+              <input
+                type="password"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                placeholder="Введите старый пароль"
+              />
+            </div>
+
+            <div className="edit-input-box">
+              <label>Новый пароль</label>
+              <input
+                type={showNewPassword ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Введите новый пароль"
+              />
+            </div>
+
+            <div className="edit-input-box">
+              <label>Повторите новый пароль</label>
+              <input
+                type={showNewPassword ? "text" : "password"}
+                value={repeatPassword}
+                onChange={(e) => setRepeatPassword(e.target.value)}
+                placeholder="Повторите новый пароль"
+              />
+            </div>
+
+            <button
+              type="button"
+              className="edit-save-button"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+            >
+              <i
+                className={
+                  showNewPassword ? "fa-solid fa-eye-slash" : "fa-solid fa-eye"
+                }
+              ></i>
+              {showNewPassword ? "Скрыть пароль" : "Показать пароль"}
+            </button>
+
+            <button
+              type="button"
+              className="edit-save-button"
+              onClick={changePassword}
+            >
+              <i className="fa-solid fa-lock"></i>
+              Изменить пароль
+            </button>
           </div>
         </div>
 
+        {/* Модальное окно изменения фото */}
         {showPhotoModal && (
           <div className="photo-modal-overlay">
             <div className="photo-modal">
@@ -249,4 +369,3 @@ function EditProfile() {
 }
 
 export default EditProfile;
-/*hotel*/

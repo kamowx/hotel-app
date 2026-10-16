@@ -7,70 +7,62 @@ function Hotels() {
   const navigate = useNavigate();
 
   const [selectedHotel, setSelectedHotel] = useState(null);
-
   const [showPayModal, setShowPayModal] = useState(false);
   const [guests, setGuests] = useState("1");
   const [date1, setDate1] = useState("");
   const [date2, setDate2] = useState("");
   const [photoIndex, setPhotoIndex] = useState(0);
-
-  // Бронирования только текущего пользователя
   const [bookedDates, setBookedDates] = useState([]);
 
+  // Получаем данные отеля
   const getHotel = async () => {
     try {
-      const response = await axios({
-        method: "GET",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/hotels/${id}`,
-      });
-
-      console.log("GET HOTEL:", response);
+      const response = await axios.get(
+        `https://6ac221b73f4ae78f6944db9c.mockapi.io/hotels/${id}`,
+      );
 
       if (response.status === 200) {
         setSelectedHotel(response.data);
       }
     } catch (error) {
-      console.error("GET HOTEL ERROR:", error);
+      console.error("Ошибка загрузки отеля:", error);
+      alert("Не удалось загрузить отель");
     }
   };
 
-  // Загружаем бронирования только текущего пользователя
   const getBookings = async () => {
+    const storedId = localStorage.getItem("id");
+
+    if (!storedId) return;
+
+    const userId = String(storedId).replaceAll('"', "");
+
     try {
-      const userId = String(localStorage.getItem("id")).replaceAll('"', "");
+      const response = await axios.get(
+        `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
+      );
 
-      if (!userId) {
-        return;
-      }
+      const bookings = Array.isArray(response.data.bookhotel)
+        ? response.data.bookhotel
+        : [];
 
-      const response = await axios({
-        method: "GET",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
-      });
+      const activeBookings = bookings.filter(
+        (booking) =>
+          String(booking.hotelId) === String(id) &&
+          booking.status !== "Отменен" &&
+          booking.status !== "Отменено",
+      );
 
-      if (response.status === 200) {
-        const bookings = Array.isArray(response.data.bookhotel)
-          ? response.data.bookhotel
-          : [];
-
-        const myHotelBookings = bookings.filter(
-          (booking) =>
-            String(booking.hotelId) === String(id) &&
-            booking.status !== "Отменен" &&
-            booking.status !== "Отменено",
-        );
-
-        setBookedDates(myHotelBookings);
-      }
+      setBookedDates(activeBookings);
     } catch (error) {
       console.error("Ошибка загрузки бронирований:", error);
     }
   };
 
   useEffect(() => {
-    const userId = localStorage.getItem("id");
+    const storedId = localStorage.getItem("id");
 
-    if (!userId) {
+    if (!storedId) {
       navigate("/signin");
       return;
     }
@@ -79,26 +71,38 @@ function Hotels() {
     getBookings();
   }, [id]);
 
-  const photos =
-    selectedHotel?.images?.length > 0
-      ? selectedHotel.images
-      : selectedHotel?.avatarhotels
-        ? [selectedHotel.avatarhotels]
-        : [];
+  const photos = selectedHotel
+    ? Array.isArray(selectedHotel.images)
+      ? selectedHotel.images.filter(Boolean)
+      : selectedHotel.image
+        ? [selectedHotel.image]
+        : selectedHotel.avatarhotels
+          ? [selectedHotel.avatarhotels]
+          : []
+    : [];
+
+  // Цена и скидка
+  const price = Number(selectedHotel?.price) || 0;
+
+  const discount = Math.min(
+    100,
+    Math.max(0, Number(selectedHotel?.discount) || 0),
+  );
+
+  const finalPrice = Number((price - (price * discount) / 100).toFixed(2));
 
   const forpriceday =
-    date1 && date2
-      ? Math.max(
-          1,
-          Math.round(
-            (new Date(date2) - new Date(date1)) / (1000 * 60 * 60 * 24),
-          ),
+    date1 && date2 && date2 > date1
+      ? Math.round(
+          (new Date(date2 + "T00:00:00").getTime() -
+            new Date(date1 + "T00:00:00").getTime()) /
+            (1000 * 60 * 60 * 24),
         )
       : 0;
 
-  const allprice = selectedHotel
-    ? forpriceday * Number(selectedHotel.price)
-    : 0;
+  const allprice = Number((forpriceday * finalPrice).toFixed(2));
+
+  const savedMoney = Number((forpriceday * price - allprice).toFixed(2));
 
   const getToday = () => {
     const today = new Date();
@@ -109,25 +113,26 @@ function Hotels() {
     return `${year}-${month}-${day}`;
   };
 
-  // Проверяем пересечение дат только с бронированиями этого пользователя
+  const isDateBooked = (date) => {
+    if (!date) return false;
+
+    return bookedDates.some(
+      (booking) => date >= booking.date1 && date < booking.date2,
+    );
+  };
+
   const checkBookedDates = (startDate, endDate) => {
     return bookedDates.some(
       (booking) => startDate < booking.date2 && endDate > booking.date1,
     );
   };
 
-  const isDateBooked = (date) => {
-    return bookedDates.some(
-      (booking) => date >= booking.date1 && date < booking.date2,
-    );
-  };
-
   const prevPhoto = () => {
-    setPhotoIndex((index) => (index === 0 ? photos.length - 1 : index - 1));
+    setPhotoIndex((prev) => (prev === 0 ? photos.length - 1 : prev - 1));
   };
 
   const nextPhoto = () => {
-    setPhotoIndex((index) => (index === photos.length - 1 ? 0 : index + 1));
+    setPhotoIndex((prev) => (prev === photos.length - 1 ? 0 : prev + 1));
   };
 
   const SaveBooking = async () => {
@@ -160,18 +165,23 @@ function Hotels() {
       return;
     }
 
-    // Проверяем только бронирования текущего пользователя
-    try {
-      const bookingsResponse = await axios({
-        method: "GET",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
-      });
+    if (forpriceday <= 0) {
+      alert("Проверьте даты проживания");
+      return;
+    }
 
-      const myBookings = Array.isArray(bookingsResponse.data.bookhotel)
-        ? bookingsResponse.data.bookhotel
+    try {
+      const userResponse = await axios.get(
+        `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
+      );
+
+      const currentUser = userResponse.data;
+
+      const oldBookings = Array.isArray(currentUser.bookhotel)
+        ? currentUser.bookhotel
         : [];
 
-      const hasConflict = myBookings.some(
+      const hasConflict = oldBookings.some(
         (booking) =>
           String(booking.hotelId) === String(selectedHotel.id) &&
           booking.status !== "Отменен" &&
@@ -181,80 +191,65 @@ function Hotels() {
       );
 
       if (hasConflict) {
-        setBookedDates(
-          myBookings.filter(
-            (booking) =>
-              String(booking.hotelId) === String(selectedHotel.id) &&
-              booking.status !== "Отменен" &&
-              booking.status !== "Отменено",
-          ),
-        );
-
         alert("Вы уже бронировали этот отель на эти даты!");
         return;
       }
-    } catch (error) {
-      console.error("Ошибка проверки дат:", error);
-      alert("Не удалось проверить бронирования. Попробуйте ещё раз.");
-      return;
-    }
 
-    const newBooking = {
-      userId: userId,
-      hotelId: selectedHotel.id,
-      name: selectedHotel.namehotels,
-      city: selectedHotel.location,
-      price: selectedHotel.price,
-      date1: date1,
-      date2: date2,
-      forpriceday: forpriceday,
-      allprice: allprice,
-      guests: guests,
-      status: "Новый",
-    };
+      // Проверяем баланс
+      const balance = Number(currentUser.check) || 0;
+      const totalPrice = Number(allprice.toFixed(2));
 
-    console.log("Новое бронирование:", newBooking);
+      if (balance < totalPrice) {
+        alert(
+          `Недостаточно денег на счёте! Ваш баланс: ${balance} сом. Нужно: ${totalPrice} сом.`,
+        );
+        return;
+      }
 
-    try {
-      const userResponse = await axios({
-        method: "GET",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
-      });
+      // Создаём бронь
+      const newBooking = {
+        userId: userId,
+        hotelId: selectedHotel.id,
+        name: selectedHotel.namehotels,
+        city: selectedHotel.location,
+        price: price,
+        discount: discount,
+        discountPrice: finalPrice,
+        date1: date1,
+        date2: date2,
+        forpriceday: forpriceday,
+        allprice: totalPrice,
+        guests: guests,
+        status: "Новый",
+        refunded: false,
+      };
 
-      if (userResponse.status === 200) {
-        const currentUser = userResponse.data;
+      const newBalance = Number((balance - totalPrice).toFixed(2));
 
-        const oldBookings = Array.isArray(currentUser.bookhotel)
-          ? currentUser.bookhotel
-          : [];
+      const response = await axios.put(
+        `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
+        {
+          ...currentUser,
+          check: newBalance,
+          bookhotel: [...oldBookings, newBooking],
+        },
+      );
 
-        const newBookings = [...oldBookings, newBooking];
+      if (response.status === 200) {
+        setBookedDates((prev) => [...prev, newBooking]);
+        setShowPayModal(false);
 
-        const response = await axios({
-          method: "PUT",
-          url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
-          data: {
-            ...currentUser,
-            bookhotel: newBookings,
-          },
-        });
+        alert(
+          `Отель успешно забронирован! Списано ${totalPrice} сом. Остаток на счёте: ${newBalance} сом.`,
+        );
 
-        console.log("PUT BOOKING:", response);
-
-        if (response.status === 200) {
-          setBookedDates((prev) => [...prev, newBooking]);
-          setShowPayModal(false);
-
-          alert("Отель успешно забронирован!");
-
-          setDate1("");
-          setDate2("");
-          setGuests("1");
-        }
+        setDate1("");
+        setDate2("");
+        setGuests("1");
       }
     } catch (error) {
       console.error("Ошибка при бронировании:", error);
-      alert("Ошибка при сохранении на сервере");
+      alert("Не удалось выполнить бронирование. Попробуйте ещё раз.");
     }
   };
 
@@ -319,8 +314,23 @@ function Hotels() {
           <h1>{selectedHotel.namehotels}</h1>
 
           <div className="details-price">
-            {selectedHotel.price} сом
-            <span>/ ночь</span>
+            {discount > 0 && (
+              <div>
+                <span className="details-old-price">
+                  {price.toLocaleString("ru-RU")} сом
+                </span>
+
+                <span className="details-discount">-{discount}%</span>
+              </div>
+            )}
+
+            <div>
+              {finalPrice.toLocaleString("ru-RU", {
+                maximumFractionDigits: 2,
+              })}{" "}
+              сом
+              <span>/ ночь</span>
+            </div>
           </div>
 
           <div className="details-divider"></div>
@@ -469,9 +479,39 @@ function Hotels() {
                         <strong>{forpriceday}</strong>
                       </div>
 
+                      {discount > 0 && (
+                        <>
+                          <div>
+                            <span>Цена без скидки</span>
+                            <strong>
+                              {(forpriceday * price).toLocaleString("ru-RU", {
+                                maximumFractionDigits: 2,
+                              })}{" "}
+                              сом
+                            </strong>
+                          </div>
+
+                          <div>
+                            <span>Скидка ({discount}%)</span>
+                            <strong>
+                              -
+                              {savedMoney.toLocaleString("ru-RU", {
+                                maximumFractionDigits: 2,
+                              })}{" "}
+                              сом
+                            </strong>
+                          </div>
+                        </>
+                      )}
+
                       <div>
                         <span>Итого к оплате</span>
-                        <strong>{allprice} сом</strong>
+                        <strong>
+                          {allprice.toLocaleString("ru-RU", {
+                            maximumFractionDigits: 2,
+                          })}{" "}
+                          сом
+                        </strong>
                       </div>
                     </div>
                   )}

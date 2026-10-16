@@ -13,6 +13,12 @@ function Home() {
 
   const [favorites, setFavorites] = useState([]);
 
+  //Range
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(10000);
+
+  const [maxPeople, setMaxPeople] = useState(10);
+
   const getHotels = async () => {
     try {
       const response = await axios({
@@ -139,9 +145,15 @@ function Home() {
       hotelLocation.toLowerCase().includes(search.toLowerCase()) ||
       hotelPrice.includes(search);
 
-    const matchesCategory = category === "Все" || hotelLocation === category;
+    //filter
+    const price = Number(hotel.price) || 0;
+    const people = Number(hotel.people) || 0;
 
-    return matchesSearch && matchesCategory;
+    const matchesCategory = category === "Все" || hotelLocation === category;
+    const matchesPrice = price >= minPrice && price <= maxPrice;
+    const matchesPeople = people <= maxPeople;
+
+    return matchesSearch && matchesCategory && matchesPrice && matchesPeople;
   });
 
   return (
@@ -204,6 +216,58 @@ function Home() {
             >
               Ош
             </button>
+
+            <div>
+              <label>Мест до:{maxPeople}</label>
+              <br />
+
+              <input
+                type="range"
+                min="1"
+                max="10"
+                step="1"
+                value={maxPeople}
+                className="rangepople"
+                onChange={(e) => setMaxPeople(Number(e.target.value))}
+              />
+            </div>
+          </div>
+
+          <div className="home-categories price-filter">
+            <div>
+              <label>Цена от: {minPrice}</label>
+              <br />
+
+              <input
+                name="range"
+                type="range"
+                min="0"
+                max="10000"
+                step="100"
+                value={minPrice}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  setMinPrice(Math.min(value, maxPrice));
+                }}
+              />
+            </div>
+
+            <div>
+              <label>Цена до: {maxPrice} сом</label>
+              <br />
+
+              <input
+                type="range"
+                min="0"
+                max="10000"
+                step="100"
+                value={maxPrice}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  setMaxPrice(Math.max(value, minPrice));
+                }}
+              />
+            </div>
           </div>
 
           <div className="home-hotels">
@@ -217,6 +281,15 @@ function Home() {
               </p>
             ) : (
               filteredHotels.map((hotel) => {
+                // Расчёт скидки
+                const price = Number(hotel.price) || 0;
+                const discount = Math.min(
+                  100,
+                  Math.max(0, Number(hotel.discount) || 0),
+                );
+
+                const finalPrice = price - (price * discount) / 100;
+
                 const isFav = Array.isArray(favorites)
                   ? favorites.some(
                       (item) => String(item.id) === String(hotel.id),
@@ -253,7 +326,6 @@ function Home() {
 
                       <p>
                         <i className="fa-solid fa-location-dot"></i>
-
                         {hotel.location}
                       </p>
 
@@ -264,9 +336,41 @@ function Home() {
 
                       <div className="home-hotel-bottom">
                         <div className="home-hotel-price">
-                          {hotel.price} сом
+                          {discount > 0 ? (
+                            <>
+                              <span
+                                style={{
+                                  textDecoration: "line-through",
+                                  color: "#888",
+                                  marginRight: "8px",
+                                }}
+                              >
+                                {price} сом
+                              </span>
+
+                              <strong>{finalPrice.toFixed(0)} сом</strong>
+                            </>
+                          ) : (
+                            <strong>{price} сом</strong>
+                          )}
+
                           <span>/ ночь</span>
                         </div>
+
+                        {discount > 0 && (
+                          <div className="home-hotel-price">
+                            <span
+                              style={{
+                                color: "red",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              -{discount}%
+                            </span>
+
+                            <span>/ Скидка</span>
+                          </div>
+                        )}
 
                         <Link
                           className="home-hotel-button"

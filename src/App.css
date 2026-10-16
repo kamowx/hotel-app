@@ -5147,3 +5147,196 @@ body {
 .account-option:hover {
   background: #f8fafc;
 }
+
+.price-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.price-filter > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.price-filter label {
+  font-size: 14px;
+  color: #333;
+}
+.price-filter input[type="range"] {
+  width: 100%;
+  accent-color: #9fdb12;
+  cursor: pointer;
+}
+.rangepople {
+  accent-color: #9fdb12;
+}
+
+/* Фон модального окна */
+.admin-user-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 2000;
+}
+
+/* Само модальное окно */
+.admin-user-modal {
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #fff;
+  color: #222;
+  border-radius: 8px;
+}
+
+/* Верхняя часть */
+.admin-user-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.admin-user-modal-header h2 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.admin-user-modal-header p {
+  margin: 0;
+  color: #777;
+  font-size: 14px;
+}
+
+.admin-user-modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  color: #555;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.admin-user-modal-close:hover {
+  color: #000;
+}
+
+.admin-user-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+}
+
+.admin-user-modal-body label {
+  margin-top: 5px;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.admin-user-modal-body input,
+.admin-user-modal-body select {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  color: #222;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.admin-user-modal-body input:focus,
+.admin-user-modal-body select:focus {
+  border-color: #9fdb12;
+  box-shadow: 0 0 0 2px rgba(159, 219, 18, 0.15);
+}
+
+.admin-user-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px 20px;
+  border-top: 1px solid #eee;
+}
+
+.admin-user-cancel-button {
+  padding: 10px 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.admin-user-cancel-button:hover {
+  background: #f5f5f5;
+}
+
+.admin-user-save-button {
+  padding: 10px 16px;
+  border: 1px solid #9fdb12;
+  border-radius: 4px;
+  background: #9fdb12;
+  color: #222;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-user-save-button:hover {
+  background: #8bc20e;
+  border-color: #8bc20e;
+}
+
+@media (max-width: 480px) {
+  .admin-user-modal-backdrop {
+    padding: 10px;
+  }
+
+  .admin-user-modal {
+    max-height: 95vh;
+  }
+
+  .admin-user-modal-header {
+    padding: 15px;
+  }
+
+  .admin-user-modal-header h2 {
+    font-size: 18px;
+  }
+
+  .admin-user-modal-body {
+    padding: 15px;
+  }
+
+  .admin-user-modal-footer {
+    padding: 12px 15px 15px;
+    flex-wrap: wrap;
+  }
+
+  .admin-user-cancel-button,
+  .admin-user-save-button {
+    flex: 1;
+  }
+}
+.ii1 {
+  color: greenyellow;
+}
