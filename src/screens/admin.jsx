@@ -308,6 +308,9 @@ function Admin() {
             <div className="admin-table">
               <div className="admin-table-head">
                 <span>Отель</span>
+                <span>Номер</span>
+                <span>Email</span>
+                <span>Имя-Фамилия</span>
                 <span>Город</span>
                 <span>Дата</span>
                 <span>Гости</span>
@@ -324,7 +327,25 @@ function Admin() {
 
                     <span>{item.name}</span>
                   </div>
-
+                  <span>
+                    <b>
+                      {" "}
+                      {item
+                        ? `${item.numberphone || ""} `.trim()
+                        : "Загрузка..."}
+                    </b>
+                  </span>
+                  <span>
+                    <b>
+                      {" "}
+                      {item ? `${item.email || ""} `.trim() : "Загрузка..."}
+                    </b>
+                  </span>
+                  <span>
+                    <b>
+                      {item.firstname}-{item.lastname}
+                    </b>
+                  </span>
                   <span>{item.city}</span>
 
                   <span>

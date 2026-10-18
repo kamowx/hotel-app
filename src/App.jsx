@@ -23,6 +23,8 @@ import Adminsignin from "./screens/adminsignin";
 import Editprofile from "./screens/editprofile";
 import Adminuplususer from "./screens/adminuplususer";
 import Adminuser from "./screens/adminuser";
+import Support from "./screens/support";
+import Adminsupport from "./screens/adminsupport";
 
 function App() {
   return (
@@ -48,6 +50,8 @@ function App() {
         <Route path="/editprofile" element={<Editprofile />} />
         <Route path="/adminuplususer" element={<Adminuplususer />} />
         <Route path="/adminuser" element={<Adminuser />} />
+        <Route path="/support" element={<Support />} />
+        <Route path="/adminsupport" element={<Adminsupport />} />
       </Routes>
     </BrowserRouter>
   );

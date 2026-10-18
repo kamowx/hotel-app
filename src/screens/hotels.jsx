@@ -14,6 +14,42 @@ function Hotels() {
   const [photoIndex, setPhotoIndex] = useState(0);
   const [bookedDates, setBookedDates] = useState([]);
 
+  //Ползователь
+  const allUser = async () => {
+    try {
+      const response = await axios({
+        method: "GET",
+        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
+      });
+
+      console.log("ВСЕ ДАННЫЕ:", response.data);
+
+      if (response.status === 200) {
+        setUsers(response.data);
+
+        const id = localStorage.getItem("id");
+
+        const currentUser = response.data.find(
+          (item) => String(item.id) === String(id).replaceAll('"', ""),
+        );
+
+        console.log("НАЙДЕННЫЙ USER:", currentUser);
+
+        if (currentUser) {
+          setUser(currentUser);
+        } else {
+          setUser(null);
+        }
+      }
+    } catch (error) {
+      console.error("ОШИБКА ПОЛУЧЕНИЯ ПОЛЬЗОВАТЕЛЯ:", error);
+    }
+  };
+
+  useEffect(() => {
+    allUser();
+  }, []);
+
   // Получаем данные отеля
   const getHotel = async () => {
     try {
@@ -177,6 +213,11 @@ function Hotels() {
 
       const currentUser = userResponse.data;
 
+      const numberphone = currentUser.numberphone;
+      const firstname = currentUser.firstname;
+      const lastname = currentUser.lastname;
+      const email = currentUser.email;
+
       const oldBookings = Array.isArray(currentUser.bookhotel)
         ? currentUser.bookhotel
         : [];
@@ -209,6 +250,10 @@ function Hotels() {
       // Создаём бронь
       const newBooking = {
         userId: userId,
+        numberphone: numberphone,
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
         hotelId: selectedHotel.id,
         name: selectedHotel.namehotels,
         city: selectedHotel.location,

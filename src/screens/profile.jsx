@@ -193,6 +193,19 @@ function Profile() {
 
               <i className="fa-solid fa-chevron-right"></i>
             </Link>
+
+            <Link to="/support" className="profile-action">
+              <div className="profile-action-icon">
+                <i class="fa-solid fa-headset"></i>
+              </div>
+
+              <div>
+                <strong>Служба поддержки</strong>
+                <span>Помощь 24/7</span>
+              </div>
+
+              <i className="fa-solid fa-chevron-right"></i>
+            </Link>
           </div>
 
           <Link to="/editprofile" className="text-decoration-none">

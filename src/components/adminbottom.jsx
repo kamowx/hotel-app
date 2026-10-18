@@ -106,6 +106,10 @@ function Adminbottom() {
             <i class="fa-solid fa-person"></i>
             <span>Пользователи</span>
           </Link>
+          <Link to="/support" className="admin-menu-item">
+            <i class="fa-solid fa-headset"></i>
+            <span>Служба поддержки</span>
+          </Link>
         </div>
 
         <div className="admin-sidebar-bottom">

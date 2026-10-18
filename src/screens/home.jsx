@@ -281,14 +281,19 @@ function Home() {
               </p>
             ) : (
               filteredHotels.map((hotel) => {
-                // Расчёт скидки
+                // Расчёт цены и скидки
                 const price = Number(hotel.price) || 0;
+
                 const discount = Math.min(
                   100,
                   Math.max(0, Number(hotel.discount) || 0),
                 );
 
                 const finalPrice = price - (price * discount) / 100;
+
+                // Перевод сомов в доллары только для отображения
+                const dollarPrice = price / 87;
+                const finalDollarPrice = finalPrice / 87;
 
                 const isFav = Array.isArray(favorites)
                   ? favorites.some(
@@ -336,8 +341,8 @@ function Home() {
 
                       <div className="home-hotel-bottom">
                         <div className="home-hotel-price">
-                          {discount > 0 ? (
-                            <>
+                          <div>
+                            {discount > 0 && (
                               <span
                                 style={{
                                   textDecoration: "line-through",
@@ -347,12 +352,26 @@ function Home() {
                               >
                                 {price} сом
                               </span>
+                            )}
 
-                              <strong>{finalPrice.toFixed(0)} сом</strong>
-                            </>
-                          ) : (
-                            <strong>{price} сом</strong>
-                          )}
+                            <strong>{finalPrice.toFixed(0)} сом</strong>
+                          </div>
+
+                          <div>
+                            {discount > 0 && (
+                              <span
+                                style={{
+                                  textDecoration: "line-through",
+                                  color: "#888",
+                                  marginRight: "8px",
+                                }}
+                              >
+                                {dollarPrice.toFixed(2)} $
+                              </span>
+                            )}
+
+                            <strong>{finalDollarPrice.toFixed(2)} $</strong>
+                          </div>
 
                           <span>/ ночь</span>
                         </div>

@@ -152,6 +152,9 @@ function Adminconfirmed() {
             <div className="admin-table">
               <div className="admin-table-head">
                 <span>Отель</span>
+                <span>Номер</span>
+                <span>Email</span>
+                <span>Имя-Фамилия</span>
                 <span>Город</span>
                 <span>Заезд</span>
                 <span>Гости</span>
@@ -168,7 +171,17 @@ function Adminconfirmed() {
 
                     <strong>{item.name}</strong>
                   </div>
-
+                  <span>
+                    <b> {item.numberphone}</b>
+                  </span>
+                  <span>
+                    <b> {item.email}</b>
+                  </span>
+                  <span>
+                    <b>
+                      {item.firstname}-{item.lastname}
+                    </b>
+                  </span>
                   <span>{item.city}</span>
 
                   <span>{item.date1}</span>
