@@ -5,7 +5,9 @@ import Bottomnav from "../components/bottomnav";
 
 function Profile() {
   const navigate = useNavigate();
-
+  const [darkTheme, setDarkTheme] = useState(
+    localStorage.getItem("theme") === "dark",
+  );
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
   const logout = () => {
@@ -81,7 +83,7 @@ function Profile() {
   };
 
   return (
-    <div className="app">
+    <div className={`app ${darkTheme ? "dark-theme" : ""}`}>
       <div className="onboarding home-onboarding">
         <div className="home-header">
           <Link to="/home" className="profile-back">

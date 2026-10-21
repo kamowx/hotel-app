@@ -5,7 +5,9 @@ import Bottomnav from "../components/bottomnav";
 
 function Favorites() {
   const navigate = useNavigate();
-
+  const [darkTheme, setDarkTheme] = useState(
+    localStorage.getItem("theme") === "dark",
+  );
   const [favorites, setFavorites] = useState([]);
 
   const getFavorites = async () => {
@@ -90,71 +92,73 @@ function Favorites() {
   };
 
   return (
-    <div className="hotel-page">
-      <div className="mobile-app">
-        <div className="page-content">
-          <div className="mb-4">
-            <h2 className="mb-1">Мои избранные</h2>
+    <div className={`app ${darkTheme ? "dark-theme" : ""}`}>
+      <div className="hotel-page">
+        <div className="mobile-app">
+          <div className="page-content">
+            <div className="mb-4">
+              <h2 className="mb-1">Мои избранные</h2>
 
-            <p className="text-secondary mb-0">Сохраненные отели</p>
-          </div>
+              <p className="text-secondary mb-0">Сохраненные отели</p>
+            </div>
 
-          {favorites.length === 0 ? (
-            <p className="text-secondary">В избранном пока ничего нет</p>
-          ) : (
-            favorites.map((item, index) => (
-              <div className="hotel-card mb-3" key={item.id || index}>
-                <div className="hotel-photo">
-                  {item.avatarhotels ? (
-                    <img
-                      className="home-hotel-image"
-                      src={item.avatarhotels}
-                      alt={item.namehotels}
-                    />
-                  ) : (
-                    <span>Фото отеля</span>
-                  )}
-                </div>
+            {favorites.length === 0 ? (
+              <p className="text-secondary">В избранном пока ничего нет</p>
+            ) : (
+              favorites.map((item, index) => (
+                <div className="hotel-card mb-3" key={item.id || index}>
+                  <div className="hotel-photo">
+                    {item.avatarhotels ? (
+                      <img
+                        className="home-hotel-image"
+                        src={item.avatarhotels}
+                        alt={item.namehotels}
+                      />
+                    ) : (
+                      <span>Фото отеля</span>
+                    )}
+                  </div>
 
-                <div className="p-3">
-                  <h5 className="mb-1">{item.namehotels}</h5>
+                  <div className="p-3">
+                    <h5 className="mb-1">{item.namehotels}</h5>
 
-                  <p className="text-secondary mb-2">{item.location}</p>
+                    <p className="text-secondary mb-2">{item.location}</p>
 
-                  <p className="mb-1">
-                    <small>{item.people} местная</small>
-                  </p>
+                    <p className="mb-1">
+                      <small>{item.people} местная</small>
+                    </p>
 
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div>
-                      <b>{item.price} сом</b>
+                    <div className="d-flex justify-content-between align-items-center">
+                      <div>
+                        <b>{item.price} сом</b>
 
-                      <small className="text-secondary"> / ночь</small>
-                    </div>
+                        <small className="text-secondary"> / ночь</small>
+                      </div>
 
-                    <div>
-                      <button
-                        className="btn btn-danger me-2"
-                        onClick={() => removeFavorite(item)}
-                      >
-                        ♥
-                      </button>
+                      <div>
+                        <button
+                          className="btn btn-danger me-2"
+                          onClick={() => removeFavorite(item)}
+                        >
+                          ♥
+                        </button>
 
-                      <Link
-                        className="btn btn-primary"
-                        to={`/hotels/${item.id}`}
-                      >
-                        Подробнее
-                      </Link>
+                        <Link
+                          className="btn btn-primary"
+                          to={`/hotels/${item.id}`}
+                        >
+                          Подробнее
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
-        </div>
+              ))
+            )}
+          </div>
 
-        <Bottomnav />
+          <Bottomnav />
+        </div>
       </div>
     </div>
   );

@@ -5545,3 +5545,185 @@ body {
     padding: 10px;
   }
 }
+/*Тема*/
+
+/* Кнопка темы */
+.theme-button {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #222222;
+  cursor: pointer;
+}
+
+/* Тёмная тема только внутри приложения */
+.app.dark-theme {
+  background: #121212;
+  color: #ffffff;
+}
+
+.app.dark-theme .onboarding {
+  background: #121212;
+  color: #ffffff;
+}
+
+.app.dark-theme .home-header,
+.app.dark-theme .home-page,
+.app.dark-theme .home-search,
+.app.dark-theme .home-categories,
+.app.dark-theme .home-hotels,
+.app.dark-theme .home-section-title {
+  background: #121212;
+  color: #ffffff;
+}
+
+.app.dark-theme .home-logo,
+.app.dark-theme .logo-text,
+.app.dark-theme .home-user-name,
+.app.dark-theme .home-user-text,
+.app.dark-theme .home-search h1,
+.app.dark-theme .home-search p,
+.app.dark-theme .home-section-title h2,
+.app.dark-theme .home-categories label {
+  color: #ffffff;
+}
+
+.app.dark-theme .home-hotel-card {
+  background: #1e1e1e;
+  color: #ffffff;
+  border-color: #333333;
+}
+
+.app.dark-theme .home-hotel-info,
+.app.dark-theme .home-hotel-info h3,
+.app.dark-theme .home-hotel-info p,
+.app.dark-theme .home-hotel-price strong {
+  color: #ffffff;
+}
+
+.app.dark-theme .home-search-box {
+  background: #252525;
+  border-color: #444444;
+}
+
+.app.dark-theme .home-search-box input {
+  background: transparent;
+  color: #ffffff;
+}
+
+.app.dark-theme .home-search-box input::placeholder {
+  color: #aaaaaa;
+}
+
+.app.dark-theme .home-categories button {
+  background: #252525;
+  color: #ffffff;
+  border-color: #444444;
+}
+
+.app.dark-theme .home-categories button.selected {
+  background: #9fdb12;
+  color: #121212;
+}
+
+.app.dark-theme .theme-button {
+  background: #252525;
+  color: #ffffff;
+  border-color: #444444;
+}
+
+.app.dark-theme .support-chat-date,
+.app.dark-theme .text-secondary {
+  color: #bbbbbb !important;
+}
+
+/* Тёмная тема для страниц внутри приложения */
+.app.dark-theme {
+  background: #121212 !important;
+  color: #ffffff !important;
+  min-height: 100vh;
+}
+
+/* Фон страниц */
+.app.dark-theme .hotel-page,
+.app.dark-theme .mobile-app,
+.app.dark-theme .page-content {
+  background: #121212 !important;
+  color: #ffffff !important;
+}
+
+/* Заголовки и обычный текст */
+.app.dark-theme .page-content h1,
+.app.dark-theme .page-content h2,
+.app.dark-theme .page-content h3,
+.app.dark-theme .page-content h4,
+.app.dark-theme .page-content h5,
+.app.dark-theme .page-content p,
+.app.dark-theme .page-content b,
+.app.dark-theme .page-content strong,
+.app.dark-theme .page-content small {
+  color: #ffffff;
+}
+
+/* Карточки отелей */
+.app.dark-theme .hotel-card {
+  background: #1e1e1e !important;
+  color: #ffffff !important;
+  border: 1px solid #333333 !important;
+}
+
+/* Текст внутри карточек */
+.app.dark-theme .hotel-card h5,
+.app.dark-theme .hotel-card p,
+.app.dark-theme .hotel-card b,
+.app.dark-theme .hotel-card strong,
+.app.dark-theme .hotel-card small {
+  color: #ffffff;
+}
+
+/* Второстепенный текст */
+.app.dark-theme .text-secondary {
+  color: #bbbbbb !important;
+}
+
+/* Область фотографий */
+.app.dark-theme .hotel-photo,
+.app.dark-theme .hotel-card-image {
+  background: #252525;
+  color: #ffffff;
+}
+
+/* Нижняя навигация */
+.app.dark-theme .mobile-app .bottom-nav,
+.app.dark-theme .mobile-app .bottomnav {
+  background: #1e1e1e;
+  border-color: #333333;
+}
+
+/* Профиль */
+.app.dark-theme .profile-content {
+  background: #121212 !important;
+  color: #ffffff !important;
+}
+
+.app.dark-theme .profile-content h1,
+.app.dark-theme .profile-content h2,
+.app.dark-theme .profile-content p,
+.app.dark-theme .profile-content span,
+.app.dark-theme .profile-content strong {
+  color: #ffffff;
+}
+
+.app.dark-theme .profile-card,
+.app.dark-theme .profile-action {
+  background: #1e1e1e !important;
+  color: #ffffff !important;
+  border-color: #333333 !important;
+}
+
+.app.dark-theme .profile-back {
+  color: #ffffff;
+}

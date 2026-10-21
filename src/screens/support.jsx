@@ -2,6 +2,10 @@ import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Bottomnav from "../components/bottomnav";
 import axios from "axios";
+import moment from "moment";
+import "moment/locale/ru";
+
+moment.locale("ru");
 
 const CHAT_URL = "https://6ad252f566cd28aed82de514.mockapi.io/chat";
 const USER_URL = "https://6ac221b73f4ae78f6944db9c.mockapi.io/data";
@@ -59,10 +63,12 @@ function Support() {
         const newChat = {
           userId: String(user.id),
           firstname: user.firstname || "",
+          avatar: user.avatar || "",
           lastname: user.lastname || "",
           email: user.email || "",
           numberphone: user.numberphone || "",
           support: "[]",
+          chatstatus: "Не прочитано",
         };
 
         const createResponse = await axios.post(CHAT_URL, newChat);
@@ -116,10 +122,12 @@ function Support() {
         id: String(Date.now()),
         text: message.trim(),
         sender: "user",
+        chatstatus: "Не прочитано",
         time: now.toLocaleTimeString("ru-RU", {
           hour: "2-digit",
           minute: "2-digit",
         }),
+        date: now.toISOString(),
       };
 
       const updatedMessages = [...oldMessages, newMessage];
@@ -127,6 +135,7 @@ function Support() {
       const updateResponse = await axios.put(`${CHAT_URL}/${chat.id}`, {
         ...currentChat,
         support: JSON.stringify(updatedMessages),
+        chatstatus: "Не прочитано",
       });
 
       setChat(updateResponse.data);
@@ -152,7 +161,7 @@ function Support() {
 
   return (
     <div className="app">
-      <div className="onboarding support-chat-page">
+      <div className="onboarding home-onboarding">
         <div className="support-chat-header">
           <Link to="/home" className="support-back-button">
             <i className="fa-solid fa-arrow-left"></i>
@@ -195,7 +204,10 @@ function Support() {
                 <p>{item.text}</p>
 
                 <div className="support-message-time">
-                  {item.time}
+                  {item.date
+                    ? moment(item.date).format("DD.MM.YYYY HH:mm")
+                    : item.time}
+
                   {item.sender === "user" && (
                     <i className="fa-solid fa-check-double"></i>
                   )}
@@ -229,4 +241,3 @@ function Support() {
 }
 
 export default Support;
-//support

@@ -10,14 +10,28 @@ function Home() {
   const [category, setCategory] = useState("Все");
 
   const [hotels, setHotels] = useState([]);
-
   const [favorites, setFavorites] = useState([]);
 
-  //Range
+  // Тема сохраняется в localStorage
+  const [darkTheme, setDarkTheme] = useState(
+    localStorage.getItem("theme") === "dark",
+  );
+
+  // Range
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(10000);
-
   const [maxPeople, setMaxPeople] = useState(10);
+
+  // Переключение темы
+  const toggleTheme = () => {
+    if (darkTheme) {
+      localStorage.removeItem("theme");
+      setDarkTheme(false);
+    } else {
+      localStorage.setItem("theme", "dark");
+      setDarkTheme(true);
+    }
+  };
 
   const getHotels = async () => {
     try {
@@ -130,7 +144,6 @@ function Home() {
       }
     } catch (error) {
       console.error("PUT FAVORITES ERROR:", error);
-
       alert("Ошибка при сохранении избранного");
     }
   };
@@ -145,11 +158,12 @@ function Home() {
       hotelLocation.toLowerCase().includes(search.toLowerCase()) ||
       hotelPrice.includes(search);
 
-    //filter
+    // Фильтр
     const price = Number(hotel.price) || 0;
     const people = Number(hotel.people) || 0;
 
     const matchesCategory = category === "Все" || hotelLocation === category;
+
     const matchesPrice = price >= minPrice && price <= maxPrice;
     const matchesPeople = people <= maxPeople;
 
@@ -157,7 +171,7 @@ function Home() {
   });
 
   return (
-    <div className="app">
+    <div className={`app ${darkTheme ? "dark-theme" : ""}`}>
       <div className="onboarding home-onboarding">
         <div className="home-header">
           <div className="home-logo">
@@ -172,15 +186,25 @@ function Home() {
 
           <div className="home-user">
             <div className="home-user-name">Привет!</div>
-
             <div className="home-user-text">Найдите свой отель</div>
           </div>
+
+          {/* Кнопка переключения темы */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="theme-button"
+            aria-label="Переключить тему"
+          >
+            <i
+              className={darkTheme ? "fa-solid fa-sun" : "fa-solid fa-moon"}
+            ></i>
+          </button>
         </div>
 
         <div className="home-page">
           <div className="home-search">
             <h1>Найдите отель</h1>
-
             <p>Найдите идеальное место для вашего отдыха</p>
 
             <div className="home-search-box">
@@ -218,7 +242,7 @@ function Home() {
             </button>
 
             <div>
-              <label>Мест до:{maxPeople}</label>
+              <label>Мест до: {maxPeople}</label>
               <br />
 
               <input
@@ -291,7 +315,7 @@ function Home() {
 
                 const finalPrice = price - (price * discount) / 100;
 
-                // Перевод сомов в доллары только для отображения
+                // Перевод сомов в доллары
                 const dollarPrice = price / 87;
                 const finalDollarPrice = finalPrice / 87;
 
@@ -416,4 +440,3 @@ function Home() {
 }
 
 export default Home;
-/*hotel*/

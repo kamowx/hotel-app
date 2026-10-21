@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
+
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Bottomnav from "../components/bottomnav";
 
 function Armored() {
   const navigate = useNavigate();
+  const [darkTheme, setDarkTheme] = useState(
+    localStorage.getItem("theme") === "dark",
+  );
 
   const [bookings, setBookings] = useState([]);
 
@@ -96,83 +100,87 @@ function Armored() {
   };
 
   return (
-    <div className="hotel-page">
-      <div className="mobile-app">
-        <div className="page-content">
-          <div className="mb-4">
-            <h2 className="mb-1">Мои бронирования</h2>
+    <div className={`app ${darkTheme ? "dark-theme" : ""}`}>
+      <div className="hotel-page">
+        <div className="mobile-app">
+          <div className="page-content">
+            <div className="mb-4">
+              <h2 className="mb-1">Мои бронирования</h2>
 
-            <p className="text-secondary mb-0">Список забронированных отелей</p>
-          </div>
+              <p className="text-secondary mb-0">
+                Список забронированных отелей
+              </p>
+            </div>
 
-          {bookings.length === 0 ? (
-            <p className="text-secondary">Пока нет бронирований</p>
-          ) : (
-            bookings.map((item, index) => (
-              <div className="hotel-card mb-3" key={item.hotelId || index}>
-                <div className="hotel-card-image">
-                  {item.avatarhotels ? (
-                    <img src={item.avatarhotels} alt={item.name} />
-                  ) : (
-                    <i className="fa-solid fa-hotel"></i>
-                  )}
-                </div>
+            {bookings.length === 0 ? (
+              <p className="text-secondary">Пока нет бронирований</p>
+            ) : (
+              bookings.map((item, index) => (
+                <div className="hotel-card mb-3" key={item.hotelId || index}>
+                  <div className="hotel-card-image">
+                    {item.avatarhotels ? (
+                      <img src={item.avatarhotels} alt={item.name} />
+                    ) : (
+                      <i className="fa-solid fa-hotel"></i>
+                    )}
+                  </div>
 
-                <div className="p-3">
-                  <h5>{item.name}</h5>
+                  <div className="p-3">
+                    <h5>{item.name}</h5>
 
-                  <p className="text-secondary mb-2">
-                    <i className="fa-solid fa-location-dot me-1"></i>
+                    <p className="text-secondary mb-2">
+                      <i className="fa-solid fa-location-dot me-1"></i>
 
-                    {item.city}
-                  </p>
-
-                  <p className="mb-1">
-                    <b>Цена:</b> {item.price} сом / ночь
-                  </p>
-
-                  {item.forpriceday ? (
-                    <p className="mb-1">
-                      <b>Дней:</b> {item.forpriceday}
+                      {item.city}
                     </p>
-                  ) : null}
 
-                  {item.allprice ? (
                     <p className="mb-1">
-                      <b>Общая сумма:</b> {item.allprice} сом
+                      <b>Цена:</b> {item.price} сом / ночь
                     </p>
-                  ) : null}
 
-                  <p className="mb-1">
-                    <b>Заезд:</b> {item.date1}
-                  </p>
+                    {item.forpriceday ? (
+                      <p className="mb-1">
+                        <b>Дней:</b> {item.forpriceday}
+                      </p>
+                    ) : null}
 
-                  <p className="mb-1">
-                    <b>Выезд:</b> {item.date2}
-                  </p>
+                    {item.allprice ? (
+                      <p className="mb-1">
+                        <b>Общая сумма:</b> {item.allprice} сом
+                      </p>
+                    ) : null}
 
-                  <p className="mb-3">
-                    <b>Гостей:</b> {item.guests}
-                  </p>
+                    <p className="mb-1">
+                      <b>Заезд:</b> {item.date1}
+                    </p>
 
-                  <p className="mb-3">
-                    <b>Статус:</b> {item.status}
-                  </p>
+                    <p className="mb-1">
+                      <b>Выезд:</b> {item.date2}
+                    </p>
 
-                  <div className="hotel-card-buttons">
-                    <Link
-                      className="hotel-details-button"
-                      to={`/armhotels/${index}`}
-                    >
-                      Подробнее
-                    </Link>
+                    <p className="mb-3">
+                      <b>Гостей:</b> {item.guests}
+                    </p>
+
+                    <p className="mb-3">
+                      <b>Статус:</b> {item.status}
+                    </p>
+
+                    <div className="hotel-card-buttons">
+                      <Link
+                        className="hotel-details-button"
+                        to={`/armhotels/${index}`}
+                      >
+                        Подробнее
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
+              ))
+            )}
+          </div>
+          <Bottomnav />
         </div>
-        <Bottomnav />
       </div>
     </div>
   );

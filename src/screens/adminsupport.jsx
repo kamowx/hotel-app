@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import moment from "moment";
+import "moment/locale/ru";
+
+moment.locale("ru");
 
 const CHAT_URL = "https://6ad252f566cd28aed82de514.mockapi.io/chat";
 const USER_URL = "https://6ac221b73f4ae78f6944db9c.mockapi.io/data";
@@ -82,12 +86,29 @@ function Adminsupport() {
     return () => clearInterval(timer);
   }, [getData]);
 
+  // Открытие чата и изменение статуса на «Прочитано»
   const openChat = async (chat) => {
     try {
       const response = await axios.get(`${CHAT_URL}/${chat.id}`);
+      const currentChat = response.data;
 
-      setSelectedChat(response.data);
-      setMessages(parseMessages(response.data.support));
+      setSelectedChat(currentChat);
+      setMessages(parseMessages(currentChat.support));
+
+      if (currentChat.chatstatus !== "Прочитано") {
+        const updateResponse = await axios.put(`${CHAT_URL}/${chat.id}`, {
+          ...currentChat,
+          chatstatus: "Прочитано",
+        });
+
+        setSelectedChat(updateResponse.data);
+
+        setChats((previous) =>
+          previous.map((item) =>
+            String(item.id) === String(chat.id) ? updateResponse.data : item,
+          ),
+        );
+      }
     } catch (error) {
       console.error("Ошибка открытия чата:", error);
       alert("Не удалось открыть чат");
@@ -101,6 +122,8 @@ function Adminsupport() {
       firstname: chat.firstname || user?.firstname || "",
       lastname: chat.lastname || user?.lastname || "",
       email: chat.email || user?.email || "",
+      avatar: chat.avatar || user?.avatar || "",
+      chatstatus: chat.chatstatus || "",
       numberphone: chat.numberphone || user?.numberphone || "",
     };
   };
@@ -145,6 +168,7 @@ function Adminsupport() {
           hour: "2-digit",
           minute: "2-digit",
         }),
+        date: now.toISOString(),
       };
 
       const updatedMessages = [...oldMessages, newMessage];
@@ -152,6 +176,7 @@ function Adminsupport() {
       const updateResponse = await axios.put(`${CHAT_URL}/${selectedChat.id}`, {
         ...currentChat,
         support: JSON.stringify(updatedMessages),
+        chatstatus: "Прочитано",
       });
 
       setSelectedChat(updateResponse.data);
@@ -218,20 +243,42 @@ function Adminsupport() {
                         : "bg-white"
                     }`}
                   >
-                    <strong>
-                      {user.firstname} {user.lastname}
-                    </strong>
+                    <div className="row align-items-center">
+                      <div className="col-9">
+                        <div className="d-flex align-items-center gap-2 mb-2">
+                          {user.avatar ? (
+                            <img
+                              src={user.avatar}
+                              alt=""
+                              className="admin-hotel-icon"
+                            />
+                          ) : (
+                            <i className="fa-solid fa-user admin-hotel-icon"></i>
+                          )}
 
-                    <div className="small text-secondary">
-                      {user.email || "Нет email"}
-                    </div>
+                          <strong>
+                            {user.firstname} {user.lastname}
+                          </strong>
+                        </div>
 
-                    <div className="small text-secondary">
-                      {user.numberphone || "Нет телефона"}
-                    </div>
+                        <div className="small text-secondary">
+                          {user.email || "Нет email"}
+                        </div>
 
-                    <div className="small mt-2 text-truncate">
-                      {lastMessage?.text || "Нет сообщений"}
+                        <div className="small text-secondary">
+                          {user.numberphone || "Нет телефона"}
+                        </div>
+
+                        <div className="small mt-2 text-truncate">
+                          {lastMessage?.text || "Нет сообщений"}
+                        </div>
+                      </div>
+
+                      <div className="col-3 small">
+                        <span className="text-primary">
+                          {chat.chatstatus === "Прочитано" ? "✓✓" : "✓"}
+                        </span>
+                      </div>
                     </div>
                   </button>
                 );
@@ -261,6 +308,10 @@ function Adminsupport() {
 
                   <div className="small text-secondary">
                     Телефон: {selectedUser.numberphone || "Не указан"}
+                  </div>
+
+                  <div className="small text-secondary">
+                    Статус: {selectedChat.chatstatus || "Не прочитано"}
                   </div>
                 </div>
 
@@ -304,7 +355,11 @@ function Adminsupport() {
 
                           <div>{item.text}</div>
 
-                          <div className="small text-end mt-1">{item.time}</div>
+                          <div className="small text-end mt-1">
+                            {item.date
+                              ? moment(item.date).format("DD.MM.YYYY HH:mm")
+                              : item.time}
+                          </div>
                         </div>
                       </div>
                     ))
