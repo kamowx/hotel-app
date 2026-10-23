@@ -98,6 +98,11 @@ function Adminbottom() {
             <span>Завершенные</span>
           </Link>
 
+          <Link to="/adminhostels" className="admin-menu-item">
+            <i className="fa-solid fa-hotel"></i>
+            <span>Хостелы</span>
+          </Link>
+
           <Link to="/adminhotels" className="admin-menu-item">
             <i className="fa-solid fa-hotel"></i>
             <span>Отели</span>

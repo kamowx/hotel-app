@@ -25,6 +25,7 @@ import Adminuplususer from "./screens/adminuplususer";
 import Adminuser from "./screens/adminuser";
 import Support from "./screens/support";
 import Adminsupport from "./screens/adminsupport";
+import Adminhostels from "./screens/adminhostels";
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
         <Route path="/adminuser" element={<Adminuser />} />
         <Route path="/support" element={<Support />} />
         <Route path="/adminsupport" element={<Adminsupport />} />
+        <Route path="/adminhostels" element={<Adminhostels />} />
       </Routes>
     </BrowserRouter>
   );

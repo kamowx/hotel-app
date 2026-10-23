@@ -2,10 +2,24 @@ import { useEffect, useState } from "react";
 import Adminbottom from "../components/adminbottom";
 import axios from "axios";
 
+const HOTELS_URL = "https://6ac221b73f4ae78f6944db9c.mockapi.io/hotels";
+
+const USERS_URL = "https://6ac221b73f4ae78f6944db9c.mockapi.io/data";
+
+function getTodayDate() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
 function Adminhotels() {
   const [hotels, setHotels] = useState([]);
 
   const [showModal, setShowModal] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
 
   const [namehotels, setNamehotels] = useState("");
   const [location, setLocation] = useState("Бишкек");
@@ -13,22 +27,52 @@ function Adminhotels() {
   const [people, setPeople] = useState("");
   const [avatarhotels, setAvatarhotels] = useState("");
   const [discount, setDiscount] = useState("0");
+  const [discountEndDate, setDiscountEndDate] = useState("");
+  const [hotelType, setHotelType] = useState("hotel");
 
   const [editId, setEditId] = useState(null);
 
   const discountPrice = Number(price) * (1 - Number(discount || 0) / 100);
 
+  // Получение отелей и автоматическое завершение скидок
   const getHotels = async () => {
     try {
-      const response = await axios({
-        method: "GET",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/hotels",
-      });
+      const response = await axios.get(HOTELS_URL);
 
       console.log("GET HOTELS:", response);
 
       if (response.status === 200) {
-        setHotels(response.data);
+        const todayDate = getTodayDate();
+
+        const updatedHotels = await Promise.all(
+          response.data.map(async (item) => {
+            if (
+              Number(item.discount) > 0 &&
+              item.discountEndDate &&
+              item.discountEndDate < todayDate
+            ) {
+              try {
+                const updateResponse = await axios.put(
+                  `${HOTELS_URL}/${item.id}`,
+                  {
+                    ...item,
+                    discount: "0",
+                  },
+                );
+
+                return updateResponse.data;
+              } catch (error) {
+                console.error("Ошибка сброса скидки:", error);
+
+                return item;
+              }
+            }
+
+            return item;
+          }),
+        );
+
+        setHotels(updatedHotels);
       }
     } catch (error) {
       console.error("GET ERROR:", error);
@@ -37,19 +81,72 @@ function Adminhotels() {
 
   useEffect(() => {
     getHotels();
+
+    // Повторная проверка скидок каждую минуту
+    const interval = setInterval(() => {
+      getHotels();
+    }, 60000);
+
+    return () => clearInterval(interval);
   }, []);
 
-  const resetForm = () => {
+  // Проверка пользователя
+  const checkUser = async () => {
+    try {
+      const savedId = localStorage.getItem("id");
+
+      if (!savedId) {
+        window.location.href = "/signin";
+        return;
+      }
+
+      const id = String(savedId).replaceAll('"', "");
+
+      const response = await axios.get(`${USERS_URL}/${id}`);
+
+      if (response.status === 200) {
+        const user = response.data;
+
+        if (user.userstatus === "user") {
+          window.location.href = "/home";
+          return;
+        }
+
+        if (user.userstatus === "admin") {
+          console.log("Это администратор");
+        }
+      }
+    } catch (error) {
+      console.error("CHECK USER ERROR:", error);
+    }
+  };
+
+  useEffect(() => {
+    checkUser();
+  }, []);
+
+  // Очистка формы
+  const resetForm = (type = "hotel") => {
     setNamehotels("");
     setLocation("Бишкек");
     setPrice("");
     setPeople("");
     setAvatarhotels("");
     setDiscount("0");
+    setDiscountEndDate("");
+    setHotelType(type);
     setEditId(null);
   };
 
-  const addHotel = async () => {
+  // Закрытие модального окна
+  const closeModal = () => {
+    setShowModal(false);
+    setShowModal2(false);
+    resetForm();
+  };
+
+  // Проверка формы
+  const validateForm = () => {
     if (
       !namehotels.trim() ||
       !location.trim() ||
@@ -58,7 +155,7 @@ function Adminhotels() {
       !avatarhotels.trim()
     ) {
       alert("Заполните все поля");
-      return;
+      return false;
     }
 
     if (
@@ -68,38 +165,61 @@ function Adminhotels() {
       Number(discount) > 100
     ) {
       alert("Проверьте цену, количество людей и скидку от 0 до 100%");
+      return false;
+    }
+
+    if (Number(discount) > 0 && !discountEndDate) {
+      alert("Укажите дату окончания скидки");
+      return false;
+    }
+
+    if (Number(discount) > 0 && discountEndDate < getTodayDate()) {
+      alert("Дата окончания скидки не может быть в прошлом");
+      return false;
+    }
+
+    return true;
+  };
+
+  // Добавление отеля или хостела
+  const addHotel = async () => {
+    if (!validateForm()) {
       return;
     }
 
     try {
-      const response = await axios({
-        method: "POST",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/hotels",
-        data: {
-          namehotels: namehotels,
-          location: location,
-          price: price,
-          people: people,
-          avatarhotels: avatarhotels,
-          discount: discount,
-        },
+      const response = await axios.post(HOTELS_URL, {
+        namehotels: namehotels,
+        location: location,
+        price: price,
+        people: people,
+        avatarhotels: avatarhotels,
+        discount: discount,
+        discountEndDate: Number(discount) > 0 ? discountEndDate : "",
+        type: hotelType,
       });
 
       console.log("POST HOTEL:", response);
 
       if (response.status === 201) {
-        alert("Отель успешно добавлен");
+        alert(
+          hotelType === "hostel"
+            ? "Хостел успешно добавлен"
+            : "Отель успешно добавлен",
+        );
 
         setShowModal(false);
+        setShowModal2(false);
         resetForm();
         getHotels();
       }
     } catch (error) {
       console.error("POST ERROR:", error);
-      alert("Ошибка при добавлении отеля");
+      alert("Ошибка при добавлении");
     }
   };
 
+  // Открытие редактирования
   const openEdit = (item) => {
     setEditId(item.id);
 
@@ -109,61 +229,54 @@ function Adminhotels() {
     setPeople(String(item.people ?? ""));
     setAvatarhotels(item.avatarhotels || "");
     setDiscount(String(item.discount ?? "0"));
+    setDiscountEndDate(item.discountEndDate || "");
 
-    setShowModal(true);
+    const type = item.type || "hotel";
+
+    setHotelType(type);
+
+    if (type === "hostel") {
+      setShowModal(false);
+      setShowModal2(true);
+    } else {
+      setShowModal(true);
+      setShowModal2(false);
+    }
   };
 
+  // Сохранение изменений
   const editHotel = async () => {
-    if (
-      !namehotels.trim() ||
-      !location.trim() ||
-      !price.trim() ||
-      !people.trim() ||
-      !avatarhotels.trim()
-    ) {
-      alert("Заполните все поля");
-      return;
-    }
-
-    if (
-      Number(price) <= 0 ||
-      Number(people) <= 0 ||
-      Number(discount) < 0 ||
-      Number(discount) > 100
-    ) {
-      alert("Проверьте цену, количество людей и скидку от 0 до 100%");
+    if (!validateForm()) {
       return;
     }
 
     try {
-      const response = await axios({
-        method: "PUT",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/hotels/${editId}`,
-        data: {
-          namehotels: namehotels,
-          location: location,
-          price: price,
-          people: people,
-          avatarhotels: avatarhotels,
-          discount: discount,
-        },
+      const response = await axios.put(`${HOTELS_URL}/${editId}`, {
+        namehotels: namehotels,
+        location: location,
+        price: price,
+        people: people,
+        avatarhotels: avatarhotels,
+        discount: discount,
+        discountEndDate: Number(discount) > 0 ? discountEndDate : "",
+        type: hotelType,
       });
 
       console.log("PUT HOTEL:", response);
 
       if (response.status === 200) {
-        alert("Отель изменён");
+        alert(hotelType === "hostel" ? "Хостел изменён" : "Отель изменён");
 
         setShowModal(false);
+        setShowModal2(false);
         resetForm();
         getHotels();
       }
     } catch (error) {
       console.error("PUT ERROR:", error);
-      alert("Ошибка при изменении отеля");
+      alert("Ошибка при изменении");
     }
   };
-
   const deleteHotel = async (id) => {
     const confirmDelete = window.confirm(
       "Вы действительно хотите удалить этот отель?",
@@ -194,7 +307,7 @@ function Adminhotels() {
 
         response = await axios({
           method: "DELETE",
-          url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/hotels/${targetId}`,
+          url: `${HOTELS_URL}/${targetId}`,
         });
       }
 
@@ -220,45 +333,6 @@ function Adminhotels() {
     }
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    resetForm();
-  };
-
-  const checkUser = async () => {
-    try {
-      const id = JSON.parse(localStorage.getItem("id"));
-
-      if (!id) {
-        window.location.href = "/signin";
-        return;
-      }
-
-      const response = await axios({
-        method: "GET",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${id}`,
-      });
-
-      if (response.status === 200) {
-        const user = response.data;
-
-        if (user.userstatus === "user") {
-          window.location.href = "/home";
-        }
-
-        if (user.userstatus === "admin") {
-          console.log("Это администратор");
-        }
-      }
-    } catch (error) {
-      console.error("CHECK USER ERROR:", error);
-    }
-  };
-
-  useEffect(() => {
-    checkUser();
-  }, []);
-
   return (
     <div className="admin-page">
       <Adminbottom />
@@ -267,7 +341,7 @@ function Adminhotels() {
         <header className="admin-top">
           <div>
             <h1>Отели</h1>
-            <p>Список Отелей</p>
+            <p>Список отелей</p>
           </div>
 
           <div className="admin-profile">
@@ -293,8 +367,9 @@ function Adminhotels() {
               <button
                 className="admin-add-button"
                 onClick={() => {
-                  resetForm();
+                  resetForm("hotel");
                   setShowModal(true);
+                  setShowModal2(false);
                 }}
               >
                 <i className="fa-solid fa-plus"></i>
@@ -303,101 +378,109 @@ function Adminhotels() {
             </div>
 
             <div className="admin-hotel-grid">
-              {hotels.map((item) => {
-                const hotelPrice = Number(item.price) || 0;
-                const hotelDiscount = Math.min(
-                  100,
-                  Math.max(0, Number(item.discount) || 0),
-                );
+              {hotels
+                .filter((item) => item.type !== "hostel")
+                .map((item) => {
+                  const hotelPrice = Number(item.price) || 0;
 
-                const finalPrice = hotelPrice * (1 - hotelDiscount / 100);
+                  const hotelDiscount = Math.min(
+                    100,
+                    Math.max(0, Number(item.discount) || 0),
+                  );
 
-                return (
-                  <div className="admin-hotel-card" key={item.id}>
-                    <div className="admin-hotel-photo">
-                      {item.avatarhotels ? (
-                        <img src={item.avatarhotels} alt={item.namehotels} />
-                      ) : (
-                        <i className="fa-solid fa-hotel"></i>
-                      )}
-                    </div>
+                  const finalPrice = hotelPrice * (1 - hotelDiscount / 100);
 
-                    <div className="admin-hotel-card-content">
-                      <h3>{item.namehotels}</h3>
-
-                      <p>
-                        <i className="fa-solid fa-location-dot"></i>{" "}
-                        {item.location}
-                      </p>
-
-                      <div>
-                        {hotelDiscount > 0 ? (
-                          <>
-                            <strong>
-                              {finalPrice.toLocaleString("ru-RU")} сом
-                            </strong>
-
-                            <span
-                              style={{
-                                textDecoration: "line-through",
-                                marginLeft: "8px",
-                                color: "#888",
-                              }}
-                            >
-                              {hotelPrice.toLocaleString("ru-RU")} сом
-                            </span>
-
-                            <span
-                              style={{
-                                marginLeft: "8px",
-                                color: "#e53935",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              -{hotelDiscount}%
-                            </span>
-                          </>
+                  return (
+                    <div className="admin-hotel-card" key={item.id}>
+                      <div className="admin-hotel-photo">
+                        {item.avatarhotels ? (
+                          <img src={item.avatarhotels} alt={item.namehotels} />
                         ) : (
-                          <strong>
-                            {hotelPrice.toLocaleString("ru-RU")} сом
-                          </strong>
+                          <i className="fa-solid fa-hotel"></i>
                         )}
-
-                        <span> / ночь</span>
                       </div>
 
-                      <p>
-                        <i className="fa-solid fa-users"></i> До {item.people}{" "}
-                        человек
-                      </p>
+                      <div className="admin-hotel-card-content">
+                        <h3>{item.namehotels}</h3>
 
-                      <div className="admin-hotel-card-buttons">
-                        <button
-                          className="admin-hotel-edit-button"
-                          onClick={() => openEdit(item)}
-                        >
-                          <i className="fa-solid fa-pen"></i>
-                          Изменить
-                        </button>
+                        <p>
+                          <i className="fa-solid fa-location-dot"></i>{" "}
+                          {item.location}
+                        </p>
 
-                        <button
-                          className="admin-hotel-delete-button"
-                          onClick={() => deleteHotel(item.id)}
-                        >
-                          <i className="fa-solid fa-trash"></i>
-                          Удалить
-                        </button>
+                        <div>
+                          {hotelDiscount > 0 ? (
+                            <>
+                              <strong>
+                                {finalPrice.toLocaleString("ru-RU")} сом
+                              </strong>
+
+                              <span
+                                style={{
+                                  textDecoration: "line-through",
+                                  marginLeft: "8px",
+                                  color: "#888",
+                                }}
+                              >
+                                {hotelPrice.toLocaleString("ru-RU")} сом
+                              </span>
+
+                              <span
+                                style={{
+                                  marginLeft: "8px",
+                                  color: "#e53935",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                -{hotelDiscount}%
+                              </span>
+
+                              {item.discountEndDate && (
+                                <p>Скидка до: {item.discountEndDate}</p>
+                              )}
+                            </>
+                          ) : (
+                            <strong>
+                              {hotelPrice.toLocaleString("ru-RU")} сом
+                            </strong>
+                          )}
+
+                          <span> / ночь</span>
+                        </div>
+
+                        <p>
+                          <i className="fa-solid fa-users"></i> До {item.people}{" "}
+                          человек
+                        </p>
+
+                        <div className="admin-hotel-card-buttons">
+                          <button
+                            className="admin-hotel-edit-button"
+                            onClick={() => openEdit(item)}
+                          >
+                            <i className="fa-solid fa-pen"></i>
+                            Изменить
+                          </button>
+
+                          <button
+                            className="admin-hotel-delete-button"
+                            onClick={() => deleteHotel(item.id)}
+                          >
+                            <i className="fa-solid fa-trash"></i>
+                            Удалить
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
 
               <button
                 className="admin-add-hotel-card"
                 onClick={() => {
-                  resetForm();
+                  resetForm("hotel");
                   setShowModal(true);
+                  setShowModal2(false);
                 }}
               >
                 <i className="fa-solid fa-plus"></i>
@@ -409,7 +492,7 @@ function Adminhotels() {
         </div>
       </main>
 
-      {showModal && (
+      {(showModal || showModal2) && (
         <div className="admin-hotel-modal">
           <div className="admin-hotel-modal-content">
             <div className="admin-hotel-modal-header">
@@ -417,9 +500,7 @@ function Adminhotels() {
                 <h2>{editId ? "Редактировать отель" : "Добавить отель"}</h2>
 
                 <p>
-                  {editId
-                    ? "Измените данные отеля"
-                    : "Введите данные нового отеля"}
+                  {editId ? "Измените данные" : "Введите данные нового отеля"}
                 </p>
               </div>
 
@@ -476,7 +557,7 @@ function Adminhotels() {
             </div>
 
             <div className="admin-hotel-modal-input">
-              <label>Фото отеля</label>
+              <label>Фото</label>
 
               <input
                 type="text"
@@ -508,7 +589,19 @@ function Adminhotels() {
               />
             </div>
 
-            {/* Расчёт цены со скидкой 
+            <div className="admin-hotel-modal-input">
+              <label>Дата окончания скидки</label>
+
+              <input
+                type="date"
+                min={getTodayDate()}
+                value={discountEndDate}
+                onChange={(e) => setDiscountEndDate(e.target.value)}
+              />
+
+              <small>Скидка действует до указанного дня включительно.</small>
+            </div>
+
             <div
               className="admin-hotel-modal-input"
               style={{
@@ -542,7 +635,6 @@ function Adminhotels() {
                 <p>Введите цену и скидку от 0 до 100%</p>
               )}
             </div>
-            */}
 
             <div className="admin-hotel-modal-buttons">
               <button className="admin-hotel-modal-cancel" onClick={closeModal}>
