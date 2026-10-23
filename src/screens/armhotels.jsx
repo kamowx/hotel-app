@@ -134,6 +134,8 @@ function Armhotels() {
     );
   }
 
+  const isHostel = booking.type === "hostel";
+
   return (
     <div className="app">
       <div className="onboarding home-onboarding">
@@ -156,11 +158,15 @@ function Armhotels() {
         <div className="armhotel-content p-2">
           <div className="armhotel-city">
             <i className="fa-solid fa-location-dot"></i>
-
             {booking.city}
           </div>
 
-          <h1>{booking.name}</h1>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <h1>{booking.name}</h1>
+            <span className={`admin-type-tag ${booking.type || "hotel"}`}>
+              {isHostel ? "Хостел" : "Отель"}
+            </span>
+          </div>
 
           <div className="armhotel-price">
             {booking.price} сом
@@ -174,6 +180,19 @@ function Armhotels() {
           <h2>Информация о бронировании</h2>
 
           <div className="armhotel-info">
+            {booking.place ? (
+              <div className="armhotel-info-row">
+                <div className="armhotel-info-icon">
+                  <i className={isHostel ? "fa-solid fa-bed" : "fa-solid fa-door-closed"}></i>
+                </div>
+
+                <div>
+                  <strong>{isHostel ? "Номер места (койка)" : "Номер комнаты"}</strong>
+                  <p>{isHostel ? `Место ${booking.place}` : `Номер ${booking.place}`}</p>
+                </div>
+              </div>
+            ) : null}
+
             <div className="armhotel-info-row">
               <div className="armhotel-info-icon">
                 <i className="fa-solid fa-calendar-check"></i>
@@ -181,7 +200,6 @@ function Armhotels() {
 
               <div>
                 <strong>Дата заезда</strong>
-
                 <p>{booking.date1}</p>
               </div>
             </div>
@@ -193,7 +211,6 @@ function Armhotels() {
 
               <div>
                 <strong>Дата выезда</strong>
-
                 <p>{booking.date2}</p>
               </div>
             </div>
@@ -205,7 +222,6 @@ function Armhotels() {
 
               <div>
                 <strong>Количество ночей</strong>
-
                 <p>{booking.forpriceday}</p>
               </div>
             </div>
@@ -217,7 +233,6 @@ function Armhotels() {
 
               <div>
                 <strong>Количество гостей</strong>
-
                 <p>{booking.guests}</p>
               </div>
             </div>
@@ -225,7 +240,6 @@ function Armhotels() {
 
           <div className="armhotel-total">
             <span>Общая сумма</span>
-
             <strong>{booking.allprice} сом</strong>
           </div>
 
@@ -242,4 +256,3 @@ function Armhotels() {
 }
 
 export default Armhotels;
-/*hotel*/

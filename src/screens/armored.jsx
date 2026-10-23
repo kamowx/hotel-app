@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Bottomnav from "../components/bottomnav";
@@ -90,7 +89,6 @@ function Armored() {
 
         if (response.status === 200) {
           setBookings(newBookings);
-
           alert("Бронирование отменено!");
         }
       }
@@ -108,7 +106,7 @@ function Armored() {
               <h2 className="mb-1">Мои бронирования</h2>
 
               <p className="text-secondary mb-0">
-                Список забронированных отелей
+                Список забронированных отелей и хостелов
               </p>
             </div>
 
@@ -126,13 +124,24 @@ function Armored() {
                   </div>
 
                   <div className="p-3">
-                    <h5>{item.name}</h5>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "8px" }}>
+                      <h5>{item.name}</h5>
+                      <span className={`admin-type-tag ${item.type || "hotel"}`}>
+                        {item.type === "hostel" ? "Хостел" : "Отель"}
+                      </span>
+                    </div>
 
                     <p className="text-secondary mb-2">
                       <i className="fa-solid fa-location-dot me-1"></i>
-
                       {item.city}
                     </p>
+
+                    {item.place ? (
+                      <p className="mb-1" style={{ color: "#2e7d32", fontWeight: 700 }}>
+                        <i className={item.type === "hostel" ? "fa-solid fa-bed me-1" : "fa-solid fa-door-closed me-1"}></i>
+                        {item.type === "hostel" ? `Место ${item.place}` : `Номер комнаты: ${item.place}`}
+                      </p>
+                    ) : null}
 
                     <p className="mb-1">
                       <b>Цена:</b> {item.price} сом / ночь
@@ -156,10 +165,6 @@ function Armored() {
 
                     <p className="mb-1">
                       <b>Выезд:</b> {item.date2}
-                    </p>
-
-                    <p className="mb-3">
-                      <b>Гостей:</b> {item.guests}
                     </p>
 
                     <p className="mb-3">
@@ -187,4 +192,3 @@ function Armored() {
 }
 
 export default Armored;
-/*hotel*/

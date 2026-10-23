@@ -10,6 +10,7 @@ function Admin() {
 
   const [hotels, setHotels] = useState([]);
   const [users, setUsers] = useState([]);
+  const [filterType, setFilterType] = useState("all"); // "all", "hotel", "hostel"
 
   const [showModal, setShowModal] = useState(false);
 
@@ -95,9 +96,7 @@ function Admin() {
 
         if (currentUser.userstatus === "user") {
           localStorage.setItem("userId", JSON.stringify(currentUser.id));
-
           localStorage.setItem("id", JSON.stringify(currentUser.id));
-
           navigate("/home", { replace: true });
           return;
         }
@@ -113,7 +112,6 @@ function Admin() {
       }
     } catch (error) {
       console.error("CHECK USER ERROR:", error);
-
       localStorage.removeItem("id");
       navigate("/signin", { replace: true });
     }
@@ -122,6 +120,24 @@ function Admin() {
   useEffect(() => {
     checkUser();
   }, []);
+
+  const getBookingType = (booking) => {
+    if (booking.type) {
+      return String(booking.type).toLowerCase();
+    }
+    if (booking.hotelType) {
+      return String(booking.hotelType).toLowerCase();
+    }
+    const hotel = hotels.find((h) => String(h.id) === String(booking.hotelId));
+    if (hotel && hotel.type) {
+      return String(hotel.type).toLowerCase();
+    }
+    const name = String(booking.name || "").toLowerCase();
+    if (name.includes("hostel") || name.includes("хостел")) {
+      return "hostel";
+    }
+    return "hotel";
+  };
 
   const allBookings = users.flatMap((user) =>
     Array.isArray(user.bookhotel) ? user.bookhotel : [],
@@ -139,6 +155,11 @@ function Admin() {
     (total, item) => total + Number(item.allprice || 0),
     0,
   );
+
+  const filteredAllBookings = allBookings.filter((item) => {
+    if (filterType === "all") return true;
+    return getBookingType(item) === filterType.toLowerCase();
+  });
 
   const handleAdminChange = (e) => {
     setAdminData({
@@ -175,9 +196,7 @@ function Admin() {
 
       if (response.status === 200) {
         alert("Данные администратора изменены!");
-
         await getUsers();
-
         setShowModal(false);
       }
     } catch (error) {
@@ -240,7 +259,7 @@ function Admin() {
               </div>
 
               <div>
-                <span>Всего отелей</span>
+                <span>Всего объектов</span>
                 <strong>{hotels.length}</strong>
               </div>
             </div>
@@ -293,66 +312,122 @@ function Admin() {
           <div className="admin-section">
             <div className="admin-section-header">
               <div>
-                <h2>Новые заказы</h2>
-                <p>Последние бронирования</p>
+                <h2>Заказы</h2>
+                <p>Все бронирования системы</p>
               </div>
 
               <button
                 className="admin-view-button"
-                onClick={() => setPage("Новые заказы")}
+                onClick={() => navigate("/adminneworders")}
               >
-                Смотреть все
+                Смотреть новые
+              </button>
+            </div>
+
+            {/* 3 кнопки фильтрации: ВСЕ, hotel, hostel */}
+            <div className="admin-filter-bar">
+              <button
+                type="button"
+                className={`admin-filter-btn ${filterType === "all" ? "active" : ""}`}
+                onClick={() => setFilterType("all")}
+              >
+                ВСЕ
+              </button>
+              <button
+                type="button"
+                className={`admin-filter-btn ${filterType === "hotel" ? "active" : ""}`}
+                onClick={() => setFilterType("hotel")}
+              >
+                hotel
+              </button>
+              <button
+                type="button"
+                className={`admin-filter-btn ${filterType === "hostel" ? "active" : ""}`}
+                onClick={() => setFilterType("hostel")}
+              >
+                hostel
               </button>
             </div>
 
             <div className="admin-table">
               <div className="admin-table-head">
-                <span>Отель</span>
-                <span>Номер</span>
+                <span>Отель / Хостел</span>
+                <span>Номер тел.</span>
                 <span>Email</span>
                 <span>Имя-Фамилия</span>
                 <span>Город</span>
                 <span>Дата</span>
-                <span>Гости</span>
+                <span>Гости / Место</span>
                 <span>Сумма</span>
                 <span>Статус</span>
               </div>
 
-              {allBookings.map((item, index) => (
+              {filteredAllBookings.map((item, index) => (
                 <div className="admin-table-row" key={index}>
                   <div className="admin-hotel-name">
                     <div className="admin-hotel-icon">
-                      <i className="fa-solid fa-hotel"></i>
+                      <i
+                        className={
+                          getBookingType(item) === "hostel"
+                            ? "fa-solid fa-bed"
+                            : "fa-solid fa-hotel"
+                        }
+                      ></i>
                     </div>
 
-                    <span>{item.name}</span>
+                    <div>
+                      <strong>{item.name}</strong>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "5px",
+                          marginTop: "4px",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <span
+                          className={`admin-type-tag ${getBookingType(item)}`}
+                        >
+                          {getBookingType(item)}
+                        </span>
+                        {item.place ? (
+                          <span className="admin-place-tag">
+                            {getBookingType(item) === "hostel"
+                              ? `Место ${item.place}`
+                              : `Номер ${item.place}`}
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
                   </div>
+
                   <span>
-                    <b>
-                      {" "}
-                      {item
-                        ? `${item.numberphone || ""} `.trim()
-                        : "Загрузка..."}
-                    </b>
+                    <b>{item ? `${item.numberphone || ""}`.trim() : "—"}</b>
                   </span>
+
                   <span>
-                    <b>
-                      {" "}
-                      {item ? `${item.email || ""} `.trim() : "Загрузка..."}
-                    </b>
+                    <b>{item ? `${item.email || ""}`.trim() : "—"}</b>
                   </span>
+
                   <span>
                     <b>
                       {item.firstname}-{item.lastname}
                     </b>
                   </span>
+
                   <span>{item.city}</span>
 
                   <span>
                     {item.date1} — {item.date2}
                   </span>
 
-                  <span>{item.guests}</span>
+                  <span>
+                    {item.place
+                      ? getBookingType(item) === "hostel"
+                        ? `Место ${item.place}`
+                        : `№ ${item.place}`
+                      : `${item.guests} гостей`}
+                  </span>
 
                   <span>{item.allprice} сом</span>
 
@@ -361,6 +436,16 @@ function Admin() {
                   </span>
                 </div>
               ))}
+
+              {filteredAllBookings.length === 0 && (
+                <div className="admin-table-row" style={{ padding: "20px 14px" }}>
+                  <span>
+                    {filterType === "all"
+                      ? "Заказов пока нет"
+                      : `Заказов в категории "${filterType.toUpperCase()}" пока нет`}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 

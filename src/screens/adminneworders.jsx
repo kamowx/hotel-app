@@ -4,6 +4,8 @@ import axios from "axios";
 
 function Adminneworders() {
   const [users, setUsers] = useState([]);
+  const [hotels, setHotels] = useState([]);
+  const [filterType, setFilterType] = useState("all"); // "all", "hotel", "hostel"
 
   const getUsers = async () => {
     try {
@@ -22,9 +24,43 @@ function Adminneworders() {
     }
   };
 
+  const getHotels = async () => {
+    try {
+      const response = await axios({
+        method: "GET",
+        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/hotels",
+      });
+
+      if (response.status === 200) {
+        setHotels(response.data);
+      }
+    } catch (error) {
+      console.error("GET HOTELS ERROR:", error);
+    }
+  };
+
   useEffect(() => {
     getUsers();
+    getHotels();
   }, []);
+
+  const getBookingType = (booking) => {
+    if (booking.type) {
+      return String(booking.type).toLowerCase();
+    }
+    if (booking.hotelType) {
+      return String(booking.hotelType).toLowerCase();
+    }
+    const hotel = hotels.find((h) => String(h.id) === String(booking.hotelId));
+    if (hotel && hotel.type) {
+      return String(hotel.type).toLowerCase();
+    }
+    const name = String(booking.name || "").toLowerCase();
+    if (name.includes("hostel") || name.includes("хостел")) {
+      return "hostel";
+    }
+    return "hotel";
+  };
 
   const allBookings = users.flatMap((user) =>
     Array.isArray(user.bookhotel)
@@ -36,6 +72,11 @@ function Adminneworders() {
   );
 
   const newBookings = allBookings.filter((item) => item.status == "Новый");
+
+  const filteredBookings = newBookings.filter((item) => {
+    if (filterType === "all") return true;
+    return getBookingType(item) === filterType.toLowerCase();
+  });
 
   const confirmBooking = async (booking) => {
     try {
@@ -50,11 +91,16 @@ function Adminneworders() {
 
       const oldBookings = Array.isArray(user.bookhotel) ? user.bookhotel : [];
 
-      const newBookings = oldBookings.map((item) => {
+      const updatedBookings = oldBookings.map((item) => {
+        const isSamePlace =
+          Number(item.place || item.room || 1) ===
+          Number(booking.place || booking.room || 1);
+
         if (
           String(item.hotelId) === String(booking.hotelId) &&
           item.date1 === booking.date1 &&
-          item.date2 === booking.date2
+          item.date2 === booking.date2 &&
+          isSamePlace
         ) {
           return {
             ...item,
@@ -70,7 +116,7 @@ function Adminneworders() {
         url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${booking.userId}`,
         data: {
           ...user,
-          bookhotel: newBookings,
+          bookhotel: updatedBookings,
         },
       });
 
@@ -78,12 +124,10 @@ function Adminneworders() {
 
       if (response.status === 200) {
         alert("Бронирование подтверждено!");
-
         getUsers();
       }
     } catch (error) {
       console.error("CONFIRM ERROR:", error);
-
       alert("Ошибка при подтверждении бронирования");
     }
   };
@@ -101,21 +145,26 @@ function Adminneworders() {
 
       const oldBookings = Array.isArray(user.bookhotel) ? user.bookhotel : [];
 
-      const newBookings = oldBookings.filter(
-        (item) =>
-          !(
-            String(item.hotelId) === String(booking.hotelId) &&
-            item.date1 === booking.date1 &&
-            item.date2 === booking.date2
-          ),
-      );
+      const updatedBookings = oldBookings.filter((item) => {
+        const isSamePlace =
+          Number(item.place || item.room || 1) ===
+          Number(booking.place || booking.room || 1);
+
+        const isExactMatch =
+          String(item.hotelId) === String(booking.hotelId) &&
+          item.date1 === booking.date1 &&
+          item.date2 === booking.date2 &&
+          isSamePlace;
+
+        return !isExactMatch;
+      });
 
       const response = await axios({
         method: "PUT",
         url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${booking.userId}`,
         data: {
           ...user,
-          bookhotel: newBookings,
+          bookhotel: updatedBookings,
         },
       });
 
@@ -123,18 +172,24 @@ function Adminneworders() {
 
       if (response.status === 200) {
         alert("Бронирование удалено!");
-
         getUsers();
       }
     } catch (error) {
       console.error("DELETE BOOKING ERROR:", error);
-
       alert("Ошибка при удалении бронирования");
     }
   };
+
   const checkUser = async () => {
     try {
-      const id = JSON.parse(localStorage.getItem("id"));
+      const savedId = localStorage.getItem("id");
+
+      if (!savedId) {
+        window.location.href = "/signin";
+        return;
+      }
+
+      const id = String(savedId).replaceAll('"', "");
 
       const response = await axios({
         method: "GET",
@@ -156,6 +211,7 @@ function Adminneworders() {
       console.error("CHECK USER ERROR:", error);
     }
   };
+
   useEffect(() => {
     checkUser();
   }, []);
@@ -168,7 +224,6 @@ function Adminneworders() {
         <header className="admin-top">
           <div>
             <h1>Новые заказы</h1>
-
             <p>Список новых бронирований</p>
           </div>
 
@@ -179,7 +234,6 @@ function Adminneworders() {
 
             <div>
               <strong>Администратор</strong>
-
               <span>Панель управления</span>
             </div>
           </div>
@@ -190,47 +244,95 @@ function Adminneworders() {
             <div className="admin-section-header">
               <div>
                 <h2>Новые заказы</h2>
-
                 <p>Заказы, которые ожидают подтверждения</p>
               </div>
             </div>
 
+            {/* 3 кнопки фильтрации: ВСЕ, hotel, hostel */}
+            <div className="admin-filter-bar">
+              <button
+                type="button"
+                className={`admin-filter-btn ${filterType === "all" ? "active" : ""}`}
+                onClick={() => setFilterType("all")}
+              >
+                ВСЕ
+              </button>
+              <button
+                type="button"
+                className={`admin-filter-btn ${filterType === "hotel" ? "active" : ""}`}
+                onClick={() => setFilterType("hotel")}
+              >
+                hotel
+              </button>
+              <button
+                type="button"
+                className={`admin-filter-btn ${filterType === "hostel" ? "active" : ""}`}
+                onClick={() => setFilterType("hostel")}
+              >
+                hostel
+              </button>
+            </div>
+
             <div className="admin-table">
               <div className="admin-table-head">
-                <span>Отель</span>
-
-                <span>Номер</span>
-
+                <span>Отель / Хостел</span>
+                <span>Номер тел.</span>
                 <span>Email</span>
-
                 <span>Имя-Фамилия</span>
-
                 <span>Город</span>
-
                 <span>Заезд</span>
-
-                <span>Гости</span>
-
+                <span>Гости / Место</span>
                 <span>Сумма</span>
-
                 <span>Действие</span>
               </div>
 
-              {newBookings.map((item, index) => (
+              {filteredBookings.map((item, index) => (
                 <div className="admin-table-row" key={index}>
                   <div className="admin-hotel-name">
                     <div className="admin-hotel-icon">
-                      <i className="fa-solid fa-hotel"></i>
+                      <i
+                        className={
+                          getBookingType(item) === "hostel"
+                            ? "fa-solid fa-bed"
+                            : "fa-solid fa-hotel"
+                        }
+                      ></i>
                     </div>
 
-                    <strong>{item.name}</strong>
+                    <div>
+                      <strong>{item.name}</strong>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "5px",
+                          marginTop: "4px",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <span
+                          className={`admin-type-tag ${getBookingType(item)}`}
+                        >
+                          {getBookingType(item)}
+                        </span>
+                        {item.place ? (
+                          <span className="admin-place-tag">
+                            {getBookingType(item) === "hostel"
+                              ? `Место ${item.place}`
+                              : `Номер ${item.place}`}
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
                   </div>
+
                   <span>
-                    <b> {item.numberphone}</b>
+                    <b>{item.numberphone}</b>
                   </span>
+
                   <span>
-                    <b> {item.email}</b>
+                    <b>{item.email}</b>
                   </span>
+
                   <span>
                     <b>
                       {item.firstname}-{item.lastname}
@@ -241,7 +343,13 @@ function Adminneworders() {
 
                   <span>{item.date1}</span>
 
-                  <span>{item.guests}</span>
+                  <span>
+                    {item.place
+                      ? getBookingType(item) === "hostel"
+                        ? `Место ${item.place}`
+                        : `№ ${item.place}`
+                      : `${item.guests} гостей`}
+                  </span>
 
                   <strong>{item.allprice} сом</strong>
 
@@ -264,9 +372,13 @@ function Adminneworders() {
                 </div>
               ))}
 
-              {newBookings.length === 0 && (
-                <div className="admin-table-row">
-                  <span>Новых заказов пока нет</span>
+              {filteredBookings.length === 0 && (
+                <div className="admin-table-row" style={{ padding: "20px 14px" }}>
+                  <span>
+                    {filterType === "all"
+                      ? "Новых заказов пока нет"
+                      : `Новых заказов в категории "${filterType.toUpperCase()}" пока нет`}
+                  </span>
                 </div>
               )}
             </div>
@@ -278,4 +390,3 @@ function Adminneworders() {
 }
 
 export default Adminneworders;
-/*hotel*/

@@ -9,12 +9,15 @@ function Hotels() {
   const [selectedHotel, setSelectedHotel] = useState(null);
   const [showPayModal, setShowPayModal] = useState(false);
   const [guests, setGuests] = useState("1");
+  const [selectedPlace, setSelectedPlace] = useState(1);
   const [date1, setDate1] = useState("");
   const [date2, setDate2] = useState("");
   const [photoIndex, setPhotoIndex] = useState(0);
   const [bookedDates, setBookedDates] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [user, setUser] = useState(null);
 
-  //Ползователь
+  // Пользователь
   const allUser = async () => {
     try {
       const response = await axios({
@@ -24,21 +27,22 @@ function Hotels() {
 
       console.log("ВСЕ ДАННЫЕ:", response.data);
 
-      if (response.status === 200) {
+      if (response.status === 200 && Array.isArray(response.data)) {
         setUsers(response.data);
 
-        const id = localStorage.getItem("id");
+        const savedId = localStorage.getItem("id");
 
-        const currentUser = response.data.find(
-          (item) => String(item.id) === String(id).replaceAll('"', ""),
-        );
+        if (savedId) {
+          const cleanId = String(savedId).replaceAll('"', "");
+          const currentUser = response.data.find(
+            (item) => String(item.id) === cleanId,
+          );
 
-        console.log("НАЙДЕННЫЙ USER:", currentUser);
-
-        if (currentUser) {
-          setUser(currentUser);
-        } else {
-          setUser(null);
+          if (currentUser) {
+            setUser(currentUser);
+          } else {
+            setUser(null);
+          }
         }
       }
     } catch (error) {
@@ -66,30 +70,29 @@ function Hotels() {
     }
   };
 
+  // Получаем бронирования всех пользователей для данного отеля/хостела
   const getBookings = async () => {
-    const storedId = localStorage.getItem("id");
-
-    if (!storedId) return;
-
-    const userId = String(storedId).replaceAll('"', "");
-
     try {
       const response = await axios.get(
-        `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
+        "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
       );
 
-      const bookings = Array.isArray(response.data.bookhotel)
-        ? response.data.bookhotel
-        : [];
+      if (response.status === 200 && Array.isArray(response.data)) {
+        const allBookings = response.data.flatMap((u) =>
+          Array.isArray(u.bookhotel)
+            ? u.bookhotel.map((b) => ({ ...b, bookedByUserId: u.id }))
+            : [],
+        );
 
-      const activeBookings = bookings.filter(
-        (booking) =>
-          String(booking.hotelId) === String(id) &&
-          booking.status !== "Отменен" &&
-          booking.status !== "Отменено",
-      );
+        const activeBookings = allBookings.filter(
+          (booking) =>
+            String(booking.hotelId) === String(id) &&
+            booking.status !== "Отменен" &&
+            booking.status !== "Отменено",
+        );
 
-      setBookedDates(activeBookings);
+        setBookedDates(activeBookings);
+      }
     } catch (error) {
       console.error("Ошибка загрузки бронирований:", error);
     }
@@ -116,6 +119,10 @@ function Hotels() {
           ? [selectedHotel.avatarhotels]
           : []
     : [];
+
+  // Вместимость и категория (отель или хостел)
+  const totalPlaces = Math.max(1, Number(selectedHotel?.people) || 1);
+  const isHostel = selectedHotel?.type === "hostel";
 
   // Цена и скидка
   const price = Number(selectedHotel?.price) || 0;
@@ -149,18 +156,48 @@ function Hotels() {
     return `${year}-${month}-${day}`;
   };
 
-  const isDateBooked = (date) => {
-    if (!date) return false;
+  // Проверка занятости конкретного места на указанные даты
+  const isPlaceBooked = (placeNum, startDate = date1, endDate = date2) => {
+    if (!startDate || !endDate) return false;
 
-    return bookedDates.some(
-      (booking) => date >= booking.date1 && date < booking.date2,
-    );
+    return bookedDates.some((booking) => {
+      const bookedP = Number(
+        booking.place || booking.room || booking.placeNumber || 1,
+      );
+      const isSamePlace = bookedP === Number(placeNum);
+      const isDateOverlap =
+        startDate < booking.date2 && endDate > booking.date1;
+
+      return isSamePlace && isDateOverlap;
+    });
   };
 
-  const checkBookedDates = (startDate, endDate) => {
-    return bookedDates.some(
-      (booking) => startDate < booking.date2 && endDate > booking.date1,
-    );
+  // Проверка: заняты ли абсолютно все места на дату
+  const isDateFullyBooked = (date) => {
+    if (!date) return false;
+
+    const occupiedPlaces = new Set();
+    bookedDates.forEach((b) => {
+      if (date >= b.date1 && date < b.date2) {
+        const p = Number(b.place || b.room || b.placeNumber || 1);
+        occupiedPlaces.add(p);
+      }
+    });
+
+    return occupiedPlaces.size >= totalPlaces;
+  };
+
+  // Проверка: заняты ли все места на весь выбранный период
+  const isRangeFullyBooked = (startDate, endDate) => {
+    if (!startDate || !endDate) return false;
+
+    for (let p = 1; p <= totalPlaces; p++) {
+      if (!isPlaceBooked(p, startDate, endDate)) {
+        return false;
+      }
+    }
+
+    return true;
   };
 
   const prevPhoto = () => {
@@ -196,8 +233,18 @@ function Hotels() {
       return;
     }
 
-    if (Number(guests) > Number(selectedHotel.people)) {
-      alert("В отеле недостаточно мест для выбранного количества гостей");
+    if (!selectedPlace) {
+      alert(isHostel ? "Выберите место для бронирования" : "Выберите номер для бронирования");
+      return;
+    }
+
+    // Проверяем: свободно ли именно это место на выбранные даты
+    if (isPlaceBooked(selectedPlace, date1, date2)) {
+      alert(
+        isHostel
+          ? `Место ${selectedPlace} уже занято на выбранные даты другим человеком! Пожалуйста, выберите другое свободное место.`
+          : `Номер ${selectedPlace} уже занят на выбранные даты другим человеком! Пожалуйста, выберите другой номер.`,
+      );
       return;
     }
 
@@ -213,26 +260,36 @@ function Hotels() {
 
       const currentUser = userResponse.data;
 
-      const numberphone = currentUser.numberphone;
-      const firstname = currentUser.firstname;
-      const lastname = currentUser.lastname;
-      const email = currentUser.email;
+      const numberphone = currentUser.numberphone || "";
+      const firstname = currentUser.firstname || "";
+      const lastname = currentUser.lastname || "";
+      const email = currentUser.email || "";
 
       const oldBookings = Array.isArray(currentUser.bookhotel)
         ? currentUser.bookhotel
         : [];
 
-      const hasConflict = oldBookings.some(
-        (booking) =>
+      // Проверяем конфликт только для ТОГО ЖЕ места у текущего пользователя
+      const hasConflict = oldBookings.some((booking) => {
+        const bookedP = Number(
+          booking.place || booking.room || booking.placeNumber || 1,
+        );
+        return (
           String(booking.hotelId) === String(selectedHotel.id) &&
+          bookedP === Number(selectedPlace) &&
           booking.status !== "Отменен" &&
           booking.status !== "Отменено" &&
           date1 < booking.date2 &&
-          date2 > booking.date1,
-      );
+          date2 > booking.date1
+        );
+      });
 
       if (hasConflict) {
-        alert("Вы уже бронировали этот отель на эти даты!");
+        alert(
+          isHostel
+            ? `Вы уже бронировали место ${selectedPlace} на эти даты!`
+            : `Вы уже бронировали номер ${selectedPlace} на эти даты!`,
+        );
         return;
       }
 
@@ -247,7 +304,7 @@ function Hotels() {
         return;
       }
 
-      // Создаём бронь
+      // Создаём бронь с указанием места и типа (hotel / hostel)
       const newBooking = {
         userId: userId,
         numberphone: numberphone,
@@ -257,6 +314,7 @@ function Hotels() {
         hotelId: selectedHotel.id,
         name: selectedHotel.namehotels,
         city: selectedHotel.location,
+        avatarhotels: selectedHotel.avatarhotels || "",
         price: price,
         discount: discount,
         discountPrice: finalPrice,
@@ -264,7 +322,10 @@ function Hotels() {
         date2: date2,
         forpriceday: forpriceday,
         allprice: totalPrice,
-        guests: guests,
+        guests: guests || "1",
+        place: Number(selectedPlace),
+        room: Number(selectedPlace),
+        type: selectedHotel.type || "hotel",
         status: "Новый",
         refunded: false,
       };
@@ -285,12 +346,14 @@ function Hotels() {
         setShowPayModal(false);
 
         alert(
-          `Отель успешно забронирован! Списано ${totalPrice} сом. Остаток на счёте: ${newBalance} сом.`,
+          `${isHostel ? `Место ${selectedPlace}` : `Номер ${selectedPlace}`} успешно забронирован! Списано ${totalPrice} сом. Остаток на счёте: ${newBalance} сом.`,
         );
 
         setDate1("");
         setDate2("");
         setGuests("1");
+        setSelectedPlace(1);
+        getBookings();
       }
     } catch (error) {
       console.error("Ошибка при бронировании:", error);
@@ -384,17 +447,17 @@ function Hotels() {
 
           <p className="details-description">
             {selectedHotel.description ||
-              `Отель ${selectedHotel.namehotels} находится в городе ${selectedHotel.location}. Здесь вы можете выбрать даты проживания и забронировать номер.`}
+              `${isHostel ? "Хостел" : "Отель"} ${selectedHotel.namehotels} находится в городе ${selectedHotel.location}. Здесь вы можете выбрать даты проживания и забронировать место.`}
           </p>
 
           <div className="details-info-row">
             <div className="details-info-icon">
-              <i className="fa-solid fa-users"></i>
+              <i className={isHostel ? "fa-solid fa-bed" : "fa-solid fa-users"}></i>
             </div>
 
             <div>
               <strong>Количество мест</strong>
-              <p>{selectedHotel.people} гостей</p>
+              <p>{selectedHotel.people} {isHostel ? "койко-мест" : "мест"}</p>
             </div>
           </div>
 
@@ -405,7 +468,7 @@ function Hotels() {
 
             <div>
               <strong>Бронирование</strong>
-              <p>Выберите даты вашего проживания</p>
+              <p>Выберите даты и конкретное место</p>
             </div>
           </div>
 
@@ -416,6 +479,7 @@ function Hotels() {
               setDate1("");
               setDate2("");
               setGuests("1");
+              setSelectedPlace(1);
             }}
           >
             Забронировать
@@ -458,8 +522,8 @@ function Hotels() {
                     onChange={(e) => {
                       const selectedDate = e.target.value;
 
-                      if (isDateBooked(selectedDate)) {
-                        alert("Вы уже бронировали этот день в этом отеле!");
+                      if (isDateFullyBooked(selectedDate)) {
+                        alert("На эту дату все места в этом объекте уже заняты!");
                         setDate1("");
                         setDate2("");
                         return;
@@ -486,39 +550,116 @@ function Hotels() {
                         return;
                       }
 
-                      if (checkBookedDates(date1, selectedDate)) {
-                        alert("Вы уже бронировали этот период!");
+                      if (isRangeFullyBooked(date1, selectedDate)) {
+                        alert("На этот период все места уже забронированы!");
                         setDate2("");
                         return;
                       }
 
                       setDate2(selectedDate);
+
+                      // Если текущее место занято на новые даты, автовыбор первого свободного
+                      if (isPlaceBooked(selectedPlace, date1, selectedDate)) {
+                        const firstFree = Array.from(
+                          { length: totalPlaces },
+                          (_, i) => i + 1,
+                        ).find((p) => !isPlaceBooked(p, date1, selectedDate));
+
+                        if (firstFree) {
+                          setSelectedPlace(firstFree);
+                        }
+                      }
                     }}
                   />
 
-                  <label>Количество гостей</label>
+                  {/* Выбор конкретного места / номера */}
+                  <div className="booking-place-selector">
+                    <label className="booking-section-label">
+                      {isHostel
+                        ? "Выберите место (койку):"
+                        : "Выберите номер комнаты:"}
+                    </label>
 
-                  <select
-                    value={guests}
-                    onChange={(e) => setGuests(e.target.value)}
-                  >
-                    {Array.from(
-                      {
-                        length: Math.max(
-                          1,
-                          Math.min(4, Number(selectedHotel.people) || 1),
-                        ),
-                      },
-                      (_, index) => index + 1,
-                    ).map((number) => (
-                      <option key={number} value={number}>
-                        {number} {number === 1 ? "гость" : "гостя"}
-                      </option>
-                    ))}
-                  </select>
+                    <div className="booking-places-grid">
+                      {Array.from(
+                        { length: totalPlaces },
+                        (_, index) => index + 1,
+                      ).map((placeNum) => {
+                        const occupied =
+                          date1 && date2 ? isPlaceBooked(placeNum) : false;
+                        const isSelected = Number(selectedPlace) === placeNum;
+
+                        return (
+                          <button
+                            key={placeNum}
+                            type="button"
+                            disabled={occupied}
+                            onClick={() => setSelectedPlace(placeNum)}
+                            className={`booking-place-btn ${
+                              isSelected ? "selected" : ""
+                            } ${occupied ? "occupied" : "available"}`}
+                          >
+                            <div className="place-btn-icon">
+                              <i
+                                className={
+                                  isHostel
+                                    ? "fa-solid fa-bed"
+                                    : "fa-solid fa-door-closed"
+                                }
+                              ></i>
+                            </div>
+
+                            <strong className="place-btn-title">
+                              {isHostel ? `Место ${placeNum}` : `Номер ${placeNum}`}
+                            </strong>
+
+                            <span
+                              className={`place-btn-status ${
+                                occupied
+                                  ? "occupied"
+                                  : isSelected
+                                    ? "selected"
+                                    : "free"
+                              }`}
+                            >
+                              {occupied
+                                ? "Занято"
+                                : isSelected
+                                  ? "Выбрано"
+                                  : "Свободно"}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {!date1 || !date2 ? (
+                      <small className="booking-hint">
+                        * Выберите даты заезда и выезда, чтобы увидеть занятые и свободные{" "}
+                        {isHostel ? "места" : "номера"}.
+                      </small>
+                    ) : (
+                      <small className="booking-hint" style={{ color: "#2e7d32", fontWeight: 600 }}>
+                        {isHostel
+                          ? `Выбрано: Место ${selectedPlace} (свободно)`
+                          : `Выбран: Номер ${selectedPlace} (свободен)`}
+                      </small>
+                    )}
+                  </div>
 
                   {forpriceday > 0 && date2 > date1 && (
                     <div className="details-total">
+                      <div>
+                        <span>
+                          {isHostel ? "Выбранное место" : "Выбранный номер"}
+                        </span>
+                        <strong>
+                          {isHostel
+                            ? `Место ${selectedPlace}`
+                            : `Номер ${selectedPlace}`}
+                        </strong>
+                      </div>
+
                       <div>
                         <span>Количество ночей</span>
                         <strong>{forpriceday}</strong>

@@ -5899,3 +5899,184 @@ body {
     bottom: -15px !important;
   }
 }
+
+
+/* =====================================
+   BOOKING PLACE SELECTOR & ADMIN FILTERS
+   ===================================== */
+
+.booking-place-selector {
+  margin: 18px 0;
+  padding: 14px;
+  background: #f8faf6;
+  border: 1px solid #e1ebd9;
+  border-radius: 10px;
+}
+
+.booking-section-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #1b3815;
+}
+
+.booking-places-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.booking-place-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 6px;
+  border: 2px solid #dde3d7;
+  background: #ffffff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 82px;
+}
+
+.booking-place-btn:hover:not(:disabled) {
+  border-color: #2e7d32;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(46, 125, 50, 0.15);
+}
+
+.booking-place-btn.selected {
+  border-color: #2e7d32 !important;
+  background: #e8f5e9 !important;
+  box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.3) !important;
+}
+
+.booking-place-btn.occupied {
+  background: #ffebee !important;
+  border-color: #ffcdd2 !important;
+  cursor: not-allowed !important;
+  opacity: 0.65;
+}
+
+.place-btn-icon {
+  font-size: 18px;
+  margin-bottom: 4px;
+  color: #555555;
+}
+
+.booking-place-btn.selected .place-btn-icon {
+  color: #2e7d32;
+}
+
+.booking-place-btn.occupied .place-btn-icon {
+  color: #c62828;
+}
+
+.place-btn-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 3px;
+  color: #111111;
+}
+
+.booking-place-btn.occupied .place-btn-title {
+  color: #c62828;
+  text-decoration: line-through;
+}
+
+.place-btn-status {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.place-btn-status.free {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.place-btn-status.selected {
+  background: #2e7d32;
+  color: #ffffff;
+}
+
+.place-btn-status.occupied {
+  background: #ffcdd2;
+  color: #b71c1c;
+}
+
+.booking-hint {
+  display: block;
+  font-size: 11px;
+  color: #666666;
+  margin-top: 6px;
+}
+
+/* Admin 3 Filter buttons (ВСЕ, hotel, hostel) */
+.admin-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0 20px;
+  flex-wrap: wrap;
+}
+
+.admin-filter-btn {
+  height: 36px;
+  padding: 0 20px;
+  border: 1px solid #dcdcdc;
+  background: #f7f7f7;
+  color: #222222;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+.admin-filter-btn:hover {
+  background: #ebebeb;
+  border-color: #aaaaaa;
+}
+
+.admin-filter-btn.active {
+  background: #0b0a0a !important;
+  border-color: #0b0a0a !important;
+  color: #ffffff !important;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+}
+
+.admin-type-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.admin-type-tag.hotel {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.admin-type-tag.hostel {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.admin-place-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #ede7f6;
+  color: #512da8;
+}
