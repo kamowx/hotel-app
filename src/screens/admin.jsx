@@ -26,7 +26,7 @@ function Admin() {
     try {
       const response = await axios({
         method: "GET",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/hotels",
+        url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/hotels",
       });
 
       console.log("GET HOTELS:", response);
@@ -43,7 +43,7 @@ function Admin() {
     try {
       const response = await axios({
         method: "GET",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
+        url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data",
       });
 
       console.log("GET USERS:", response);
@@ -88,7 +88,7 @@ function Admin() {
     try {
       const response = await axios({
         method: "GET",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${id}`,
+        url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${id}`,
       });
 
       if (response.status === 200) {
@@ -98,6 +98,16 @@ function Admin() {
           localStorage.setItem("userId", JSON.stringify(currentUser.id));
           localStorage.setItem("id", JSON.stringify(currentUser.id));
           navigate("/home", { replace: true });
+          return;
+        }
+
+        if (currentUser.userstatus === "padmin") {
+          navigate("/padmin", { replace: true });
+          return;
+        }
+
+        if (currentUser.userstatus === "cleaning") {
+          navigate("/cleaning", { replace: true });
           return;
         }
 
@@ -182,7 +192,7 @@ function Admin() {
 
       const response = await axios({
         method: "PUT",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${adminData.id}`,
+        url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${adminData.id}`,
         data: {
           ...users.find((item) => String(item.id) === String(adminData.id)),
           lastname: adminData.lastname,
@@ -438,7 +448,10 @@ function Admin() {
               ))}
 
               {filteredAllBookings.length === 0 && (
-                <div className="admin-table-row" style={{ padding: "20px 14px" }}>
+                <div
+                  className="admin-table-row"
+                  style={{ padding: "20px 14px" }}
+                >
                   <span>
                     {filterType === "all"
                       ? "Заказов пока нет"

@@ -1,8 +1,16 @@
+import { enforceRole } from "../utils/authGuard";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Adminbottom from "../components/adminbottom";
 import axios from "axios";
 
 function Adminuser() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    enforceRole(["admin"], navigate);
+  }, [navigate]);
+
   const [allUser, setAllUser] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editUser, setEditUser] = useState(null);
@@ -12,7 +20,7 @@ function Adminuser() {
     try {
       const response = await axios({
         method: "GET",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
+        url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data",
       });
 
       console.log("ВСЕ ПОЛЬЗОВАТЕЛИ:", response.data);
@@ -44,7 +52,7 @@ function Adminuser() {
     try {
       await axios({
         method: "DELETE",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${item.id}`,
+        url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${item.id}`,
       });
 
       setAllUser((prev) =>
@@ -90,7 +98,7 @@ function Adminuser() {
     try {
       const response = await axios({
         method: "PUT",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${editUser.id}`,
+        url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${editUser.id}`,
         data: {
           ...editUser,
           check: Number(editUser.check) || 0,

@@ -1,32 +1,79 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "../firabase/firebase-config";
 import axios from "axios";
+
+const USER_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data";
 
 function Signin() {
   const [showPassword, setShowPassword] = useState(false);
-
   const [users, setUsers] = useState([]);
-
   const [emailsigin, setEmailsigin] = useState("");
-
   const [password2signin, setPassword2signin] = useState("");
 
   const navigate = useNavigate();
 
   const allUser = async () => {
     try {
-      const response = await axios({
-        method: "GET",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
-      });
-
-      console.log("GET", response);
-
-      if (response.status === 200) {
-        setUsers(response.data);
-      }
+      const response = await axios.get(USER_URL);
+      setUsers(response.data);
     } catch (error) {
-      console.error(error);
+      console.error("Ошибка загрузки пользователей:", error);
+    }
+  };
+
+  // Ищем пользователя в MockAPI по UID Google
+  const getUserByUid = async (uid) => {
+    const response = await axios.get(USER_URL);
+
+    return response.data.find((item) => item.uid === uid);
+  };
+
+  // Создаём пользователя в MockAPI
+  const createUser = async (userData) => {
+    const response = await axios.post(USER_URL, userData);
+
+    return response.data;
+  };
+
+  // Вход через Google
+  const loginWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const googleUser = result.user;
+
+      // Сохраняем UID Google
+      localStorage.setItem("uid", googleUser.uid);
+
+      // Проверяем, есть ли пользователь в MockAPI
+      let existingUser = await getUserByUid(googleUser.uid);
+
+      if (!existingUser) {
+        const nameParts = (googleUser.displayName || "").split(" ");
+
+        existingUser = await createUser({
+          uid: googleUser.uid,
+          firstname: nameParts[0] || "",
+          lastname: nameParts.slice(1).join(" "),
+          email: googleUser.email || "",
+          avatar: googleUser.photoURL || "",
+          numberphone: googleUser.phoneNumber || "",
+          userstatus: "user",
+          createdAt: new Date().toISOString(),
+        });
+      }
+
+      // Сохраняем ID именно записи MockAPI
+      localStorage.setItem("uid", JSON.stringify(existingUser.uid));
+
+      alert("Вы успешно вошли через Google");
+
+      // Открываем профиль
+      navigate("/profile");
+    } catch (error) {
+      console.error("Ошибка входа через Google:", error);
+      alert("Не удалось войти через Google");
     }
   };
 
@@ -35,13 +82,14 @@ function Signin() {
   }, []);
 
   useEffect(() => {
-    const id = localStorage.getItem("id");
+    const uid = localStorage.getItem("uid");
 
-    if (id) {
+    if (uid) {
       navigate("/home");
     }
-  }, []);
+  }, [navigate]);
 
+  // Обычный вход
   const signIn = async () => {
     if (!emailsigin.trim() || !password2signin.trim()) {
       alert("Заполните все поля");
@@ -50,10 +98,11 @@ function Signin() {
 
     const user = users.find(
       (item) =>
-        item.email == emailsigin &&
-        item.password2 == password2signin &&
-        item.userstatus == "user",
+        item.email === emailsigin &&
+        item.password2 === password2signin &&
+        item.userstatus === "user",
     );
+
     if (!user) {
       alert("Имя пользователя или пароль неправильные");
       return;
@@ -61,7 +110,7 @@ function Signin() {
 
     alert("Вы успешно вошли");
 
-    localStorage.setItem("id", JSON.stringify(user.id));
+    localStorage.setItem("uid", JSON.stringify(user.uid));
 
     navigate("/home");
   };
@@ -122,6 +171,12 @@ function Signin() {
             <button className="login-submit" onClick={signIn}>
               Вход
             </button>
+
+            <br />
+
+            <button className="login-submit" onClick={loginWithGoogle}>
+              Вход через Google
+            </button>
           </div>
         </div>
 
@@ -138,4 +193,3 @@ function Signin() {
 }
 
 export default Signin;
-/*hotel*/

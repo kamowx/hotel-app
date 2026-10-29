@@ -22,7 +22,7 @@ function Hotels() {
     try {
       const response = await axios({
         method: "GET",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
+        url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data",
       });
 
       console.log("ВСЕ ДАННЫЕ:", response.data);
@@ -58,7 +58,7 @@ function Hotels() {
   const getHotel = async () => {
     try {
       const response = await axios.get(
-        `https://6ac221b73f4ae78f6944db9c.mockapi.io/hotels/${id}`,
+        `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/hotels/${id}`,
       );
 
       if (response.status === 200) {
@@ -74,7 +74,7 @@ function Hotels() {
   const getBookings = async () => {
     try {
       const response = await axios.get(
-        "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
+        "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data",
       );
 
       if (response.status === 200 && Array.isArray(response.data)) {
@@ -255,7 +255,7 @@ function Hotels() {
 
     try {
       const userResponse = await axios.get(
-        `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
+        `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${userId}`,
       );
 
       const currentUser = userResponse.data;
@@ -333,7 +333,7 @@ function Hotels() {
       const newBalance = Number((balance - totalPrice).toFixed(2));
 
       const response = await axios.put(
-        `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
+        `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${userId}`,
         {
           ...currentUser,
           check: newBalance,

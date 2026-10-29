@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import Adminbottom from "../components/adminbottom";
 import axios from "axios";
 
-const HOTELS_URL = "https://6ac221b73f4ae78f6944db9c.mockapi.io/hotels";
+const HOTELS_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/hotels";
 
-const USERS_URL = "https://6ac221b73f4ae78f6944db9c.mockapi.io/data";
+const USERS_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data";
 
 function getTodayDate() {
   const today = new Date();
@@ -105,6 +105,16 @@ function Adminhostels() {
       if (response.status === 200) {
         const user = response.data;
 
+        if (user.userstatus === "padmin") {
+          window.location.href = "/padmin";
+          return;
+        }
+
+        if (user.userstatus === "cleaning") {
+          window.location.href = "/cleaning";
+          return;
+        }
+
         if (user.userstatus === "user") {
           window.location.href = "/home";
           return;
@@ -136,14 +146,12 @@ function Adminhostels() {
     setEditId(null);
   };
 
-  // Закрытие модального окна
   const closeModal = () => {
     setShowModal(false);
     setShowModal2(false);
     resetForm();
   };
 
-  // Проверка формы
   const validateForm = () => {
     if (
       !namehotels.trim() ||
@@ -213,7 +221,6 @@ function Adminhostels() {
     }
   };
 
-  // Открытие редактирования хостела
   const openEdit = (item) => {
     setEditId(item.id);
 
@@ -230,7 +237,6 @@ function Adminhostels() {
     setShowModal2(true);
   };
 
-  // Сохранение изменений хостела
   const editHotel = async () => {
     if (!validateForm()) {
       return;
@@ -263,10 +269,9 @@ function Adminhostels() {
       alert("Ошибка при изменении хостела");
     }
   };
-  // Удаление хостела
   const deleteHotel = async (id) => {
     const confirmDelete = window.confirm(
-      "Вы действительно хотите удалить этот хостел?",
+      "Вы действительно хотите удалить этот отель?",
     );
 
     if (!confirmDelete) {
@@ -274,20 +279,49 @@ function Adminhostels() {
     }
 
     try {
-      const response = await axios.delete(`${HOTELS_URL}/${id}`);
+      const hotel = hotels.find((item) => String(item.id) === String(id));
 
-      console.log("DELETE HOSTEL:", response);
+      const targetId = hotel ? hotel.id : id;
+      const parentId = hotel?.dataId || 1;
+
+      console.log("Выбранный отель:", hotel);
+      console.log("ID отеля:", targetId);
+
+      let response;
+
+      try {
+        response = await axios({
+          method: "DELETE",
+          url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${parentId}/hotels/${targetId}`,
+        });
+      } catch (nestedError) {
+        console.log("Первый запрос не сработал:", nestedError);
+
+        response = await axios({
+          method: "DELETE",
+          url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/hotels/${targetId}`,
+        });
+      }
+
+      console.log("DELETE RESPONSE:", response);
 
       if (response.status === 200 || response.status === 204) {
-        alert("Хостел удалён");
+        alert("Отель удалён");
 
         setHotels((prevHotels) =>
-          prevHotels.filter((item) => String(item.id) !== String(id)),
+          prevHotels.filter((item) => String(item.id) !== String(targetId)),
         );
       }
     } catch (error) {
-      console.error("DELETE HOSTEL ERROR:", error);
-      alert("Ошибка при удалении хостела");
+      console.error("DELETE ERROR:", error);
+      console.error("DELETE STATUS:", error.response?.status);
+      console.error("DELETE DATA:", error.response?.data);
+
+      alert(
+        `Ошибка при удалении. Status: ${
+          error.response?.status || "нет ответа от сервера"
+        }`,
+      );
     }
   };
 

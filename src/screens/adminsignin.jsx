@@ -14,7 +14,7 @@ function Adminsignin() {
     try {
       const response = await axios({
         method: "GET",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
+        url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data",
       });
 
       console.log("GET", response);
@@ -22,14 +22,24 @@ function Adminsignin() {
       if (response.status === 200) {
         setUsers(response.data);
 
-        const id = JSON.parse(localStorage.getItem("id"));
+        const rawId = localStorage.getItem("id");
+        if (rawId) {
+          const id = String(rawId).replaceAll('"', "");
+          const currentUser = response.data.find(
+            (item) => String(item.id) === String(id),
+          );
 
-        const currentUser = response.data.find(
-          (item) => String(item.id) === String(id),
-        );
-
-        if (currentUser && currentUser.userstatus === "user") {
-          window.location.href = "/home";
+          if (currentUser) {
+            if (currentUser.userstatus === "user") {
+              navigate("/home");
+            } else if (currentUser.userstatus === "admin") {
+              navigate("/admin");
+            } else if (currentUser.userstatus === "padmin") {
+              navigate("/padmin");
+            } else if (currentUser.userstatus === "cleaning") {
+              navigate("/cleaning");
+            }
+          }
         }
       }
     } catch (error) {
@@ -50,7 +60,7 @@ function Adminsignin() {
     try {
       const response = await axios({
         method: "GET",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
+        url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data",
       });
 
       console.log("USERS ДЛЯ ВХОДА:", response.data);
@@ -71,23 +81,33 @@ function Adminsignin() {
 
         if (currentUser.userstatus === "user") {
           localStorage.removeItem("adminId");
-
           localStorage.setItem("userId", JSON.stringify(currentUser.id));
-
           localStorage.setItem("id", JSON.stringify(currentUser.id));
-
           navigate("/home");
           return;
         }
 
         if (currentUser.userstatus === "admin") {
           localStorage.removeItem("userId");
-
           localStorage.setItem("adminId", JSON.stringify(currentUser.id));
-
           localStorage.setItem("id", JSON.stringify(currentUser.id));
-
           navigate("/admin");
+          return;
+        }
+
+        if (currentUser.userstatus === "padmin") {
+          localStorage.removeItem("userId");
+          localStorage.setItem("adminId", JSON.stringify(currentUser.id));
+          localStorage.setItem("id", JSON.stringify(currentUser.id));
+          navigate("/padmin");
+          return;
+        }
+
+        if (currentUser.userstatus === "cleaning") {
+          localStorage.removeItem("userId");
+          localStorage.setItem("adminId", JSON.stringify(currentUser.id));
+          localStorage.setItem("id", JSON.stringify(currentUser.id));
+          navigate("/cleaning");
           return;
         }
 
@@ -120,11 +140,11 @@ function Adminsignin() {
           <h1>
             Панель
             <br />
-            администратора
+            управления
           </h1>
 
           <p>
-            Управляйте бронированиями, отелями и пользователями в одном месте.
+            Вход для администрации, партнёров (padmin) и персонала клининга (cleaning).
           </p>
         </div>
 
@@ -139,9 +159,9 @@ function Adminsignin() {
       <div className="admin-signin-right">
         <div className="admin-signin-form">
           <div className="admin-signin-header">
-            <span className="admin-signin-label">ADMIN PANEL</span>
+            <span className="admin-signin-label">STAFF & ADMIN PANEL</span>
 
-            <h2>Вход администратора</h2>
+            <h2>Вход в систему</h2>
 
             <p>Введите свои данные для входа в панель управления</p>
           </div>

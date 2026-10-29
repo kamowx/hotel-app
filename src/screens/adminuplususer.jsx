@@ -18,7 +18,7 @@ function Adminuplususer() {
     try {
       const response = await axios({
         method: "GET",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
+        url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data",
       });
 
       const user = response.data.find(

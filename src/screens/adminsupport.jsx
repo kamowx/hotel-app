@@ -7,7 +7,7 @@ import "moment/locale/ru";
 moment.locale("ru");
 
 const CHAT_URL = "https://6ad252f566cd28aed82de514.mockapi.io/chat";
-const USER_URL = "https://6ac221b73f4ae78f6944db9c.mockapi.io/data";
+const USER_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data";
 
 function parseMessages(value) {
   if (Array.isArray(value)) return value;
@@ -44,6 +44,14 @@ function Adminsupport() {
     try {
       const adminResponse = await axios.get(`${USER_URL}/${adminId}`);
 
+      if (adminResponse.data.userstatus === "padmin") {
+        navigate("/padmin");
+        return;
+      }
+      if (adminResponse.data.userstatus === "cleaning") {
+        navigate("/cleaning");
+        return;
+      }
       if (adminResponse.data.userstatus !== "admin") {
         navigate("/home");
         return;

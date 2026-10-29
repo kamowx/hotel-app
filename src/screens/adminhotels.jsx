@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import Adminbottom from "../components/adminbottom";
 import axios from "axios";
 
-const HOTELS_URL = "https://6ac221b73f4ae78f6944db9c.mockapi.io/hotels";
+const HOTELS_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/hotels";
 
-const USERS_URL = "https://6ac221b73f4ae78f6944db9c.mockapi.io/data";
+const USERS_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data";
 
 function getTodayDate() {
   const today = new Date();
@@ -106,6 +106,16 @@ function Adminhotels() {
 
       if (response.status === 200) {
         const user = response.data;
+
+        if (user.userstatus === "padmin") {
+          window.location.href = "/padmin";
+          return;
+        }
+
+        if (user.userstatus === "cleaning") {
+          window.location.href = "/cleaning";
+          return;
+        }
 
         if (user.userstatus === "user") {
           window.location.href = "/home";
@@ -300,14 +310,14 @@ function Adminhotels() {
       try {
         response = await axios({
           method: "DELETE",
-          url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${parentId}/hotels/${targetId}`,
+          url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${parentId}/hotels/${targetId}`,
         });
       } catch (nestedError) {
         console.log("Первый запрос не сработал:", nestedError);
 
         response = await axios({
           method: "DELETE",
-          url: `${HOTELS_URL}/${targetId}`,
+          url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/hotels/${targetId}`,
         });
       }
 

@@ -24,7 +24,7 @@ function AdminSignup() {
       try {
         const response = await axios({
           method: "GET",
-          url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
+          url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data",
         });
 
         if (response.status === 200) {
@@ -33,6 +33,16 @@ function AdminSignup() {
           );
 
           if (!currentUser) {
+            return;
+          }
+
+          if (currentUser.userstatus == "padmin") {
+            navigate("/padmin");
+            return;
+          }
+
+          if (currentUser.userstatus == "cleaning") {
+            navigate("/cleaning");
             return;
           }
 
@@ -75,7 +85,7 @@ function AdminSignup() {
     try {
       const response = await axios({
         method: "GET",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
+        url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data",
       });
 
       if (response.status === 200) {
@@ -97,7 +107,7 @@ function AdminSignup() {
 
         const newUser = await axios({
           method: "POST",
-          url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
+          url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data",
           data: {
             firstname: name,
             lastname: surname,

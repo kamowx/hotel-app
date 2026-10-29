@@ -20,7 +20,7 @@ function Armhotels() {
       const cleanUserId = String(userId).replaceAll('"', "");
 
       const response = await axios.get(
-        `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${cleanUserId}`,
+        `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${cleanUserId}`,
       );
 
       console.log("GET USER:", response);
@@ -69,7 +69,7 @@ function Armhotels() {
       const cleanUserId = String(userId).replaceAll('"', "");
 
       const userResponse = await axios.get(
-        `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${cleanUserId}`,
+        `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${cleanUserId}`,
       );
 
       const currentUser = userResponse.data;
@@ -97,7 +97,7 @@ function Armhotels() {
       );
 
       const response = await axios.put(
-        `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${cleanUserId}`,
+        `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${cleanUserId}`,
         {
           ...currentUser,
           check: newBalance,

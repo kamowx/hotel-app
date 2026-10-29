@@ -23,7 +23,7 @@ function Favorites() {
     try {
       const response = await axios({
         method: "GET",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
+        url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${userId}`,
       });
 
       console.log("GET USER:", response);
@@ -63,7 +63,7 @@ function Favorites() {
     try {
       const userResponse = await axios({
         method: "GET",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
+        url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${userId}`,
       });
 
       if (userResponse.status === 200) {
@@ -71,7 +71,7 @@ function Favorites() {
 
         const response = await axios({
           method: "PUT",
-          url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
+          url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${userId}`,
           data: {
             ...currentUser,
             favorites: newFavorites,

@@ -192,6 +192,16 @@ function Adminactive() {
       if (response.status === 200) {
         const user = response.data;
 
+        if (user.userstatus == "padmin") {
+          window.location.href = "/padmin";
+          return;
+        }
+
+        if (user.userstatus == "cleaning") {
+          window.location.href = "/cleaning";
+          return;
+        }
+
         if (user.userstatus == "user") {
           window.location.href = "/home";
         }
@@ -358,7 +368,10 @@ function Adminactive() {
               ))}
 
               {filteredBookings.length === 0 && (
-                <div className="admin-table-row" style={{ padding: "20px 14px" }}>
+                <div
+                  className="admin-table-row"
+                  style={{ padding: "20px 14px" }}
+                >
                   <span>
                     {filterType === "all"
                       ? "Активных бронирований пока нет"

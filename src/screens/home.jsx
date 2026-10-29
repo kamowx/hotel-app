@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Bottomnav from "../components/bottomnav";
 import axios from "axios";
@@ -37,7 +37,7 @@ function Home() {
     try {
       const response = await axios({
         method: "GET",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/hotels",
+        url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/hotels",
       });
 
       console.log("GET HOTELS:", response);
@@ -51,7 +51,7 @@ function Home() {
   };
 
   const getUser = async () => {
-    const id = localStorage.getItem("id");
+    const id = localStorage.getItem("uid");
 
     if (!id) {
       navigate("/signin");
@@ -63,13 +63,23 @@ function Home() {
     try {
       const response = await axios({
         method: "GET",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
+        url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${userId}`,
       });
 
       console.log("GET USER:", response);
 
       if (response.status === 200) {
         const currentUser = response.data;
+
+        if (currentUser.userstatus == "padmin") {
+          navigate("/padmin");
+          return;
+        }
+
+        if (currentUser.userstatus == "cleaning") {
+          navigate("/cleaning");
+          return;
+        }
 
         if (currentUser.userstatus == "admin") {
           navigate("/admin");
@@ -95,24 +105,24 @@ function Home() {
   }, []);
 
   const toggleFavorite = async (hotel) => {
-    const id = localStorage.getItem("id");
+    const uid = localStorage.getItem("uid");
 
-    if (!id) {
+    if (!uid) {
       navigate("/signin");
       return;
     }
 
-    const userId = String(id).replaceAll('"', "");
+    const userId = String(uid).replaceAll('"', "");
 
     const isFav = Array.isArray(favorites)
-      ? favorites.some((item) => String(item.id) === String(hotel.id))
+      ? favorites.some((item) => String(item.uid) === String(hotel.id))
       : false;
 
     let updated;
 
     if (isFav) {
       updated = favorites.filter(
-        (item) => String(item.id) !== String(hotel.id),
+        (item) => String(item.uid) !== String(hotel.uid),
       );
     } else {
       updated = [...favorites, hotel];
@@ -121,7 +131,7 @@ function Home() {
     try {
       const userResponse = await axios({
         method: "GET",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
+        url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${userId}`,
       });
 
       if (userResponse.status === 200) {
@@ -129,7 +139,7 @@ function Home() {
 
         const response = await axios({
           method: "PUT",
-          url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${userId}`,
+          url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${userId}`,
           data: {
             ...currentUser,
             favorites: updated,

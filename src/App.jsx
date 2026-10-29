@@ -26,6 +26,11 @@ import Adminuser from "./screens/adminuser";
 import Support from "./screens/support";
 import Adminsupport from "./screens/adminsupport";
 import Adminhostels from "./screens/adminhostels";
+import Adminstaff from "./screens/adminstaff";
+import Padmin from "./screens/padmin";
+import Cleaning from "./screens/cleaning";
+import Admincleaning from "./screens/admincleaning";
+import Staffsignin from "./screens/staffsignin";
 
 function App() {
   return (
@@ -54,6 +59,11 @@ function App() {
         <Route path="/support" element={<Support />} />
         <Route path="/adminsupport" element={<Adminsupport />} />
         <Route path="/adminhostels" element={<Adminhostels />} />
+        <Route path="/adminstaff" element={<Adminstaff />} />
+        <Route path="/padmin" element={<Padmin />} />
+        <Route path="/cleaning" element={<Cleaning />} />
+        <Route path="/admincleaning" element={<Admincleaning />} />
+        <Route path="/staffsignin" element={<Staffsignin />} />
       </Routes>
     </BrowserRouter>
   );

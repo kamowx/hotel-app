@@ -29,7 +29,7 @@ function EditProfile() {
     try {
       const response = await axios({
         method: "GET",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
+        url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data",
       });
 
       console.log("GET", response);
@@ -102,7 +102,7 @@ function EditProfile() {
     try {
       const response = await axios({
         method: "PUT",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${id}`,
+        url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${id}`,
         data: {
           ...user,
           firstname: name,
@@ -153,7 +153,7 @@ function EditProfile() {
     try {
       const response = await axios({
         method: "PUT",
-        url: `https://6ac221b73f4ae78f6944db9c.mockapi.io/data/${id}`,
+        url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${id}`,
         data: {
           ...user,
           password1: newPassword,

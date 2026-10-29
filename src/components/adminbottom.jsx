@@ -12,7 +12,7 @@ function Adminbottom() {
     try {
       const response = await axios({
         method: "GET",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
+        url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data",
       });
 
       console.log("GET USERS:", response);
@@ -107,24 +107,35 @@ function Adminbottom() {
             <i className="fa-solid fa-hotel"></i>
             <span>Отели</span>
           </Link>
+
           <Link to="/adminuser" className="admin-menu-item">
-            <i class="fa-solid fa-person"></i>
+            <i className="fa-solid fa-person"></i>
             <span>Пользователи</span>
           </Link>
-          <Link to="/support" className="admin-menu-item">
-            <i class="fa-solid fa-headset"></i>
+
+          {/* Персонал */}
+          <Link to="/adminstaff" className="admin-menu-item">
+            <i className="fa-solid fa-users-gear"></i>
+            <span>Персонал</span>
+          </Link>
+
+          {/* Клининг */}
+          <Link to="/admincleaning" className="admin-menu-item">
+            <i className="fa-solid fa-broom"></i>
+            <span>Клининг</span>
+          </Link>
+
+          <Link to="/adminsupport" className="admin-menu-item">
+            <i className="fa-solid fa-headset"></i>
             <span>Служба поддержки</span>
           </Link>
         </div>
 
         <div className="admin-sidebar-bottom">
-          <button className="admin-menu-item">
+          <button className="admin-menu-item" onClick={logout1}>
             <span>Здравствуйте!</span>
             <br />
-
-            <span onClick={logout1}>
-              <b>Выйти</b>
-            </span>
+            <b>Выйти</b>
           </button>
         </div>
       </aside>

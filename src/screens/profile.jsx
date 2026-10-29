@@ -14,7 +14,7 @@ function Profile() {
     const adminId = localStorage.getItem("adminId");
 
     if (adminId) {
-      localStorage.setItem("id", adminId);
+      localStorage.setItem("uid", adminId);
 
       localStorage.removeItem("userId");
 
@@ -31,9 +31,9 @@ function Profile() {
     }
   };
   useEffect(() => {
-    const id = localStorage.getItem("id");
+    const uid = localStorage.getItem("uid");
 
-    if (!id) {
+    if (!uid) {
       navigate("/signin");
     }
   }, [navigate]);
@@ -42,7 +42,7 @@ function Profile() {
     try {
       const response = await axios({
         method: "GET",
-        url: "https://6ac221b73f4ae78f6944db9c.mockapi.io/data",
+        url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data",
       });
 
       console.log("ВСЕ ДАННЫЕ:", response.data);
@@ -50,10 +50,10 @@ function Profile() {
       if (response.status === 200) {
         setUsers(response.data);
 
-        const id = localStorage.getItem("id");
+        const uid = localStorage.getItem("uid");
 
         const currentUser = response.data.find(
-          (item) => String(item.id) === String(id).replaceAll('"', ""),
+          (item) => String(item.uid) === String(uid).replaceAll('"', ""),
         );
 
         console.log("НАЙДЕННЫЙ USER:", currentUser);
