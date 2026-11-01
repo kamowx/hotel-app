@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import Adminbottom from "../components/adminbottom";
 import axios from "axios";
 
 const HOTELS_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/hotels";
-
 const USERS_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data";
 
 function getTodayDate() {
@@ -30,11 +29,16 @@ function Adminhostels() {
   const [discountEndDate, setDiscountEndDate] = useState("");
   const [hotelType, setHotelType] = useState("hostel");
 
+  // Поля промокода
+  const [promo, setPromo] = useState("");
+  const [pricepromo, setPricepromo] = useState("");
+  const [promodate, setPromodate] = useState("");
+
   const [editId, setEditId] = useState(null);
 
   const discountPrice = Number(price) * (1 - Number(discount || 0) / 100);
 
-  // Получение списка хостелов и проверка скидок
+  // Получение списка хостелов и проверка сроков скидки и промокода
   const getHotels = async () => {
     try {
       const response = await axios.get(HOTELS_URL);
@@ -46,23 +50,35 @@ function Adminhostels() {
 
         const updatedHotels = await Promise.all(
           response.data.map(async (item) => {
+            const updateData = {};
+
             if (
               Number(item.discount) > 0 &&
               item.discountEndDate &&
               item.discountEndDate < todayDate
             ) {
+              updateData.discount = "0";
+            }
+
+            if (item.promo && item.promodate && item.promodate < todayDate) {
+              updateData.promo = "";
+              updateData.pricepromo = "";
+              updateData.promodate = "";
+            }
+
+            if (Object.keys(updateData).length > 0) {
               try {
                 const updateResponse = await axios.put(
                   `${HOTELS_URL}/${item.id}`,
                   {
                     ...item,
-                    discount: "0",
+                    ...updateData,
                   },
                 );
 
                 return updateResponse.data;
               } catch (error) {
-                console.error("Ошибка сброса скидки:", error);
+                console.error("Ошибка обновления хостела:", error);
                 return item;
               }
             }
@@ -143,6 +159,11 @@ function Adminhostels() {
     setDiscount("0");
     setDiscountEndDate("");
     setHotelType("hostel");
+
+    setPromo("");
+    setPricepromo("");
+    setPromodate("");
+
     setEditId(null);
   };
 
@@ -152,6 +173,7 @@ function Adminhostels() {
     resetForm();
   };
 
+  // Проверка формы
   const validateForm = () => {
     if (
       !namehotels.trim() ||
@@ -184,6 +206,24 @@ function Adminhostels() {
       return false;
     }
 
+    // Проверка промокода
+    if (promo.trim()) {
+      if (!pricepromo.trim() || !promodate) {
+        alert("Укажите цену и дату окончания промокода");
+        return false;
+      }
+
+      if (Number(pricepromo) <= 0 || Number(pricepromo) >= Number(price)) {
+        alert("Цена по промокоду должна быть меньше обычной цены");
+        return false;
+      }
+
+      if (promodate < getTodayDate()) {
+        alert("Дата окончания промокода не может быть в прошлом");
+        return false;
+      }
+    }
+
     return true;
   };
 
@@ -202,6 +242,9 @@ function Adminhostels() {
         avatarhotels: avatarhotels,
         discount: discount,
         discountEndDate: Number(discount) > 0 ? discountEndDate : "",
+        promo: promo.trim(),
+        pricepromo: promo.trim() ? pricepromo : "",
+        promodate: promo.trim() ? promodate : "",
         type: "hostel",
       });
 
@@ -221,6 +264,7 @@ function Adminhostels() {
     }
   };
 
+  // Открытие редактирования
   const openEdit = (item) => {
     setEditId(item.id);
 
@@ -233,10 +277,15 @@ function Adminhostels() {
     setDiscountEndDate(item.discountEndDate || "");
     setHotelType("hostel");
 
+    setPromo(item.promo || "");
+    setPricepromo(String(item.pricepromo ?? ""));
+    setPromodate(item.promodate || "");
+
     setShowModal(false);
     setShowModal2(true);
   };
 
+  // Изменение хостела
   const editHotel = async () => {
     if (!validateForm()) {
       return;
@@ -251,6 +300,9 @@ function Adminhostels() {
         avatarhotels: avatarhotels,
         discount: discount,
         discountEndDate: Number(discount) > 0 ? discountEndDate : "",
+        promo: promo.trim(),
+        pricepromo: promo.trim() ? pricepromo : "",
+        promodate: promo.trim() ? promodate : "",
         type: "hostel",
       });
 
@@ -269,6 +321,8 @@ function Adminhostels() {
       alert("Ошибка при изменении хостела");
     }
   };
+
+  // Удаление хостела
   const deleteHotel = async (id) => {
     const confirmDelete = window.confirm(
       "Вы действительно хотите удалить этот отель?",
@@ -382,6 +436,12 @@ function Adminhostels() {
 
                   const finalPrice = hostelPrice * (1 - hostelDiscount / 100);
 
+                  const promoActive =
+                    item.promo &&
+                    item.pricepromo &&
+                    item.promodate &&
+                    item.promodate >= getTodayDate();
+
                   return (
                     <div className="admin-hotel-card" key={item.id}>
                       <div className="admin-hotel-photo">
@@ -439,6 +499,25 @@ function Adminhostels() {
 
                           <span> / ночь</span>
                         </div>
+
+                        {promoActive && (
+                          <div
+                            style={{
+                              marginTop: "10px",
+                              padding: "10px",
+                              background: "#f5f8f2",
+                              borderRadius: "8px",
+                            }}
+                          >
+                            <strong>Промокод: {item.promo}</strong>
+                            <p style={{ margin: "5px 0" }}>
+                              Цена:{" "}
+                              {Number(item.pricepromo).toLocaleString("ru-RU")}{" "}
+                              сом
+                            </p>
+                            <small>Действует до: {item.promodate}</small>
+                          </div>
+                        )}
 
                         <p>
                           <i className="fa-solid fa-users"></i> До {item.people}{" "}
@@ -630,6 +709,72 @@ function Adminhostels() {
                 </>
               ) : (
                 <p>Введите цену хостела</p>
+              )}
+            </div>
+
+            {/* Поля промокода */}
+            <div
+              style={{
+                marginTop: "15px",
+                padding: "15px",
+                background: "#f5f8f2",
+                borderRadius: "8px",
+              }}
+            >
+              <h3 style={{ marginBottom: "15px" }}>Промокод</h3>
+
+              <div className="admin-hotel-modal-input">
+                <label>Название промокода</label>
+
+                <input
+                  type="text"
+                  placeholder="Например: HOSTEL20"
+                  value={promo}
+                  onChange={(e) => setPromo(e.target.value)}
+                />
+              </div>
+
+              <div className="admin-hotel-modal-input">
+                <label>Цена по промокоду (сом)</label>
+
+                <input
+                  type="number"
+                  min="1"
+                  placeholder="Например: 700"
+                  value={pricepromo}
+                  onChange={(e) => setPricepromo(e.target.value)}
+                />
+              </div>
+
+              <div className="admin-hotel-modal-input">
+                <label>Дата окончания промокода</label>
+
+                <input
+                  type="date"
+                  min={getTodayDate()}
+                  value={promodate}
+                  onChange={(e) => setPromodate(e.target.value)}
+                />
+
+                <small>
+                  Промокод действует до указанного дня включительно.
+                </small>
+              </div>
+
+              {promo.trim() && Number(pricepromo) > 0 && Number(price) > 0 && (
+                <div style={{ marginTop: "10px" }}>
+                  <strong>
+                    Цена по промокоду:{" "}
+                    {Number(pricepromo).toLocaleString("ru-RU")} сом
+                  </strong>
+                  <p style={{ margin: "5px 0", color: "#2e7d32" }}>
+                    Экономия:{" "}
+                    {(Number(price) - Number(pricepromo)).toLocaleString(
+                      "ru-RU",
+                    )}{" "}
+                    сом
+                  </p>
+                </div>
               )}
             </div>
 

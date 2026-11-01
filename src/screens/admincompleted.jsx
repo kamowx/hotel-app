@@ -268,7 +268,10 @@ function Admincompleted() {
               ))}
 
               {filteredBookings.length === 0 && (
-                <div className="admin-table-row" style={{ padding: "20px 14px" }}>
+                <div
+                  className="admin-table-row"
+                  style={{ padding: "20px 14px" }}
+                >
                   <span>
                     {filterType === "all"
                       ? "Завершенных бронирований пока нет"

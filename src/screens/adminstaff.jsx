@@ -34,6 +34,8 @@ function Adminstaff() {
           navigate("/padmin", { replace: true });
         } else if (current.data.userstatus === "cleaning") {
           navigate("/cleaning", { replace: true });
+        } else if (current.data.userstatus === "chef") {
+          navigate("/cook", { replace: true });
         } else {
           navigate("/home", { replace: true });
         }
@@ -48,9 +50,12 @@ function Adminstaff() {
       setStaff(
         usersResponse.data.filter(
           (item) =>
-            item.userstatus === "padmin" || item.userstatus === "cleaning",
+            item.userstatus === "padmin" ||
+            item.userstatus === "cleaning" ||
+            item.userstatus === "chef",
         ),
       );
+
       setHotels(hotelsResponse.data);
     } catch (error) {
       console.error(error);
@@ -73,10 +78,13 @@ function Adminstaff() {
 
   const editStaff = (item) => {
     setEditId(item.id);
+
     setName(
       item.name || item.namesigin || item.nameuser || item.username || "",
     );
+
     setEmail(item.email || item.emailsigin || item.emailuser || "");
+
     setPassword(
       item.password ||
         item.password2signin ||
@@ -84,7 +92,9 @@ function Adminstaff() {
         item.password2 ||
         "",
     );
+
     setRole(item.userstatus);
+
     setAssignedHotels(
       Array.isArray(item.cleaningHotelIds)
         ? item.cleaningHotelIds.map(String)
@@ -171,6 +181,7 @@ function Adminstaff() {
 
     try {
       await axios.delete(`${USERS_URL}/${id}`);
+
       setStaff((previous) =>
         previous.filter((item) => String(item.id) !== String(id)),
       );
@@ -219,7 +230,6 @@ function Adminstaff() {
         </button>
 
         <a href="/admin" className="i1">
-          {" "}
           <button className="staff-sidebar-link">
             <i className="fa-solid fa-right-from-bracket"></i>
             Выйти
@@ -295,11 +305,14 @@ function Adminstaff() {
                   value={role}
                   onChange={(e) => {
                     setRole(e.target.value);
-                    if (e.target.value !== "cleaning") setAssignedHotels([]);
+                    if (e.target.value !== "cleaning") {
+                      setAssignedHotels([]);
+                    }
                   }}
                 >
                   <option value="padmin">Padmin — бронирования</option>
                   <option value="cleaning">Уборщик</option>
+                  <option value="chef">Chef — Повар</option>
                 </select>
               </div>
 
@@ -366,17 +379,27 @@ function Adminstaff() {
                       <td>
                         <b>{getName(item)}</b>
                       </td>
+
                       <td>{getEmail(item)}</td>
+
                       <td>
                         <span className="staff-table-status">
-                          {item.userstatus === "padmin" ? "Padmin" : "Уборщик"}
+                          {item.userstatus === "padmin"
+                            ? "Padmin"
+                            : item.userstatus === "cleaning"
+                              ? "Уборщик"
+                              : item.userstatus === "chef"
+                                ? "Chef — Повар"
+                                : "—"}
                         </span>
                       </td>
+
                       <td>
                         {item.userstatus === "cleaning"
                           ? item.cleaningHotelIds?.length || 0
                           : "—"}
                       </td>
+
                       <td>
                         <div className="staff-table-buttons">
                           <button
@@ -385,6 +408,7 @@ function Adminstaff() {
                           >
                             Изменить
                           </button>
+
                           <button
                             className="staff-table-delete"
                             onClick={() => deleteStaff(item.id)}

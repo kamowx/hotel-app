@@ -31,7 +31,13 @@ import Padmin from "./screens/padmin";
 import Cleaning from "./screens/cleaning";
 import Admincleaning from "./screens/admincleaning";
 import Staffsignin from "./screens/staffsignin";
-
+import Menu from "./screens/menu";
+import Check from "./screens/check";
+import Cook from "./screens/cook";
+import Cookpreparing from "./screens/cookpreparing";
+import Cookready from "./screens/cookready";
+import Adminfood from "./screens/adminfood";
+import Adminorders from "./screens/adminorders";
 function App() {
   return (
     <BrowserRouter>
@@ -64,6 +70,13 @@ function App() {
         <Route path="/cleaning" element={<Cleaning />} />
         <Route path="/admincleaning" element={<Admincleaning />} />
         <Route path="/staffsignin" element={<Staffsignin />} />
+        <Route path="/menu" element={<Menu />} />
+        <Route path="/check" element={<Check />} />
+        <Route path="/cook" element={<Cook />} />
+        <Route path="/cookpreparing" element={<Cookpreparing />} />
+        <Route path="/cookready" element={<Cookready />} />
+        <Route path="/adminfood" element={<Adminfood />} />
+        <Route path="/adminorders" element={<Adminorders />} />
       </Routes>
     </BrowserRouter>
   );

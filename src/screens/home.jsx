@@ -3,6 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import Bottomnav from "../components/bottomnav";
 import axios from "axios";
 
+const USERS_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data";
+const HOTELS_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/hotels";
+
 function Home() {
   const navigate = useNavigate();
 
@@ -35,10 +38,7 @@ function Home() {
 
   const getHotels = async () => {
     try {
-      const response = await axios({
-        method: "GET",
-        url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/hotels",
-      });
+      const response = await axios.get(HOTELS_URL);
 
       console.log("GET HOTELS:", response);
 
@@ -50,49 +50,51 @@ function Home() {
     }
   };
 
+  // Ищем пользователя по Firebase uid
   const getUser = async () => {
-    const id = localStorage.getItem("uid");
+    const uid = localStorage.getItem("uid");
 
-    if (!id) {
+    if (!uid) {
       navigate("/signin");
       return;
     }
 
-    const userId = String(id).replaceAll('"', "");
-
     try {
-      const response = await axios({
-        method: "GET",
-        url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${userId}`,
-      });
+      const response = await axios.get(USERS_URL);
 
-      console.log("GET USER:", response);
+      console.log("GET USERS:", response.data);
 
-      if (response.status === 200) {
-        const currentUser = response.data;
+      const currentUser = response.data.find(
+        (item) => String(item.uid) === String(uid).replaceAll('"', ""),
+      );
 
-        if (currentUser.userstatus == "padmin") {
-          navigate("/padmin");
-          return;
-        }
+      if (!currentUser) {
+        console.error("Пользователь с таким uid не найден в MockAPI");
+        setFavorites([]);
+        return;
+      }
 
-        if (currentUser.userstatus == "cleaning") {
-          navigate("/cleaning");
-          return;
-        }
+      console.log("CURRENT USER:", currentUser);
 
-        if (currentUser.userstatus == "admin") {
-          navigate("/admin");
-          return;
-        }
+      if (currentUser.userstatus === "padmin") {
+        navigate("/padmin");
+        return;
+      }
 
-        if (currentUser.userstatus == "user") {
-          if (Array.isArray(currentUser.favorites)) {
-            setFavorites(currentUser.favorites);
-          } else {
-            setFavorites([]);
-          }
-        }
+      if (currentUser.userstatus === "cleaning") {
+        navigate("/cleaning");
+        return;
+      }
+
+      if (currentUser.userstatus === "admin") {
+        navigate("/admin");
+        return;
+      }
+
+      if (currentUser.userstatus === "user") {
+        setFavorites(
+          Array.isArray(currentUser.favorites) ? currentUser.favorites : [],
+        );
       }
     } catch (error) {
       console.error("GET USER ERROR:", error);
@@ -104,6 +106,7 @@ function Home() {
     getUser();
   }, []);
 
+  // Добавление и удаление избранного
   const toggleFavorite = async (hotel) => {
     const uid = localStorage.getItem("uid");
 
@@ -112,45 +115,49 @@ function Home() {
       return;
     }
 
-    const userId = String(uid).replaceAll('"', "");
-
-    const isFav = Array.isArray(favorites)
-      ? favorites.some((item) => String(item.uid) === String(hotel.id))
-      : false;
-
-    let updated;
-
-    if (isFav) {
-      updated = favorites.filter(
-        (item) => String(item.uid) !== String(hotel.uid),
-      );
-    } else {
-      updated = [...favorites, hotel];
-    }
-
     try {
-      const userResponse = await axios({
-        method: "GET",
-        url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${userId}`,
+      // Получаем всех пользователей
+      const usersResponse = await axios.get(USERS_URL);
+
+      // Находим запись по Firebase uid
+      const currentUser = usersResponse.data.find(
+        (item) => String(item.uid) === String(uid).replaceAll('"', ""),
+      );
+
+      if (!currentUser) {
+        console.error("Пользователь с таким uid не найден в MockAPI");
+        alert("Пользователь не найден");
+        return;
+      }
+
+      const currentFavorites = Array.isArray(currentUser.favorites)
+        ? currentUser.favorites
+        : [];
+
+      const isFav = currentFavorites.some(
+        (item) => String(item.id) === String(hotel.id),
+      );
+
+      let updated;
+
+      if (isFav) {
+        updated = currentFavorites.filter(
+          (item) => String(item.id) !== String(hotel.id),
+        );
+      } else {
+        updated = [...currentFavorites, hotel];
+      }
+
+      // Обновляем именно запись найденного пользователя в MockAPI
+      const response = await axios.put(`${USERS_URL}/${currentUser.id}`, {
+        ...currentUser,
+        favorites: updated,
       });
 
-      if (userResponse.status === 200) {
-        const currentUser = userResponse.data;
+      console.log("PUT FAVORITES:", response.data);
 
-        const response = await axios({
-          method: "PUT",
-          url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${userId}`,
-          data: {
-            ...currentUser,
-            favorites: updated,
-          },
-        });
-
-        console.log("PUT FAVORITES:", response);
-
-        if (response.status === 200) {
-          setFavorites(updated);
-        }
+      if (response.status === 200) {
+        setFavorites(updated);
       }
     } catch (error) {
       console.error("PUT FAVORITES ERROR:", error);

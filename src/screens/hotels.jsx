@@ -2,46 +2,64 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
+const USERS_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data";
+const HOTELS_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/hotels";
+
+function getToday() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
 function Hotels() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [selectedHotel, setSelectedHotel] = useState(null);
   const [showPayModal, setShowPayModal] = useState(false);
+
   const [guests, setGuests] = useState("1");
   const [selectedPlace, setSelectedPlace] = useState(1);
   const [date1, setDate1] = useState("");
   const [date2, setDate2] = useState("");
   const [photoIndex, setPhotoIndex] = useState(0);
+
   const [bookedDates, setBookedDates] = useState([]);
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState(null);
 
-  // Пользователь
+  // Состояния промокода
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState(false);
+  const [promoMessage, setPromoMessage] = useState("");
+
+  // Пользователь: ищем по Firebase uid
   const allUser = async () => {
     try {
-      const response = await axios({
-        method: "GET",
-        url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data",
-      });
+      const response = await axios.get(USERS_URL);
 
       console.log("ВСЕ ДАННЫЕ:", response.data);
 
       if (response.status === 200 && Array.isArray(response.data)) {
         setUsers(response.data);
 
-        const savedId = localStorage.getItem("id");
+        const savedId = localStorage.getItem("uid");
 
         if (savedId) {
           const cleanId = String(savedId).replaceAll('"', "");
+
           const currentUser = response.data.find(
-            (item) => String(item.id) === cleanId,
+            (item) => String(item.uid) === cleanId,
           );
 
           if (currentUser) {
             setUser(currentUser);
           } else {
             setUser(null);
+            console.error("Пользователь с таким uid не найден");
           }
         }
       }
@@ -57,9 +75,7 @@ function Hotels() {
   // Получаем данные отеля
   const getHotel = async () => {
     try {
-      const response = await axios.get(
-        `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/hotels/${id}`,
-      );
+      const response = await axios.get(`${HOTELS_URL}/${id}`);
 
       if (response.status === 200) {
         setSelectedHotel(response.data);
@@ -70,17 +86,18 @@ function Hotels() {
     }
   };
 
-  // Получаем бронирования всех пользователей для данного отеля/хостела
+  // Получаем бронирования всех пользователей для данного отеля
   const getBookings = async () => {
     try {
-      const response = await axios.get(
-        "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data",
-      );
+      const response = await axios.get(USERS_URL);
 
       if (response.status === 200 && Array.isArray(response.data)) {
         const allBookings = response.data.flatMap((u) =>
           Array.isArray(u.bookhotel)
-            ? u.bookhotel.map((b) => ({ ...b, bookedByUserId: u.id }))
+            ? u.bookhotel.map((b) => ({
+                ...b,
+                bookedByUserId: u.id,
+              }))
             : [],
         );
 
@@ -99,7 +116,7 @@ function Hotels() {
   };
 
   useEffect(() => {
-    const storedId = localStorage.getItem("id");
+    const storedId = localStorage.getItem("uid");
 
     if (!storedId) {
       navigate("/signin");
@@ -134,6 +151,22 @@ function Hotels() {
 
   const finalPrice = Number((price - (price * discount) / 100).toFixed(2));
 
+  // Проверяем, действует ли промокод
+  const promoAvailable =
+    Boolean(selectedHotel?.promo) &&
+    Boolean(selectedHotel?.pricepromo) &&
+    Boolean(selectedHotel?.promodate) &&
+    selectedHotel.promodate >= getToday() &&
+    Number(selectedHotel.pricepromo) > 0 &&
+    Number(selectedHotel.pricepromo) < price;
+
+  // Цена с учётом применённого промокода
+  const bookingPrice =
+    appliedPromo && promoAvailable
+      ? Number(selectedHotel.pricepromo)
+      : finalPrice;
+
+  // Расчёт количества ночей
   const forpriceday =
     date1 && date2 && date2 > date1
       ? Math.round(
@@ -143,17 +176,41 @@ function Hotels() {
         )
       : 0;
 
-  const allprice = Number((forpriceday * finalPrice).toFixed(2));
+  // Итоговая сумма
+  const allprice = Number((forpriceday * bookingPrice).toFixed(2));
 
   const savedMoney = Number((forpriceday * price - allprice).toFixed(2));
 
-  const getToday = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
+  // Применение промокода
+  const applyPromo = () => {
+    if (!promoAvailable) {
+      setAppliedPromo(false);
+      setPromoMessage("Срок действия промокода закончился или он недоступен.");
+      return;
+    }
 
-    return `${year}-${month}-${day}`;
+    if (!promoCode.trim()) {
+      setPromoMessage("Введите промокод");
+      return;
+    }
+
+    if (
+      promoCode.trim().toLowerCase() ===
+      String(selectedHotel.promo).trim().toLowerCase()
+    ) {
+      setAppliedPromo(true);
+      setPromoMessage("Промокод успешно применён!");
+    } else {
+      setAppliedPromo(false);
+      setPromoMessage("Неправильный промокод");
+    }
+  };
+
+  // Удаление применённого промокода
+  const removePromo = () => {
+    setAppliedPromo(false);
+    setPromoCode("");
+    setPromoMessage("");
   };
 
   // Проверка занятости конкретного места на указанные даты
@@ -164,7 +221,9 @@ function Hotels() {
       const bookedP = Number(
         booking.place || booking.room || booking.placeNumber || 1,
       );
+
       const isSamePlace = bookedP === Number(placeNum);
+
       const isDateOverlap =
         startDate < booking.date2 && endDate > booking.date1;
 
@@ -172,11 +231,12 @@ function Hotels() {
     });
   };
 
-  // Проверка: заняты ли абсолютно все места на дату
+  // Проверка: заняты ли все места на дату
   const isDateFullyBooked = (date) => {
     if (!date) return false;
 
     const occupiedPlaces = new Set();
+
     bookedDates.forEach((b) => {
       if (date >= b.date1 && date < b.date2) {
         const p = Number(b.place || b.room || b.placeNumber || 1);
@@ -187,7 +247,7 @@ function Hotels() {
     return occupiedPlaces.size >= totalPlaces;
   };
 
-  // Проверка: заняты ли все места на весь выбранный период
+  // Проверка: заняты ли все места на весь период
   const isRangeFullyBooked = (startDate, endDate) => {
     if (!startDate || !endDate) return false;
 
@@ -208,8 +268,9 @@ function Hotels() {
     setPhotoIndex((prev) => (prev === photos.length - 1 ? 0 : prev + 1));
   };
 
+  // Сохранение бронирования
   const SaveBooking = async () => {
-    const storedId = localStorage.getItem("id");
+    const storedId = localStorage.getItem("uid");
 
     if (!storedId) {
       navigate("/signin");
@@ -234,11 +295,15 @@ function Hotels() {
     }
 
     if (!selectedPlace) {
-      alert(isHostel ? "Выберите место для бронирования" : "Выберите номер для бронирования");
+      alert(
+        isHostel
+          ? "Выберите место для бронирования"
+          : "Выберите номер для бронирования",
+      );
       return;
     }
 
-    // Проверяем: свободно ли именно это место на выбранные даты
+    // Проверяем, свободно ли выбранное место
     if (isPlaceBooked(selectedPlace, date1, date2)) {
       alert(
         isHostel
@@ -254,11 +319,18 @@ function Hotels() {
     }
 
     try {
-      const userResponse = await axios.get(
-        `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${userId}`,
+      // Получаем всех пользователей и находим по Firebase uid
+      const usersResponse = await axios.get(USERS_URL);
+
+      const currentUser = usersResponse.data.find(
+        (item) => String(item.uid) === userId,
       );
 
-      const currentUser = userResponse.data;
+      if (!currentUser) {
+        alert("Пользователь не найден");
+        console.error("Пользователь с таким uid не найден:", userId);
+        return;
+      }
 
       const numberphone = currentUser.numberphone || "";
       const firstname = currentUser.firstname || "";
@@ -269,11 +341,12 @@ function Hotels() {
         ? currentUser.bookhotel
         : [];
 
-      // Проверяем конфликт только для ТОГО ЖЕ места у текущего пользователя
+      // Проверяем конфликт для того же места у текущего пользователя
       const hasConflict = oldBookings.some((booking) => {
         const bookedP = Number(
           booking.place || booking.room || booking.placeNumber || 1,
         );
+
         return (
           String(booking.hotelId) === String(selectedHotel.id) &&
           bookedP === Number(selectedPlace) &&
@@ -304,7 +377,7 @@ function Hotels() {
         return;
       }
 
-      // Создаём бронь с указанием места и типа (hotel / hostel)
+      // Создаём бронь
       const newBooking = {
         userId: userId,
         numberphone: numberphone,
@@ -318,6 +391,15 @@ function Hotels() {
         price: price,
         discount: discount,
         discountPrice: finalPrice,
+
+        // Информация о промокоде
+        promo: appliedPromo ? selectedHotel.promo : "",
+        pricepromo: appliedPromo ? Number(selectedHotel.pricepromo) : "",
+        promoApplied: appliedPromo,
+
+        // Фактическая цена за ночь
+        bookingPrice: bookingPrice,
+
         date1: date1,
         date2: date2,
         forpriceday: forpriceday,
@@ -332,16 +414,15 @@ function Hotels() {
 
       const newBalance = Number((balance - totalPrice).toFixed(2));
 
-      const response = await axios.put(
-        `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${userId}`,
-        {
-          ...currentUser,
-          check: newBalance,
-          bookhotel: [...oldBookings, newBooking],
-        },
-      );
+      // В URL используем настоящий id записи пользователя в MockAPI
+      const response = await axios.put(`${USERS_URL}/${currentUser.id}`, {
+        ...currentUser,
+        check: newBalance,
+        bookhotel: [...oldBookings, newBooking],
+      });
 
       if (response.status === 200) {
+        setUser(response.data);
         setBookedDates((prev) => [...prev, newBooking]);
         setShowPayModal(false);
 
@@ -353,6 +434,8 @@ function Hotels() {
         setDate2("");
         setGuests("1");
         setSelectedPlace(1);
+        removePromo();
+
         getBookings();
       }
     } catch (error) {
@@ -441,6 +524,30 @@ function Hotels() {
             </div>
           </div>
 
+          {/* Информация о доступном промокоде */}
+          {promoAvailable && (
+            <div
+              style={{
+                marginTop: "15px",
+                padding: "12px",
+                background: "#f5f8f2",
+                borderRadius: "8px",
+              }}
+            >
+              <strong>Есть специальное предложение!</strong>
+
+              <p style={{ margin: "6px 0" }}>
+                Используйте промокод и забронируйте по цене{" "}
+                <strong>
+                  {Number(selectedHotel.pricepromo).toLocaleString("ru-RU")} сом
+                </strong>{" "}
+                за ночь.
+              </p>
+
+              <small>Промокод действует до: {selectedHotel.promodate}</small>
+            </div>
+          )}
+
           <div className="details-divider"></div>
 
           <h2>Об отеле</h2>
@@ -452,12 +559,16 @@ function Hotels() {
 
           <div className="details-info-row">
             <div className="details-info-icon">
-              <i className={isHostel ? "fa-solid fa-bed" : "fa-solid fa-users"}></i>
+              <i
+                className={isHostel ? "fa-solid fa-bed" : "fa-solid fa-users"}
+              ></i>
             </div>
 
             <div>
               <strong>Количество мест</strong>
-              <p>{selectedHotel.people} {isHostel ? "койко-мест" : "мест"}</p>
+              <p>
+                {selectedHotel.people} {isHostel ? "койко-мест" : "мест"}
+              </p>
             </div>
           </div>
 
@@ -480,6 +591,7 @@ function Hotels() {
               setDate2("");
               setGuests("1");
               setSelectedPlace(1);
+              removePromo();
             }}
           >
             Забронировать
@@ -523,7 +635,9 @@ function Hotels() {
                       const selectedDate = e.target.value;
 
                       if (isDateFullyBooked(selectedDate)) {
-                        alert("На эту дату все места в этом объекте уже заняты!");
+                        alert(
+                          "На эту дату все места в этом объекте уже заняты!",
+                        );
                         setDate1("");
                         setDate2("");
                         return;
@@ -558,7 +672,8 @@ function Hotels() {
 
                       setDate2(selectedDate);
 
-                      // Если текущее место занято на новые даты, автовыбор первого свободного
+                      // Если место занято на новые даты,
+                      // выбираем первое свободное место
                       if (isPlaceBooked(selectedPlace, date1, selectedDate)) {
                         const firstFree = Array.from(
                           { length: totalPlaces },
@@ -571,6 +686,105 @@ function Hotels() {
                       }
                     }}
                   />
+
+                  {/* Поле для промокода */}
+                  {promoAvailable && (
+                    <div
+                      style={{
+                        marginTop: "15px",
+                        padding: "12px",
+                        background: "#f5f8f2",
+                        borderRadius: "8px",
+                      }}
+                    >
+                      <label>Промокод</label>
+
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "8px",
+                          marginTop: "8px",
+                        }}
+                      >
+                        <input
+                          type="text"
+                          placeholder="Введите промокод"
+                          value={promoCode}
+                          disabled={appliedPromo}
+                          onChange={(e) => {
+                            setPromoCode(e.target.value);
+                            setPromoMessage("");
+                          }}
+                          style={{
+                            flex: 1,
+                            minWidth: 0,
+                            margin: 0,
+                          }}
+                        />
+
+                        {!appliedPromo ? (
+                          <button
+                            type="button"
+                            onClick={applyPromo}
+                            style={{
+                              padding: "10px 14px",
+                              border: "none",
+                              borderRadius: "6px",
+                              background: "#9fdb12",
+                              color: "#222",
+                              fontWeight: 600,
+                              cursor: "pointer",
+                            }}
+                          >
+                            Применить
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={removePromo}
+                            style={{
+                              padding: "10px 14px",
+                              border: "none",
+                              borderRadius: "6px",
+                              background: "#eeeeee",
+                              color: "#333",
+                              cursor: "pointer",
+                            }}
+                          >
+                            Отменить
+                          </button>
+                        )}
+                      </div>
+
+                      {promoMessage && (
+                        <p
+                          style={{
+                            margin: "8px 0 0",
+                            color: appliedPromo ? "#2e7d32" : "#e53935",
+                            fontSize: "13px",
+                          }}
+                        >
+                          {promoMessage}
+                        </p>
+                      )}
+
+                      {appliedPromo && (
+                        <p
+                          style={{
+                            margin: "8px 0 0",
+                            color: "#2e7d32",
+                            fontWeight: 600,
+                          }}
+                        >
+                          Промокод применён! Цена:{" "}
+                          {Number(selectedHotel.pricepromo).toLocaleString(
+                            "ru-RU",
+                          )}{" "}
+                          сом / ночь
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   {/* Выбор конкретного места / номера */}
                   <div className="booking-place-selector">
@@ -587,6 +801,7 @@ function Hotels() {
                       ).map((placeNum) => {
                         const occupied =
                           date1 && date2 ? isPlaceBooked(placeNum) : false;
+
                         const isSelected = Number(selectedPlace) === placeNum;
 
                         return (
@@ -610,7 +825,9 @@ function Hotels() {
                             </div>
 
                             <strong className="place-btn-title">
-                              {isHostel ? `Место ${placeNum}` : `Номер ${placeNum}`}
+                              {isHostel
+                                ? `Место ${placeNum}`
+                                : `Номер ${placeNum}`}
                             </strong>
 
                             <span
@@ -635,11 +852,17 @@ function Hotels() {
 
                     {!date1 || !date2 ? (
                       <small className="booking-hint">
-                        * Выберите даты заезда и выезда, чтобы увидеть занятые и свободные{" "}
-                        {isHostel ? "места" : "номера"}.
+                        * Выберите даты заезда и выезда, чтобы увидеть занятые и
+                        свободные {isHostel ? "места" : "номера"}.
                       </small>
                     ) : (
-                      <small className="booking-hint" style={{ color: "#2e7d32", fontWeight: 600 }}>
+                      <small
+                        className="booking-hint"
+                        style={{
+                          color: "#2e7d32",
+                          fontWeight: 600,
+                        }}
+                      >
                         {isHostel
                           ? `Выбрано: Место ${selectedPlace} (свободно)`
                           : `Выбран: Номер ${selectedPlace} (свободен)`}
@@ -653,6 +876,7 @@ function Hotels() {
                         <span>
                           {isHostel ? "Выбранное место" : "Выбранный номер"}
                         </span>
+
                         <strong>
                           {isHostel
                             ? `Место ${selectedPlace}`
@@ -665,10 +889,29 @@ function Hotels() {
                         <strong>{forpriceday}</strong>
                       </div>
 
-                      {discount > 0 && (
+                      <div>
+                        <span>Цена за ночь</span>
+
+                        <strong>
+                          {bookingPrice.toLocaleString("ru-RU", {
+                            maximumFractionDigits: 2,
+                          })}{" "}
+                          сом
+                        </strong>
+                      </div>
+
+                      {appliedPromo && (
+                        <div>
+                          <span>Применён промокод</span>
+                          <strong>{selectedHotel.promo}</strong>
+                        </div>
+                      )}
+
+                      {!appliedPromo && discount > 0 && (
                         <>
                           <div>
                             <span>Цена без скидки</span>
+
                             <strong>
                               {(forpriceday * price).toLocaleString("ru-RU", {
                                 maximumFractionDigits: 2,
@@ -679,6 +922,7 @@ function Hotels() {
 
                           <div>
                             <span>Скидка ({discount}%)</span>
+
                             <strong>
                               -
                               {savedMoney.toLocaleString("ru-RU", {
@@ -690,8 +934,26 @@ function Hotels() {
                         </>
                       )}
 
+                      {appliedPromo && (
+                        <div>
+                          <span>Экономия по промокоду</span>
+
+                          <strong>
+                            -
+                            {(
+                              forpriceday *
+                              (price - bookingPrice)
+                            ).toLocaleString("ru-RU", {
+                              maximumFractionDigits: 2,
+                            })}{" "}
+                            сом
+                          </strong>
+                        </div>
+                      )}
+
                       <div>
                         <span>Итого к оплате</span>
+
                         <strong>
                           {allprice.toLocaleString("ru-RU", {
                             maximumFractionDigits: 2,

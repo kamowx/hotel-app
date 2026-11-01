@@ -3,82 +3,102 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Bottomnav from "../components/bottomnav";
 
+const USERS_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data";
+
 function Profile() {
   const navigate = useNavigate();
+
   const [darkTheme, setDarkTheme] = useState(
     localStorage.getItem("theme") === "dark",
   );
-  const [users, setUsers] = useState([]);
+
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const allUser = async () => {
+      const uid = String(localStorage.getItem("uid") || "").replaceAll('"', "");
+
+      if (!uid) {
+        navigate("/signin", { replace: true });
+        return;
+      }
+
+      try {
+        const response = await axios.get(USERS_URL);
+
+        const currentUser = response.data.find(
+          (item) => String(item.uid) === uid,
+        );
+
+        if (!currentUser) {
+          if (!cancelled) {
+            alert("Пользователь не найден");
+            localStorage.removeItem("uid");
+            localStorage.removeItem("id");
+            navigate("/signin", { replace: true });
+          }
+          return;
+        }
+
+        if (cancelled) return;
+
+        // Восстанавливаем ID записи MockAPI, если он отсутствует
+        // localStorage.setItem("id", String(currentUser.id));
+
+        setUser(currentUser);
+      } catch (error) {
+        console.error("Ошибка получения пользователя:", error);
+
+        if (error.response?.status === 429) {
+          alert("Слишком много запросов. Подожди немного и попробуй снова.");
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    allUser();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [navigate]);
+
   const logout = () => {
     const adminId = localStorage.getItem("adminId");
+    const adminUid = localStorage.getItem("adminUid");
 
     if (adminId) {
-      localStorage.setItem("uid", adminId);
-
+      // Возвращаем сохранённую сессию администратора
+      localStorage.setItem("id", adminId);
+      localStorage.setItem("uid", adminUid || adminId);
       localStorage.removeItem("userId");
 
       alert("Вы вышли из аккаунта пользователя");
-
-      navigate("/admin");
+      navigate("/admin", { replace: true });
     } else {
       localStorage.removeItem("id");
       localStorage.removeItem("userId");
+      localStorage.removeItem("uid");
 
       alert("Вы вышли из аккаунта");
-
-      navigate("/signin");
+      navigate("/signin", { replace: true });
     }
   };
-  useEffect(() => {
-    const uid = localStorage.getItem("uid");
-
-    if (!uid) {
-      navigate("/signin");
-    }
-  }, [navigate]);
-
-  const allUser = async () => {
-    try {
-      const response = await axios({
-        method: "GET",
-        url: "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data",
-      });
-
-      console.log("ВСЕ ДАННЫЕ:", response.data);
-
-      if (response.status === 200) {
-        setUsers(response.data);
-
-        const uid = localStorage.getItem("uid");
-
-        const currentUser = response.data.find(
-          (item) => String(item.uid) === String(uid).replaceAll('"', ""),
-        );
-
-        console.log("НАЙДЕННЫЙ USER:", currentUser);
-
-        if (currentUser) {
-          setUser(currentUser);
-        } else {
-          setUser(null);
-        }
-      }
-    } catch (error) {
-      console.error("ОШИБКА ПОЛУЧЕНИЯ ПОЛЬЗОВАТЕЛЯ:", error);
-    }
-  };
-
-  useEffect(() => {
-    allUser();
-  }, []);
 
   const returnToAdmin = () => {
     const adminId = localStorage.getItem("adminId");
+    const adminUid = localStorage.getItem("adminUid");
 
     if (adminId) {
-      localStorage.setItem("id", adminId);
-      navigate("/admin");
+      //     localStorage.setItem("id", adminId);
+      localStorage.setItem("uid", adminUid || adminId);
+      navigate("/admin", { replace: true });
     }
   };
 
@@ -118,11 +138,12 @@ function Profile() {
 
               <div>
                 <span>Имя пользователя</span>
-
                 <strong>
-                  {user
-                    ? `${user.firstname || ""} ${user.lastname || ""}`.trim()
-                    : "Загрузка..."}
+                  {loading
+                    ? "Загрузка..."
+                    : user
+                      ? `${user.firstname || ""} ${user.lastname || ""}`.trim()
+                      : ""}
                 </strong>
               </div>
             </div>
@@ -134,8 +155,7 @@ function Profile() {
 
               <div>
                 <span>Email</span>
-
-                <strong>{user ? user.email : "Загрузка..."}</strong>
+                <strong>{loading ? "Загрузка..." : user?.email || ""}</strong>
               </div>
             </div>
 
@@ -146,14 +166,15 @@ function Profile() {
 
               <div>
                 <span>Телефон</span>
-
-                <strong>{user ? user.numberphone : "Загрузка..."}</strong>
+                <strong>
+                  {loading ? "Загрузка..." : user?.numberphone || ""}
+                </strong>
               </div>
             </div>
           </div>
 
           <div className="profile-actions">
-            <Link className="profile-action">
+            <Link className="profile-action" to="/profile">
               <div className="profile-action-icon">
                 <i className="fa-solid fa-dollar-sign"></i>
               </div>
@@ -163,13 +184,15 @@ function Profile() {
                   Счёт:
                   <i>
                     <h4 className="ii1">
-                      <b>{user ? user.check : "Загрузка..."}сом</b>
+                      <b>{loading ? "Загрузка..." : (user?.check ?? 0)} сом</b>
                     </h4>
-                  </i>{" "}
+                  </i>
                 </strong>
-                <span>Мои денги</span>
+
+                <span>Мои деньги</span>
               </div>
             </Link>
+
             <Link to="/armored" className="profile-action">
               <div className="profile-action-icon">
                 <i className="fa-solid fa-calendar-check"></i>
@@ -198,7 +221,7 @@ function Profile() {
 
             <Link to="/support" className="profile-action">
               <div className="profile-action-icon">
-                <i class="fa-solid fa-headset"></i>
+                <i className="fa-solid fa-headset"></i>
               </div>
 
               <div>

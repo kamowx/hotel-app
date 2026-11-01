@@ -124,6 +124,10 @@ function Adminbottom() {
             <i className="fa-solid fa-broom"></i>
             <span>Клининг</span>
           </Link>
+          <Link to="/adminfood" className="admin-menu-item">
+            <i class="fa-solid fa-kitchen-set"></i>
+            <span>Повар</span>
+          </Link>
 
           <Link to="/adminsupport" className="admin-menu-item">
             <i className="fa-solid fa-headset"></i>

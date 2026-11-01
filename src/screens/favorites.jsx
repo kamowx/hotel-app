@@ -3,40 +3,44 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Bottomnav from "../components/bottomnav";
 
+const USERS_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data";
+
 function Favorites() {
   const navigate = useNavigate();
+
   const [darkTheme, setDarkTheme] = useState(
     localStorage.getItem("theme") === "dark",
   );
+
   const [favorites, setFavorites] = useState([]);
 
+  // Получаем пользователя по Firebase uid
   const getFavorites = async () => {
-    const id = localStorage.getItem("id");
+    const uid = localStorage.getItem("uid");
 
-    if (!id) {
+    if (!uid) {
       navigate("/signin");
       return;
     }
 
-    const userId = String(id).replaceAll('"', "");
-
     try {
-      const response = await axios({
-        method: "GET",
-        url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${userId}`,
-      });
+      const response = await axios.get(USERS_URL);
 
-      console.log("GET USER:", response);
+      const currentUser = response.data.find(
+        (item) => String(item.uid) === String(uid).replaceAll('"', ""),
+      );
 
-      if (response.status === 200) {
-        const currentUser = response.data;
-
-        if (Array.isArray(currentUser.favorites)) {
-          setFavorites(currentUser.favorites);
-        } else {
-          setFavorites([]);
-        }
+      if (!currentUser) {
+        console.error("Пользователь с таким uid не найден в MockAPI");
+        setFavorites([]);
+        return;
       }
+
+      console.log("CURRENT USER:", currentUser);
+
+      setFavorites(
+        Array.isArray(currentUser.favorites) ? currentUser.favorites : [],
+      );
     } catch (error) {
       console.error("GET FAVORITES ERROR:", error);
     }
@@ -46,47 +50,47 @@ function Favorites() {
     getFavorites();
   }, []);
 
+  // Удаляем отель из избранного
   const removeFavorite = async (hotel) => {
-    const id = localStorage.getItem("id");
+    const uid = localStorage.getItem("uid");
 
-    if (!id) {
+    if (!uid) {
       navigate("/signin");
       return;
     }
 
-    const userId = String(id).replaceAll('"', "");
-
-    const newFavorites = favorites.filter(
-      (item) => String(item.id) !== String(hotel.id),
-    );
-
     try {
-      const userResponse = await axios({
-        method: "GET",
-        url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${userId}`,
+      // Находим пользователя по uid
+      const usersResponse = await axios.get(USERS_URL);
+
+      const currentUser = usersResponse.data.find(
+        (item) => String(item.uid) === String(uid).replaceAll('"', ""),
+      );
+
+      if (!currentUser) {
+        console.error("Пользователь с таким uid не найден в MockAPI");
+        alert("Пользователь не найден");
+        return;
+      }
+
+      // Удаляем отель по его id
+      const newFavorites = (
+        Array.isArray(currentUser.favorites) ? currentUser.favorites : []
+      ).filter((item) => String(item.id) !== String(hotel.id));
+
+      // Обновляем запись пользователя по настоящему MockAPI id
+      const response = await axios.put(`${USERS_URL}/${currentUser.id}`, {
+        ...currentUser,
+        favorites: newFavorites,
       });
 
-      if (userResponse.status === 200) {
-        const currentUser = userResponse.data;
+      console.log("PUT REMOVE FAVORITE:", response.data);
 
-        const response = await axios({
-          method: "PUT",
-          url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${userId}`,
-          data: {
-            ...currentUser,
-            favorites: newFavorites,
-          },
-        });
-
-        console.log("PUT REMOVE FAVORITE:", response);
-
-        if (response.status === 200) {
-          setFavorites(newFavorites);
-        }
+      if (response.status === 200) {
+        setFavorites(newFavorites);
       }
     } catch (error) {
       console.error("REMOVE FAVORITE ERROR:", error);
-
       alert("Ошибка при удалении из избранного");
     }
   };
@@ -165,4 +169,3 @@ function Favorites() {
 }
 
 export default Favorites;
-/*hotel*/

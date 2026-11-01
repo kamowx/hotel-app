@@ -53,18 +53,36 @@ function Staffsignin() {
 
       if (
         employee.userstatus !== "padmin" &&
-        employee.userstatus !== "cleaning"
+        employee.userstatus !== "cleaning" &&
+        employee.userstatus !== "chef"
       ) {
         alert("У вас нет доступа к входу персонала");
         return;
       }
 
+      // Проверяем наличие ID
+      if (!employee.id) {
+        alert("У сотрудника отсутствует ID в базе данных");
+        console.log("Данные сотрудника:", employee);
+        return;
+      }
+
+      // Сохраняем данные сотрудника
       localStorage.setItem("id", JSON.stringify(employee.id));
+      localStorage.setItem("uid", JSON.stringify(employee.uid || ""));
+      localStorage.setItem("accountType", JSON.stringify(employee.userstatus));
+
+      // Проверяем сохранение
+      console.log("ID:", localStorage.getItem("id"));
+      console.log("UID:", localStorage.getItem("uid"));
+      console.log("Статус:", localStorage.getItem("accountType"));
 
       if (employee.userstatus === "padmin") {
         navigate("/padmin", { replace: true });
-      } else {
+      } else if (employee.userstatus === "cleaning") {
         navigate("/cleaning", { replace: true });
+      } else if (employee.userstatus === "chef") {
+        navigate("/cook", { replace: true });
       }
     } catch (error) {
       console.error(error);

@@ -25,6 +25,15 @@ function Bottomnav() {
         </NavLink>
 
         <NavLink
+          to="/menu"
+          className={({ isActive }) =>
+            isActive ? "home-nav-item active" : "home-nav-item"
+          }
+        >
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span>Меню</span>
+        </NavLink>
+        <NavLink
           to="/favorites"
           className={({ isActive }) =>
             isActive ? "home-nav-item active" : "home-nav-item"

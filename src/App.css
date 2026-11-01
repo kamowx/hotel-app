@@ -6431,3 +6431,2998 @@ body {
     grid-column: auto;
   }
 }
+.admin-hotel-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px 10px;
+  overflow-y: auto;
+}
+
+.admin-hotel-modal-content {
+  width: 100%;
+  max-width: 600px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  padding: 25px;
+  margin: auto 0;
+  box-sizing: border-box;
+}
+
+.admin-hotel-modal-content {
+  -webkit-overflow-scrolling: touch;
+}
+.booking-place-selector {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.booking-section-label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+}
+
+.booking-places-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.booking-place-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 105px;
+  padding: 12px 6px;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* Иконка */
+.place-btn-icon {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  border-radius: 8px;
+  color: #666;
+  font-size: 17px;
+}
+
+.place-btn-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.place-btn-status {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.booking-place-btn.available {
+  border-color: #e5e5e5;
+}
+
+.booking-place-btn.available .place-btn-status {
+  color: #777;
+}
+
+.booking-place-btn.selected {
+  background: #f6fbea;
+  border: 1.5px solid #9fdb12;
+}
+
+.booking-place-btn.selected .place-btn-icon {
+  background: #9fdb12;
+  color: #fff;
+}
+
+.booking-place-btn.selected .place-btn-title,
+.booking-place-btn.selected .place-btn-status {
+  color: #659900;
+}
+
+.booking-place-btn.occupied {
+  background: #f5f5f5;
+  border-color: #eeeeee;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.booking-place-btn.occupied .place-btn-icon {
+  background: #eaeaea;
+  color: #999;
+}
+
+.booking-place-btn.occupied .place-btn-title,
+.booking-place-btn.occupied .place-btn-status {
+  color: #999;
+}
+
+.booking-hint {
+  display: block;
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #888;
+}
+
+@media (max-width: 400px) {
+  .booking-places-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .booking-place-btn {
+    min-height: 95px;
+  }
+}
+
+/*
+   СТРАНИЦА МЕНЮ
+*/
+
+.menu-page,
+.check-page {
+  overflow: hidden;
+}
+
+.menu-header {
+  padding: 22px 16px 10px;
+  flex-shrink: 0;
+}
+
+.menu-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.menu-header h2,
+.check-header h2 {
+  margin: 0;
+  font-size: 23px;
+  font-weight: 700;
+  color: #0b0a0a;
+}
+
+.menu-header p,
+.check-header p {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: #777;
+}
+
+.menu-cart-icon {
+  width: 38px;
+  height: 38px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  font-size: 17px;
+}
+
+.menu-cart-icon span {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 17px;
+  height: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #9fdb12;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 10px;
+}
+
+.menu-content,
+.check-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 16px 95px;
+}
+
+.menu-search {
+  height: 43px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  background: #fff;
+  border: 1px solid #dedede;
+  border-radius: 4px;
+  color: #777;
+}
+
+.menu-search i {
+  font-size: 13px;
+}
+
+.menu-search input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 12px;
+}
+
+.menu-categories {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 17px 0 20px;
+  scrollbar-width: none;
+}
+
+.menu-categories::-webkit-scrollbar {
+  display: none;
+}
+
+.menu-categories button {
+  height: 34px;
+  flex-shrink: 0;
+  padding: 0 14px;
+  background: #fff;
+  border: 1px solid #dedede;
+  border-radius: 4px;
+  color: #666;
+  font-size: 11px;
+}
+
+.menu-categories button.active {
+  background: #0b0a0a;
+  border-color: #0b0a0a;
+  color: #fff;
+}
+
+.menu-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 13px;
+}
+
+.menu-section-title h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0b0a0a;
+}
+
+.menu-section-title span {
+  font-size: 11px;
+  color: #888;
+}
+
+.menu-food-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.menu-food-card {
+  min-width: 0;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 6px;
+}
+
+.menu-food-image {
+  width: 100%;
+  height: 115px;
+  position: relative;
+  background: #e9e9e9;
+}
+
+.menu-food-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.menu-food-label {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  padding: 5px 7px;
+  background: #9fdb12;
+  color: #fff;
+  border-radius: 3px;
+  font-size: 9px;
+}
+
+.menu-food-info {
+  padding: 10px;
+}
+
+.menu-food-info h4 {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0b0a0a;
+}
+
+.menu-food-info p {
+  min-height: 28px;
+  margin: 6px 0 10px;
+  font-size: 10px;
+  line-height: 1.4;
+  color: #888;
+}
+
+.menu-food-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+.menu-food-bottom strong {
+  font-size: 12px;
+  color: #0b0a0a;
+}
+
+.menu-food-bottom button {
+  width: 29px;
+  height: 29px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #9fdb12;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 12px;
+}
+
+.menu-order-preview {
+  margin-top: 20px;
+  padding: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+
+.menu-order-preview div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.menu-order-preview strong {
+  font-size: 12px;
+}
+
+.menu-order-preview span {
+  font-size: 10px;
+  color: #777;
+}
+
+.menu-order-preview button {
+  min-height: 36px;
+  padding: 0 10px;
+  background: #0b0a0a;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* СТРАНИЦА ЧЕКА*/
+
+.check-header {
+  padding: 22px 16px 12px;
+  flex-shrink: 0;
+}
+
+.check-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+
+.check-status-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f8ed;
+  border-radius: 5px;
+  color: #83b80b;
+  font-size: 17px;
+}
+
+.check-status > div:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.check-status strong {
+  font-size: 13px;
+  color: #0b0a0a;
+}
+
+.check-status span {
+  font-size: 10px;
+  color: #888;
+}
+
+.check-status .check-status-badge {
+  margin-left: auto;
+  padding: 6px 8px;
+  background: #f5f8ed;
+  border-radius: 3px;
+  color: #78a900;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.check-info-card {
+  margin-top: 12px;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+
+.check-info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 0;
+}
+
+.check-info-row:not(:last-child) {
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.check-info-row span {
+  font-size: 11px;
+  color: #888;
+}
+
+.check-info-row strong {
+  font-size: 11px;
+  color: #0b0a0a;
+}
+
+.check-items-section {
+  margin-top: 23px;
+}
+
+.check-items-section h3,
+.check-total-card h3 {
+  margin: 0 0 13px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0b0a0a;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.check-item img {
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.check-item-info {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.check-item-info strong {
+  font-size: 11px;
+  color: #0b0a0a;
+}
+
+.check-item-info span {
+  font-size: 10px;
+  color: #888;
+}
+
+.check-item-price {
+  font-size: 11px;
+  white-space: nowrap;
+  color: #0b0a0a;
+}
+
+.check-total-card {
+  margin-top: 22px;
+  padding: 15px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+
+.check-total-card h3 {
+  margin-bottom: 15px;
+}
+
+.check-total-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.check-total-row span {
+  font-size: 11px;
+  color: #777;
+}
+
+.check-total-row span:last-child {
+  color: #0b0a0a;
+  font-weight: 600;
+}
+
+.check-total-divider {
+  height: 1px;
+  margin: 14px 0;
+  background: #eaeaea;
+}
+
+.check-total-final {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.check-total-final strong:first-child {
+  font-size: 13px;
+  color: #0b0a0a;
+}
+
+.check-total-final strong:last-child {
+  font-size: 17px;
+  color: #0b0a0a;
+}
+
+.check-pay-button {
+  width: 100%;
+  height: 46px;
+  margin-top: 17px;
+  background: #9fdb12;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.check-bottom-text {
+  margin: 15px 0 5px;
+  text-align: center;
+  color: #999;
+  font-size: 10px;
+}
+
+/* =========================
+   АДАПТИВНОСТЬ
+========================= */
+
+@media (max-width: 350px) {
+  .menu-content,
+  .check-content {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .menu-food-grid {
+    gap: 8px;
+  }
+
+  .menu-food-info {
+    padding: 8px;
+  }
+
+  .menu-food-info h4 {
+    font-size: 11px;
+  }
+
+  .menu-food-bottom strong {
+    font-size: 11px;
+  }
+}
+
+@media (min-width: 768px) {
+  .menu-page,
+  .check-page {
+    width: 375px;
+    min-height: 812px;
+    max-height: calc(100dvh - 60px);
+    margin-top: 30px;
+    border-radius: 19px;
+    overflow: hidden;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.12);
+  }
+}
+/* =========================
+   АДАПТАЦИЯ МЕНЮ И ЧЕКА ДЛЯ ПК
+========================= */
+
+@media (min-width: 768px) {
+  .menu-page,
+  .check-page {
+    width: 100%;
+    max-width: 1100px;
+    min-height: calc(100vh - 60px);
+    max-height: none;
+    margin: 30px auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+  }
+
+  .menu-header,
+  .check-header {
+    padding: 30px 35px 15px;
+  }
+
+  .menu-header h2,
+  .check-header h2 {
+    font-size: 28px;
+  }
+
+  .menu-header p,
+  .check-header p {
+    font-size: 14px;
+  }
+
+  .menu-content,
+  .check-content {
+    padding: 20px 35px 35px;
+  }
+
+  .menu-search {
+    max-width: 500px;
+    height: 48px;
+  }
+
+  .menu-search input {
+    font-size: 14px;
+  }
+
+  .menu-categories {
+    gap: 12px;
+    padding: 22px 0 25px;
+  }
+
+  .menu-categories button {
+    height: 40px;
+    padding: 0 20px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .menu-section-title h3 {
+    font-size: 21px;
+  }
+
+  .menu-section-title span {
+    font-size: 13px;
+  }
+
+  .menu-food-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .menu-food-image {
+    height: 180px;
+  }
+
+  .menu-food-info {
+    padding: 15px;
+  }
+
+  .menu-food-info h4 {
+    font-size: 15px;
+  }
+
+  .menu-food-info p {
+    font-size: 12px;
+  }
+
+  .menu-food-bottom strong {
+    font-size: 15px;
+  }
+
+  .menu-food-bottom button {
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+  }
+
+  .menu-order-preview {
+    max-width: 500px;
+    margin-top: 25px;
+    padding: 18px;
+  }
+
+  .menu-order-preview strong {
+    font-size: 14px;
+  }
+
+  .menu-order-preview span {
+    font-size: 12px;
+  }
+
+  .menu-order-preview button {
+    padding: 0 18px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  /* ЧЕК */
+
+  .check-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .check-status,
+  .check-info-card,
+  .check-total-card {
+    padding: 20px;
+  }
+
+  .check-status strong {
+    font-size: 15px;
+  }
+
+  .check-status span,
+  .check-info-row span,
+  .check-info-row strong {
+    font-size: 13px;
+  }
+
+  .check-items-section h3,
+  .check-total-card h3 {
+    font-size: 19px;
+  }
+
+  .check-item {
+    padding: 16px 0;
+    gap: 15px;
+  }
+
+  .check-item img {
+    width: 75px;
+    height: 75px;
+  }
+
+  .check-item-info strong,
+  .check-item-price {
+    font-size: 14px;
+  }
+
+  .check-item-info span {
+    font-size: 12px;
+  }
+
+  .check-total-row span {
+    font-size: 13px;
+  }
+
+  .check-total-final strong:first-child {
+    font-size: 16px;
+  }
+
+  .check-total-final strong:last-child {
+    font-size: 21px;
+  }
+
+  .check-pay-button {
+    height: 52px;
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  .check-bottom-text {
+    font-size: 12px;
+  }
+
+  .menu-cart-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .menu-page,
+  .check-page {
+    max-width: 1200px;
+  }
+
+  .menu-food-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .menu-food-image {
+    height: 210px;
+  }
+
+  .menu-content,
+  .check-header {
+    padding-left: 45px;
+    padding-right: 45px;
+  }
+}
+/* =========================
+   АДАПТАЦИЯ СТРАНИЦЫ ЧЕКА ДЛЯ ПК
+========================= */
+
+@media (min-width: 768px) {
+  .check-page {
+    width: 100%;
+    max-width: 1100px;
+    min-height: calc(100vh - 60px);
+    max-height: none;
+    margin: 30px auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+  }
+
+  .check-header {
+    padding: 30px 40px 20px;
+  }
+
+  .check-header h2 {
+    font-size: 28px;
+  }
+
+  .check-header p {
+    font-size: 14px;
+  }
+
+  .check-content {
+    width: 100%;
+    max-width: 750px;
+    margin: 0 auto;
+    padding: 20px 30px 40px;
+  }
+
+  .check-status {
+    padding: 20px;
+  }
+
+  .check-status-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+  .check-status strong {
+    font-size: 15px;
+  }
+
+  .check-status span {
+    font-size: 12px;
+  }
+
+  .check-info-card {
+    padding: 18px 20px;
+  }
+
+  .check-info-row {
+    padding: 10px 0;
+  }
+
+  .check-info-row span,
+  .check-info-row strong {
+    font-size: 13px;
+  }
+
+  .check-items-section {
+    margin-top: 28px;
+  }
+
+  .check-items-section h3,
+  .check-total-card h3 {
+    font-size: 19px;
+  }
+
+  .check-item {
+    padding: 16px 0;
+    gap: 15px;
+  }
+
+  .check-item img {
+    width: 75px;
+    height: 75px;
+  }
+
+  .check-item-info strong,
+  .check-item-price {
+    font-size: 14px;
+  }
+
+  .check-item-info span {
+    font-size: 12px;
+  }
+
+  .check-total-card {
+    padding: 20px;
+    margin-top: 28px;
+  }
+
+  .check-total-row {
+    margin-bottom: 15px;
+  }
+
+  .check-total-row span {
+    font-size: 13px;
+  }
+
+  .check-total-final strong:first-child {
+    font-size: 16px;
+  }
+
+  .check-total-final strong:last-child {
+    font-size: 21px;
+  }
+
+  .check-pay-button {
+    height: 52px;
+    margin-top: 22px;
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  .check-bottom-text {
+    font-size: 12px;
+  }
+}
+/* =========================
+   ПАНЕЛЬ ПОВАРА
+========================= */
+
+.cook-page {
+  min-height: 100vh;
+  display: flex;
+  background: #f8f8f8;
+  color: #0b0a0a;
+  font-family: inherit;
+}
+
+/* БОКОВОЕ МЕНЮ */
+
+.cook-sidebar {
+  width: 245px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 25px 17px;
+  background: #fff;
+  border-right: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+.cook-logo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 5px 10px 30px;
+  font-size: 21px;
+  font-weight: 700;
+}
+
+.cook-logo i {
+  color: #9fdb12;
+  font-size: 24px;
+}
+
+.cook-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 17px 10px;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.cook-avatar,
+.cook-header-avatar {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f6ed;
+  border-radius: 50%;
+  color: #83b80b;
+}
+
+.cook-profile div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.cook-profile strong {
+  font-size: 13px;
+}
+
+.cook-profile span {
+  font-size: 11px;
+  color: #888;
+}
+
+.cook-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 25px;
+}
+
+.cook-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px;
+  border-radius: 5px;
+  color: #777;
+  font-size: 13px;
+}
+
+.cook-menu-item i {
+  width: 18px;
+  font-size: 15px;
+}
+
+.cook-menu-item.active {
+  background: #f3f8e9;
+  color: #83b80b;
+  font-weight: 600;
+}
+
+.cook-sidebar-bottom {
+  margin-top: auto;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+}
+
+/* ОСНОВНАЯ ЧАСТЬ */
+
+.cook-main {
+  flex: 1;
+  min-width: 0;
+  padding: 30px 35px;
+}
+
+.cook-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 28px;
+}
+
+.cook-header h2 {
+  margin: 0;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.cook-header p {
+  margin: 7px 0 0;
+  color: #888;
+  font-size: 13px;
+}
+
+.cook-header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.cook-online {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: #5d8c00;
+}
+
+.cook-online i {
+  width: 8px;
+  height: 8px;
+  background: #9fdb12;
+  border-radius: 50%;
+}
+
+/* СТАТИСТИКА */
+
+.cook-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 32px;
+}
+
+.cook-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 6px;
+}
+
+.cook-stat-icon {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  font-size: 18px;
+}
+
+.cook-stat-icon.orange {
+  background: #fff5e9;
+  color: #ed9a38;
+}
+
+.cook-stat-icon.blue {
+  background: #edf4ff;
+  color: #568bdc;
+}
+
+.cook-stat-icon.green {
+  background: #f1f8e6;
+  color: #83b80b;
+}
+
+.cook-stat-card div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.cook-stat-card span {
+  color: #888;
+  font-size: 12px;
+}
+
+.cook-stat-card strong {
+  font-size: 23px;
+}
+
+/* ЗАКАЗЫ */
+
+.cook-orders-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 17px;
+}
+
+.cook-orders-title h3 {
+  margin: 0;
+  font-size: 19px;
+}
+
+.cook-orders-title span {
+  color: #888;
+  font-size: 12px;
+}
+
+.cook-orders {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.cook-order-card {
+  padding: 18px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 6px;
+}
+
+.cook-order-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.cook-order-top div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cook-order-top strong {
+  font-size: 14px;
+}
+
+.cook-order-top div span {
+  color: #888;
+  font-size: 11px;
+}
+
+.cook-badge {
+  padding: 6px 9px;
+  border-radius: 3px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.cook-badge.new {
+  background: #fff5e9;
+  color: #d88a27;
+}
+
+.cook-badge.cooking {
+  background: #edf4ff;
+  color: #568bdc;
+}
+
+.cook-badge.ready {
+  background: #f1f8e6;
+  color: #78a900;
+}
+
+.cook-order-food {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.cook-order-food img {
+  width: 53px;
+  height: 53px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.cook-order-food div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cook-order-food strong {
+  font-size: 12px;
+}
+
+.cook-order-food span {
+  color: #888;
+  font-size: 10px;
+}
+
+.cook-order-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.cook-order-bottom > strong {
+  font-size: 14px;
+}
+
+.cook-action-button {
+  min-height: 37px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.cook-action-button.start {
+  background: #9fdb12;
+  color: #fff;
+}
+
+.cook-action-button.cooking-button {
+  background: #edf4ff;
+  color: #568bdc;
+}
+
+.cook-action-button.ready-button {
+  background: #f1f8e6;
+  color: #78a900;
+}
+
+/* АДАПТАЦИЯ */
+
+@media (max-width: 1000px) {
+  .cook-sidebar {
+    width: 210px;
+  }
+
+  .cook-main {
+    padding: 25px 20px;
+  }
+
+  .cook-orders {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 650px) {
+  .cook-page {
+    display: block;
+  }
+
+  .cook-sidebar {
+    display: none;
+  }
+
+  .cook-main {
+    padding: 20px 14px 35px;
+  }
+
+  .cook-header {
+    margin-bottom: 20px;
+  }
+
+  .cook-header h2 {
+    font-size: 21px;
+  }
+
+  .cook-header p {
+    font-size: 11px;
+  }
+
+  .cook-header-avatar {
+    display: none;
+  }
+
+  .cook-stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 25px;
+  }
+
+  .cook-stat-card {
+    padding: 13px;
+  }
+
+  .cook-stat-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .cook-stat-card strong {
+    font-size: 19px;
+  }
+
+  .cook-orders {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .cook-order-card {
+    padding: 13px;
+  }
+
+  .cook-order-bottom {
+    flex-wrap: wrap;
+  }
+
+  .cook-action-button {
+    font-size: 10px;
+  }
+}
+.cook-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 245px;
+  height: 100vh;
+  min-height: 100vh;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.cook-main {
+  margin-left: 245px;
+  width: calc(100% - 245px);
+}
+* {
+  box-sizing: border-box;
+}
+
+.adminfood-page {
+  display: flex;
+  min-height: 100vh;
+  background: #f8f8f8;
+  color: #252525;
+  font-family: Arial, sans-serif;
+}
+
+/* Боковое меню */
+
+.adminfood-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 245px;
+  height: 100vh;
+  background: #ffffff;
+  border-right: 1px solid #eeeeee;
+  display: flex;
+  flex-direction: column;
+  padding: 25px 18px;
+  z-index: 100;
+  overflow-y: auto;
+}
+
+.adminfood-logo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 22px;
+  font-weight: 700;
+  padding: 0 10px 28px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.adminfood-logo i {
+  color: #9fdb12;
+  font-size: 25px;
+}
+
+.adminfood-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 8px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.adminfood-avatar {
+  width: 43px;
+  height: 43px;
+  border-radius: 50%;
+  background: #f1f7e7;
+  color: #83b50b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.adminfood-profile div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.adminfood-profile strong {
+  font-size: 13px;
+}
+
+.adminfood-profile span {
+  color: #999999;
+  font-size: 11px;
+}
+
+.adminfood-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-top: 25px;
+}
+
+.adminfood-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 12px;
+  color: #777777;
+  text-decoration: none;
+  font-size: 14px;
+  border-radius: 5px;
+  transition: 0.2s;
+}
+
+.adminfood-menu-item i {
+  width: 19px;
+  font-size: 16px;
+}
+
+.adminfood-menu-item:hover {
+  background: #f7f9f3;
+  color: #83b50b;
+}
+
+.adminfood-menu-item.active {
+  background: #f1f8e5;
+  color: #79a90b;
+  font-weight: 600;
+}
+
+.adminfood-sidebar-bottom {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid #eeeeee;
+}
+
+/* Основная часть */
+
+.adminfood-main {
+  margin-left: 245px;
+  width: calc(100% - 245px);
+  padding: 35px 40px;
+  min-height: 100vh;
+}
+
+.adminfood-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.adminfood-header h2 {
+  font-size: 25px;
+  font-weight: 700;
+  margin: 0 0 9px;
+}
+
+.adminfood-header p {
+  color: #999999;
+  font-size: 14px;
+  margin: 0;
+}
+
+.adminfood-add-button {
+  border: none;
+  background: #9fdb12;
+  color: #ffffff;
+  padding: 13px 18px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+}
+
+.adminfood-add-button:hover {
+  background: #8bc20c;
+}
+
+/* Статистика */
+
+.adminfood-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 35px;
+}
+
+.adminfood-stat-card {
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 6px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.adminfood-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+}
+
+.adminfood-stat-icon.green {
+  background: #f1f8e5;
+  color: #8cbd16;
+}
+
+.adminfood-stat-icon.orange {
+  background: #fff5e9;
+  color: #efa342;
+}
+
+.adminfood-stat-icon.blue {
+  background: #edf5ff;
+  color: #5797dc;
+}
+
+.adminfood-stat-card span {
+  color: #999999;
+  font-size: 12px;
+}
+
+.adminfood-stat-card h3 {
+  font-size: 21px;
+  margin: 6px 0 0;
+  font-weight: 700;
+}
+
+/* Список блюд */
+
+.adminfood-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.adminfood-list-header h3 {
+  font-size: 19px;
+  margin: 0 0 6px;
+  font-weight: 700;
+}
+
+.adminfood-list-header p {
+  color: #999999;
+  font-size: 13px;
+  margin: 0;
+}
+
+.adminfood-list-header > span {
+  color: #888888;
+  font-size: 13px;
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  padding: 8px 13px;
+  border-radius: 4px;
+}
+
+.adminfood-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.adminfood-card {
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.adminfood-card-image {
+  height: 185px;
+  position: relative;
+  background: #eeeeee;
+}
+
+.adminfood-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.adminfood-category {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #ffffff;
+  padding: 7px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #555555;
+}
+
+.adminfood-card-content {
+  padding: 17px;
+}
+
+.adminfood-card-content h4 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 9px;
+}
+
+.adminfood-card-content > p {
+  color: #999999;
+  font-size: 12px;
+  line-height: 1.5;
+  min-height: 36px;
+  margin: 0 0 17px;
+}
+
+.adminfood-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px solid #eeeeee;
+  padding-top: 14px;
+}
+
+.adminfood-card-bottom > strong {
+  font-size: 16px;
+  color: #83b50b;
+}
+
+.adminfood-card-actions {
+  display: flex;
+  gap: 7px;
+}
+
+.adminfood-card-actions button {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.adminfood-edit {
+  background: #f1f7e7;
+  color: #82b20d;
+}
+
+.adminfood-delete {
+  background: #fff0f0;
+  color: #e45b5b;
+}
+
+.adminfood-edit:hover {
+  background: #e6f2d3;
+}
+
+.adminfood-delete:hover {
+  background: #ffe1e1;
+}
+
+/* Пустой список */
+
+.adminfood-empty {
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 6px;
+  padding: 65px 20px;
+  text-align: center;
+}
+
+.adminfood-empty > i {
+  font-size: 40px;
+  color: #a5cf4a;
+  margin-bottom: 15px;
+}
+
+.adminfood-empty h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.adminfood-empty p {
+  color: #999999;
+  font-size: 13px;
+}
+
+.adminfood-empty button {
+  border: none;
+  background: #9fdb12;
+  color: #ffffff;
+  padding: 11px 17px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* Окно добавления */
+
+.adminfood-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 1000;
+}
+
+.adminfood-modal {
+  background: #ffffff;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 6px;
+  padding: 25px;
+}
+
+.adminfood-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 23px;
+}
+
+.adminfood-modal-header h3 {
+  font-size: 20px;
+  margin: 0 0 7px;
+  font-weight: 700;
+}
+
+.adminfood-modal-header p {
+  color: #999999;
+  font-size: 13px;
+  margin: 0;
+}
+
+.adminfood-close {
+  width: 33px;
+  height: 33px;
+  border: none;
+  background: #f5f5f5;
+  color: #777777;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.adminfood-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 16px 0 8px;
+}
+
+.adminfood-modal input:not([type="file"]),
+.adminfood-modal textarea,
+.adminfood-modal select {
+  width: 100%;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  padding: 12px;
+  font-size: 13px;
+  outline: none;
+  background: #ffffff;
+  color: #333333;
+}
+
+.adminfood-modal input:focus,
+.adminfood-modal textarea:focus,
+.adminfood-modal select:focus {
+  border-color: #9fdb12;
+}
+
+.adminfood-modal textarea {
+  resize: vertical;
+}
+
+.adminfood-upload {
+  width: 100%;
+  height: 150px;
+  border: 1px dashed #cccccc;
+  border-radius: 5px;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+}
+
+.adminfood-upload > i {
+  color: #9fdb12;
+  font-size: 27px;
+}
+
+.adminfood-upload strong {
+  font-size: 13px;
+}
+
+.adminfood-upload span {
+  font-size: 11px;
+  color: #999999;
+}
+
+.adminfood-upload input {
+  display: none;
+}
+
+.adminfood-upload img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Кнопки окна */
+
+.adminfood-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.adminfood-modal-actions button {
+  padding: 12px 16px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.adminfood-cancel {
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  color: #777777;
+}
+
+.adminfood-save {
+  background: #9fdb12;
+  color: #ffffff;
+  border: none;
+}
+
+.adminfood-save:hover {
+  background: #8bc20c;
+}
+
+/* Планшет */
+
+@media (max-width: 1100px) {
+  .adminfood-sidebar {
+    width: 210px;
+  }
+
+  .adminfood-main {
+    margin-left: 210px;
+    width: calc(100% - 210px);
+    padding: 25px 20px;
+  }
+
+  .adminfood-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Телефон */
+
+@media (max-width: 650px) {
+  .adminfood-sidebar {
+    display: none;
+  }
+
+  .adminfood-main {
+    margin-left: 0;
+    width: 100%;
+    padding: 22px 15px;
+  }
+
+  .adminfood-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .adminfood-header h2 {
+    font-size: 21px;
+  }
+
+  .adminfood-add-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .adminfood-stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .adminfood-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .adminfood-card-image {
+    height: 210px;
+  }
+
+  .adminfood-modal {
+    padding: 18px;
+  }
+
+  .adminfood-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .adminfood-modal-actions button {
+    width: 100%;
+  }
+}
+* {
+  box-sizing: border-box;
+}
+
+.adminorders-page {
+  display: flex;
+  min-height: 100vh;
+  background: #f8f8f8;
+  color: #252525;
+  font-family: Arial, sans-serif;
+}
+
+/* Боковое меню */
+
+.adminorders-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 245px;
+  height: 100vh;
+  background: #ffffff;
+  border-right: 1px solid #eeeeee;
+  display: flex;
+  flex-direction: column;
+  padding: 25px 18px;
+  z-index: 100;
+}
+
+.adminorders-logo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 22px;
+  font-weight: 700;
+  padding: 0 10px 28px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.adminorders-logo i {
+  color: #9fdb12;
+  font-size: 25px;
+}
+
+.adminorders-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 8px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.adminorders-avatar {
+  width: 43px;
+  height: 43px;
+  border-radius: 50%;
+  background: #f1f7e7;
+  color: #83b50b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.adminorders-profile div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.adminorders-profile strong {
+  font-size: 13px;
+}
+
+.adminorders-profile span {
+  color: #999999;
+  font-size: 11px;
+}
+
+.adminorders-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-top: 25px;
+}
+
+.adminorders-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 12px;
+  color: #777777;
+  text-decoration: none;
+  font-size: 14px;
+  border-radius: 5px;
+  transition: 0.2s;
+}
+
+.adminorders-menu-item i {
+  width: 19px;
+  font-size: 16px;
+}
+
+.adminorders-menu-item:hover {
+  background: #f7f9f3;
+  color: #83b50b;
+}
+
+.adminorders-menu-item.active {
+  background: #f1f8e5;
+  color: #79a90b;
+  font-weight: 600;
+}
+
+.adminorders-sidebar-bottom {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid #eeeeee;
+}
+
+/* Основная часть */
+
+.adminorders-main {
+  margin-left: 245px;
+  width: calc(100% - 245px);
+  padding: 35px 40px;
+  min-height: 100vh;
+}
+
+.adminorders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.adminorders-header h2 {
+  font-size: 25px;
+  font-weight: 700;
+  margin: 0 0 9px;
+}
+
+.adminorders-header p {
+  color: #999999;
+  font-size: 14px;
+  margin: 0;
+}
+
+.adminorders-header-date {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 5px;
+  padding: 12px 15px;
+  font-size: 13px;
+  color: #777777;
+}
+
+/* Статистика */
+
+.adminorders-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 35px;
+}
+
+.adminorders-stat-card {
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 6px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.adminorders-stat-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.adminorders-stat-icon.green {
+  background: #f1f8e5;
+  color: #8cbd16;
+}
+
+.adminorders-stat-icon.orange {
+  background: #fff5e9;
+  color: #efa342;
+}
+
+.adminorders-stat-icon.blue {
+  background: #edf5ff;
+  color: #5797dc;
+}
+
+.adminorders-stat-icon.red {
+  background: #fff0f0;
+  color: #e45b5b;
+}
+
+.adminorders-stat-card span {
+  color: #999999;
+  font-size: 12px;
+}
+
+.adminorders-stat-card h3 {
+  font-size: 22px;
+  margin: 6px 0 0;
+  font-weight: 700;
+}
+
+/* Фильтры */
+
+.adminorders-filter-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.adminorders-filter-section h3 {
+  font-size: 19px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.adminorders-filter-section p {
+  color: #999999;
+  font-size: 13px;
+  margin: 0;
+}
+
+.adminorders-filters {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.adminorders-filters button {
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  color: #777777;
+  padding: 9px 13px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.adminorders-filters button.active {
+  background: #9fdb12;
+  border-color: #9fdb12;
+  color: #ffffff;
+}
+
+/* Карточка заказа */
+
+.adminorders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.adminorders-card {
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 6px;
+  padding: 21px;
+}
+
+.adminorders-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding-bottom: 17px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.adminorders-order-number {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.adminorders-order-icon {
+  width: 42px;
+  height: 42px;
+  background: #f1f8e5;
+  color: #8cbd16;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  font-size: 17px;
+}
+
+.adminorders-order-number h4 {
+  font-size: 15px;
+  margin: 0 0 6px;
+  font-weight: 700;
+}
+
+.adminorders-order-number span {
+  color: #999999;
+  font-size: 11px;
+}
+
+.adminorders-status {
+  font-size: 11px;
+  padding: 7px 11px;
+  border-radius: 4px;
+}
+
+.adminorders-status.new {
+  background: #fff5e8;
+  color: #e99a35;
+}
+
+.adminorders-status.confirmed {
+  background: #eff7e4;
+  color: #80ad16;
+}
+
+.adminorders-status.rejected {
+  background: #fff0f0;
+  color: #df5a5a;
+}
+
+/* Клиент */
+
+.adminorders-customer {
+  display: flex;
+  gap: 25px;
+  padding: 16px 0;
+}
+
+.adminorders-customer div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #777777;
+  font-size: 12px;
+}
+
+.adminorders-customer i {
+  color: #9fbd6a;
+  font-size: 14px;
+}
+
+/* Блюда */
+
+.adminorders-foods {
+  background: #fafafa;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.adminorders-foods h5 {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 0 13px;
+}
+
+.adminorders-food-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 10px 0;
+  border-top: 1px solid #eeeeee;
+}
+
+.adminorders-food-row div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.adminorders-food-row div strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.adminorders-food-row span {
+  color: #999999;
+  font-size: 11px;
+}
+
+.adminorders-food-row > strong {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* Нижняя часть */
+
+.adminorders-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding-top: 17px;
+}
+
+.adminorders-total {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.adminorders-total span {
+  color: #999999;
+  font-size: 11px;
+}
+
+.adminorders-total strong {
+  font-size: 18px;
+  color: #82b20d;
+}
+
+.adminorders-actions {
+  display: flex;
+  gap: 9px;
+}
+
+.adminorders-actions button {
+  padding: 11px 15px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.adminorders-reject {
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  color: #df5a5a;
+}
+
+.adminorders-confirm {
+  background: #9fdb12;
+  border: 1px solid #9fdb12;
+  color: #ffffff;
+}
+
+.adminorders-confirm:hover {
+  background: #8bc20c;
+}
+
+.adminorders-sent,
+.adminorders-rejected-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #80ad16;
+}
+
+.adminorders-rejected-text {
+  color: #df5a5a;
+}
+
+/* Пустой список */
+
+.adminorders-empty {
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 6px;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.adminorders-empty > i {
+  font-size: 38px;
+  color: #a5cf4a;
+  margin-bottom: 15px;
+}
+
+.adminorders-empty h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.adminorders-empty p {
+  color: #999999;
+  font-size: 13px;
+}
+
+/* Планшет */
+
+@media (max-width: 1100px) {
+  .adminorders-sidebar {
+    width: 210px;
+  }
+
+  .adminorders-main {
+    margin-left: 210px;
+    width: calc(100% - 210px);
+    padding: 25px 20px;
+  }
+
+  .adminorders-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .adminorders-filter-section {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+/* Телефон */
+
+@media (max-width: 650px) {
+  .adminorders-sidebar {
+    display: none;
+  }
+
+  .adminorders-main {
+    margin-left: 0;
+    width: 100%;
+    padding: 22px 15px;
+  }
+
+  .adminorders-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .adminorders-header h2 {
+    font-size: 21px;
+  }
+
+  .adminorders-stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .adminorders-filter-section {
+    flex-direction: column;
+  }
+
+  .adminorders-filters {
+    width: 100%;
+  }
+
+  .adminorders-filters button {
+    flex: 1;
+  }
+
+  .adminorders-card {
+    padding: 15px;
+  }
+
+  .adminorders-customer {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .adminorders-card-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .adminorders-actions {
+    width: 100%;
+  }
+
+  .adminorders-actions button {
+    flex: 1;
+  }
+}
+
+.menu-quantity {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.menu-quantity button {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: #9fdb12;
+  color: #fff;
+}
+
+.menu-quantity span {
+  font-weight: 600;
+}
+
+.menu-empty {
+  text-align: center;
+  padding: 35px 10px;
+  color: #777;
+}
+
+.menu-empty i {
+  font-size: 30px;
+  margin-bottom: 12px;
+}
+
+.menu-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  z-index: 9999;
+}
+
+.menu-modal {
+  width: 100%;
+  max-width: 400px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.menu-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.menu-modal-header h3 {
+  font-size: 19px;
+  margin: 0 0 5px;
+}
+
+.menu-modal-header p {
+  font-size: 12px;
+  color: #888;
+  margin: 0;
+}
+
+.menu-modal-close {
+  border: none;
+  background: #f3f3f3;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+}
+
+.menu-modal-foods {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.menu-modal-food {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.menu-modal-food div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-modal-food strong {
+  font-size: 13px;
+}
+
+.menu-modal-food span {
+  font-size: 12px;
+  color: #888;
+}
+
+.menu-modal-total {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 0;
+  margin-bottom: 5px;
+}
+
+.menu-modal-total strong {
+  color: #8abf0c;
+}
+
+.menu-modal-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 12px 0 7px;
+}
+
+.menu-modal select {
+  width: 100%;
+  height: 43px;
+  border: 1px solid #e5e5e5;
+  border-radius: 7px;
+  padding: 0 10px;
+  background: #fff;
+  font-size: 13px;
+  outline: none;
+}
+
+.menu-modal select:disabled {
+  background: #f5f5f5;
+  color: #777;
+}
+
+.menu-modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.menu-modal-actions button {
+  flex: 1;
+  height: 43px;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.menu-modal-cancel {
+  background: #f1f1f1;
+  color: #555;
+}
+
+.menu-modal-submit {
+  background: #9fdb12;
+  color: #fff;
+}
+
+.menu-modal-submit:disabled {
+  opacity: 0.5;
+}
+.check-balance {
+  margin-top: 18px;
+  padding: 15px;
+  background: #ffffff;
+  border: 1px solid #eeeeee;
+  border-radius: 12px;
+}
+
+.check-balance span,
+.check-payment-balance span {
+  color: #777;
+  font-size: 13px;
+}
+
+.check-balance h3 {
+  margin: 6px 0 0;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.check-receive-button,
+.check-payment-confirm {
+  width: 100%;
+  border: none;
+  padding: 13px;
+  background: #9fdb12;
+  color: #222;
+  border-radius: 9px;
+  font-weight: 600;
+  margin-top: 12px;
+}
+
+.check-received {
+  margin-top: 12px;
+  padding: 13px;
+  background: #eff9df;
+  color: #558600;
+  border-radius: 9px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.check-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+}
+
+.check-payment-modal {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.check-modal-close {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  color: #777;
+}
+
+.check-modal-icon {
+  width: 55px;
+  height: 55px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eff9df;
+  color: #79aa08;
+  border-radius: 50%;
+  font-size: 23px;
+}
+
+.check-payment-modal h3 {
+  font-size: 21px;
+  margin-bottom: 5px;
+}
+
+.check-payment-modal > p {
+  color: #888;
+  font-size: 13px;
+}
+
+.check-modal-total,
+.check-payment-balance {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 0;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.check-modal-total strong {
+  font-size: 19px;
+}
+
+.check-payment-balance strong {
+  font-size: 15px;
+}
+
+.check-payment-modal h4 {
+  text-align: left;
+  font-size: 14px;
+  margin: 18px 0 10px;
+}
+
+.check-payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.check-payment-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px;
+  border: 1px solid #eeeeee;
+  border-radius: 9px;
+  background: #ffffff;
+  text-align: left;
+}
+
+.check-payment-option span {
+  flex: 1;
+}
+
+.check-payment-option > i:last-child {
+  color: #bbb;
+}
+
+.check-payment-option.selected {
+  border-color: #9fdb12;
+  background: #f8fceb;
+}
+
+.check-payment-option.selected > i:last-child {
+  color: #83b50b;
+}
+
+.check-payment-note {
+  margin: 12px 0 !important;
+  text-align: left;
+  color: #777;
+  font-size: 12px;
+}
+
+.check-payment-cancel {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 12px;
+  color: #777;
+}
+
+.check-payment-confirm:disabled,
+.check-payment-cancel:disabled,
+.check-modal-close:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

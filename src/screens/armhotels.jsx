@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const USERS_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data";
+
 function Armhotels() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -10,69 +12,72 @@ function Armhotels() {
 
   const getBooking = async () => {
     try {
-      const userId = localStorage.getItem("id");
+      const uid = String(localStorage.getItem("uid") || "").replaceAll('"', "");
 
-      if (!userId) {
+      if (!uid) {
         navigate("/signin");
         return;
       }
 
-      const cleanUserId = String(userId).replaceAll('"', "");
+      // Получаем всех пользователей
+      const response = await axios.get(USERS_URL);
 
-      const response = await axios.get(
-        `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${cleanUserId}`,
+      // Ищем пользователя по Firebase uid
+      const currentUser = response.data.find(
+        (item) => String(item.uid) === uid,
       );
 
-      console.log("GET USER:", response);
+      if (!currentUser) {
+        console.log("Пользователь не найден:", uid);
+        alert("Пользователь не найден");
+        navigate("/armored");
+        return;
+      }
 
-      if (response.status === 200) {
-        const currentUser = response.data;
+      const bookings = Array.isArray(currentUser.bookhotel)
+        ? currentUser.bookhotel
+        : [];
 
-        const bookings = Array.isArray(currentUser.bookhotel)
-          ? currentUser.bookhotel
-          : [];
+      // id из адреса — это индекс бронирования
+      const selectedBooking = bookings[Number(id)];
 
-        const selectedBooking = bookings[Number(id)];
-
-        if (selectedBooking) {
-          setBooking(selectedBooking);
-        } else {
-          alert("Бронирование не найдено");
-          navigate("/armored");
-        }
+      if (selectedBooking) {
+        setBooking(selectedBooking);
+      } else {
+        alert("Бронирование не найдено");
+        navigate("/armored");
       }
     } catch (error) {
       console.error("Ошибка при получении бронирования:", error);
+      alert("Не удалось загрузить бронирование");
     }
   };
 
   useEffect(() => {
-    const userId = localStorage.getItem("id");
-
-    if (!userId) {
-      navigate("/signin");
-      return;
-    }
-
     getBooking();
   }, [id]);
 
   const removeBooking = async () => {
     try {
-      const userId = localStorage.getItem("id");
+      const uid = String(localStorage.getItem("uid") || "").replaceAll('"', "");
 
-      if (!userId) {
+      if (!uid) {
         navigate("/signin");
         return;
       }
 
-      const cleanUserId = String(userId).replaceAll('"', "");
+      // Получаем всех пользователей
+      const userResponse = await axios.get(USERS_URL);
 
-      const userResponse = await axios.get(
-        `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${cleanUserId}`,
+      // Ищем пользователя по Firebase uid
+      const currentUser = userResponse.data.find(
+        (item) => String(item.uid) === uid,
       );
 
-      const currentUser = userResponse.data;
+      if (!currentUser) {
+        alert("Пользователь не найден");
+        return;
+      }
 
       const oldBookings = Array.isArray(currentUser.bookhotel)
         ? currentUser.bookhotel
@@ -89,21 +94,18 @@ function Armhotels() {
 
       const refundAmount = Number(currentBooking.allprice) || 0;
       const balance = Number(currentUser.check) || 0;
-
       const newBalance = Number((balance + refundAmount).toFixed(2));
 
       const updatedBookings = oldBookings.filter(
         (_, itemIndex) => itemIndex !== index,
       );
 
-      const response = await axios.put(
-        `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data/${cleanUserId}`,
-        {
-          ...currentUser,
-          check: newBalance,
-          bookhotel: updatedBookings,
-        },
-      );
+      // Обновляем по ID записи MockAPI
+      const response = await axios.put(`${USERS_URL}/${currentUser.id}`, {
+        ...currentUser,
+        check: newBalance,
+        bookhotel: updatedBookings,
+      });
 
       if (response.status === 200) {
         alert(
@@ -116,10 +118,6 @@ function Armhotels() {
       console.error("Ошибка при отмене бронирования:", error);
       alert("Не удалось отменить бронирование");
     }
-  };
-
-  const callCleaning = () => {
-    alert("Ожидайте!");
   };
 
   if (!booking) {
@@ -161,8 +159,15 @@ function Armhotels() {
             {booking.city}
           </div>
 
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <h1>{booking.name}</h1>
+
             <span className={`admin-type-tag ${booking.type || "hotel"}`}>
               {isHostel ? "Хостел" : "Отель"}
             </span>
@@ -183,12 +188,23 @@ function Armhotels() {
             {booking.place ? (
               <div className="armhotel-info-row">
                 <div className="armhotel-info-icon">
-                  <i className={isHostel ? "fa-solid fa-bed" : "fa-solid fa-door-closed"}></i>
+                  <i
+                    className={
+                      isHostel ? "fa-solid fa-bed" : "fa-solid fa-door-closed"
+                    }
+                  ></i>
                 </div>
 
                 <div>
-                  <strong>{isHostel ? "Номер места (койка)" : "Номер комнаты"}</strong>
-                  <p>{isHostel ? `Место ${booking.place}` : `Номер ${booking.place}`}</p>
+                  <strong>
+                    {isHostel ? "Номер места (койка)" : "Номер комнаты"}
+                  </strong>
+
+                  <p>
+                    {isHostel
+                      ? `Место ${booking.place}`
+                      : `Номер ${booking.place}`}
+                  </p>
                 </div>
               </div>
             ) : null}
@@ -247,6 +263,7 @@ function Armhotels() {
             <i className="fa-solid fa-trash"></i>
             Отменить бронирование
           </button>
+
           <br />
           <br />
         </div>

@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import Adminbottom from "../components/adminbottom";
 import axios from "axios";
 
 const HOTELS_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/hotels";
-
 const USERS_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data";
 
 function getTodayDate() {
@@ -30,11 +29,16 @@ function Adminhotels() {
   const [discountEndDate, setDiscountEndDate] = useState("");
   const [hotelType, setHotelType] = useState("hotel");
 
+  // Поля промокода
+  const [promo, setPromo] = useState("");
+  const [pricepromo, setPricepromo] = useState("");
+  const [promodate, setPromodate] = useState("");
+
   const [editId, setEditId] = useState(null);
 
   const discountPrice = Number(price) * (1 - Number(discount || 0) / 100);
 
-  // Получение отелей и автоматическое завершение скидок
+  // Получение отелей и автоматическое завершение скидок и промокодов
   const getHotels = async () => {
     try {
       const response = await axios.get(HOTELS_URL);
@@ -46,24 +50,38 @@ function Adminhotels() {
 
         const updatedHotels = await Promise.all(
           response.data.map(async (item) => {
+            const updateData = {};
+
+            // Проверка окончания скидки
             if (
               Number(item.discount) > 0 &&
               item.discountEndDate &&
               item.discountEndDate < todayDate
             ) {
+              updateData.discount = "0";
+            }
+
+            // Проверка окончания промокода
+            if (item.promo && item.promodate && item.promodate < todayDate) {
+              updateData.promo = "";
+              updateData.pricepromo = "";
+              updateData.promodate = "";
+            }
+
+            // Если скидка или промокод закончились, обновляем запись
+            if (Object.keys(updateData).length > 0) {
               try {
                 const updateResponse = await axios.put(
                   `${HOTELS_URL}/${item.id}`,
                   {
                     ...item,
-                    discount: "0",
+                    ...updateData,
                   },
                 );
 
                 return updateResponse.data;
               } catch (error) {
-                console.error("Ошибка сброса скидки:", error);
-
+                console.error("Ошибка обновления отеля:", error);
                 return item;
               }
             }
@@ -82,7 +100,7 @@ function Adminhotels() {
   useEffect(() => {
     getHotels();
 
-    // Повторная проверка скидок каждую минуту
+    // Повторная проверка скидок и промокодов каждую минуту
     const interval = setInterval(() => {
       getHotels();
     }, 60000);
@@ -145,6 +163,12 @@ function Adminhotels() {
     setDiscount("0");
     setDiscountEndDate("");
     setHotelType(type);
+
+    // Очистка промокода
+    setPromo("");
+    setPricepromo("");
+    setPromodate("");
+
     setEditId(null);
   };
 
@@ -188,6 +212,29 @@ function Adminhotels() {
       return false;
     }
 
+    // Проверка промокода
+    if (promo.trim()) {
+      if (!pricepromo.trim() || Number(pricepromo) <= 0) {
+        alert("Укажите правильную цену промокода");
+        return false;
+      }
+
+      if (Number(pricepromo) >= Number(price)) {
+        alert("Цена по промокоду должна быть меньше обычной цены");
+        return false;
+      }
+
+      if (!promodate) {
+        alert("Укажите дату окончания промокода");
+        return false;
+      }
+
+      if (promodate < getTodayDate()) {
+        alert("Дата окончания промокода не может быть в прошлом");
+        return false;
+      }
+    }
+
     return true;
   };
 
@@ -207,6 +254,11 @@ function Adminhotels() {
         discount: discount,
         discountEndDate: Number(discount) > 0 ? discountEndDate : "",
         type: hotelType,
+
+        // Промокод
+        promo: promo.trim(),
+        pricepromo: promo.trim() ? pricepromo : "",
+        promodate: promo.trim() ? promodate : "",
       });
 
       console.log("POST HOTEL:", response);
@@ -241,6 +293,11 @@ function Adminhotels() {
     setDiscount(String(item.discount ?? "0"));
     setDiscountEndDate(item.discountEndDate || "");
 
+    // Загружаем промокод
+    setPromo(item.promo || "");
+    setPricepromo(String(item.pricepromo ?? ""));
+    setPromodate(item.promodate || "");
+
     const type = item.type || "hotel";
 
     setHotelType(type);
@@ -270,6 +327,11 @@ function Adminhotels() {
         discount: discount,
         discountEndDate: Number(discount) > 0 ? discountEndDate : "",
         type: hotelType,
+
+        // Промокод
+        promo: promo.trim(),
+        pricepromo: promo.trim() ? pricepromo : "",
+        promodate: promo.trim() ? promodate : "",
       });
 
       console.log("PUT HOTEL:", response);
@@ -287,6 +349,7 @@ function Adminhotels() {
       alert("Ошибка при изменении");
     }
   };
+
   const deleteHotel = async (id) => {
     const confirmDelete = window.confirm(
       "Вы действительно хотите удалить этот отель?",
@@ -317,7 +380,7 @@ function Adminhotels() {
 
         response = await axios({
           method: "DELETE",
-          url: `https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/hotels/${targetId}`,
+          url: `${HOTELS_URL}/${targetId}`,
         });
       }
 
@@ -457,6 +520,24 @@ function Adminhotels() {
 
                           <span> / ночь</span>
                         </div>
+
+                        {/* Информация о промокоде */}
+                        {item.promo && (
+                          <div style={{ marginTop: "10px" }}>
+                            <p>
+                              <strong>Промокод:</strong> {item.promo}
+                            </p>
+
+                            <p>
+                              <strong>Цена по промокоду:</strong>{" "}
+                              {item.pricepromo} сом
+                            </p>
+
+                            <p>
+                              <strong>Действует до:</strong> {item.promodate}
+                            </p>
+                          </div>
+                        )}
 
                         <p>
                           <i className="fa-solid fa-users"></i> До {item.people}{" "}
@@ -610,6 +691,43 @@ function Adminhotels() {
               />
 
               <small>Скидка действует до указанного дня включительно.</small>
+            </div>
+
+            {/* Поля промокода */}
+            <div className="admin-hotel-modal-input">
+              <label>Промокод</label>
+
+              <input
+                type="text"
+                placeholder="Например: FIRST2026"
+                value={promo}
+                onChange={(e) => setPromo(e.target.value)}
+              />
+            </div>
+
+            <div className="admin-hotel-modal-input">
+              <label>Цена по промокоду (сом)</label>
+
+              <input
+                type="number"
+                min="1"
+                placeholder="Например: 1500"
+                value={pricepromo}
+                onChange={(e) => setPricepromo(e.target.value)}
+              />
+            </div>
+
+            <div className="admin-hotel-modal-input">
+              <label>Дата окончания промокода</label>
+
+              <input
+                type="date"
+                min={getTodayDate()}
+                value={promodate}
+                onChange={(e) => setPromodate(e.target.value)}
+              />
+
+              <small>Промокод действует до указанного дня включительно.</small>
             </div>
 
             <div
