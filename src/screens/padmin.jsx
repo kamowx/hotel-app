@@ -25,9 +25,15 @@ function Padmin() {
       const id = String(savedId).replaceAll('"', "");
       const currentResponse = await axios.get(`${USERS_URL}/${id}`);
 
-      if (currentResponse.data.userstatus !== "padmin") {
-        if (currentResponse.data.userstatus === "cleaning") {
+      const status = String(currentResponse.data.userstatus || "").trim().toLowerCase();
+
+      if (status !== "padmin") {
+        if (status === "cleaning") {
           navigate("/cleaning", { replace: true });
+        } else if (status === "chef") {
+          navigate("/cook", { replace: true });
+        } else if (status === "admin") {
+          navigate("/admin", { replace: true });
         } else {
           navigate("/staffsignin", { replace: true });
         }
@@ -131,6 +137,11 @@ function Padmin() {
 
   const logout = () => {
     localStorage.removeItem("id");
+    localStorage.removeItem("adminId");
+    localStorage.removeItem("uid");
+    localStorage.removeItem("accountType");
+    localStorage.removeItem("userstatus");
+    localStorage.removeItem("currentUser");
     navigate("/staffsignin", { replace: true });
   };
 

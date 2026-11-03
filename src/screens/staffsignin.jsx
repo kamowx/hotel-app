@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -12,10 +12,44 @@ function Staffsignin() {
 
   const navigate = useNavigate();
 
+  // Автоматический вход/перенаправление, если сотрудник уже авторизован
+  useEffect(() => {
+    const rawId = localStorage.getItem("id");
+    if (!rawId) return;
+
+    const checkExistingStaff = async () => {
+      try {
+        const id = String(rawId).replaceAll('"', "");
+        const response = await axios.get(`${USERS_URL}/${id}`);
+        const user = response.data;
+        const status = String(user.userstatus || user.role || "")
+          .trim()
+          .toLowerCase();
+
+        if (status === "padmin") {
+          navigate("/padmin", { replace: true });
+        } else if (status === "cleaning") {
+          navigate("/cleaning", { replace: true });
+        } else if (status === "chef") {
+          navigate("/cook", { replace: true });
+        } else if (status === "admin") {
+          navigate("/admin", { replace: true });
+        }
+      } catch (error) {
+        console.error("Ошибка проверки сохранённой сессии:", error);
+      }
+    };
+
+    checkExistingStaff();
+  }, [navigate]);
+
   const login = async (e) => {
     e.preventDefault();
 
-    if (!email.trim() || !password.trim()) {
+    const trimmedEmail = email.trim().toLowerCase();
+    const trimmedPassword = password.trim();
+
+    if (!trimmedEmail || !trimmedPassword) {
       alert("Заполните email и пароль");
       return;
     }
@@ -26,24 +60,31 @@ function Staffsignin() {
       const response = await axios.get(USERS_URL);
 
       const employee = response.data.find((item) => {
-        const userEmail =
+        const userEmail = String(
           item.email ||
-          item.emailsigin ||
-          item.emailuser ||
-          item.emailSignup ||
-          "";
+            item.emailsigin ||
+            item.emailuser ||
+            item.emailSignup ||
+            item.username ||
+            "",
+        )
+          .trim()
+          .toLowerCase();
 
-        const userPassword =
-          item.password ||
-          item.password2signin ||
-          item.passwordsignup ||
-          item.password2 ||
-          "";
+        const passOptions = [
+          item.password,
+          item.password2signin,
+          item.passwordsignup,
+          item.password2,
+          item.password1,
+        ]
+          .filter(Boolean)
+          .map((p) => String(p).trim());
 
-        return (
-          String(userEmail).trim().toLowerCase() ===
-            email.trim().toLowerCase() && String(userPassword) === password
-        );
+        const isEmailMatch = userEmail === trimmedEmail;
+        const isPasswordMatch = passOptions.includes(trimmedPassword);
+
+        return isEmailMatch && isPasswordMatch;
       });
 
       if (!employee) {
@@ -51,10 +92,15 @@ function Staffsignin() {
         return;
       }
 
+      const role = String(employee.userstatus || employee.role || "")
+        .trim()
+        .toLowerCase();
+
       if (
-        employee.userstatus !== "padmin" &&
-        employee.userstatus !== "cleaning" &&
-        employee.userstatus !== "chef"
+        role !== "padmin" &&
+        role !== "cleaning" &&
+        role !== "chef" &&
+        role !== "admin"
       ) {
         alert("У вас нет доступа к входу персонала");
         return;
@@ -67,22 +113,36 @@ function Staffsignin() {
         return;
       }
 
-      // Сохраняем данные сотрудника
-      localStorage.setItem("id", JSON.stringify(employee.id));
-      localStorage.setItem("uid", JSON.stringify(employee.uid || ""));
-      localStorage.setItem("accountType", JSON.stringify(employee.userstatus));
+      const employeeId = String(employee.id);
+      const employeeUid = String(employee.uid || employee.id);
 
-      // Проверяем сохранение
-      console.log("ID:", localStorage.getItem("id"));
-      console.log("UID:", localStorage.getItem("uid"));
-      console.log("Статус:", localStorage.getItem("accountType"));
+      // Очищаем старую сессию обычного клиента
+      localStorage.removeItem("userId");
 
-      if (employee.userstatus === "padmin") {
+      // Сохраняем сессию сотрудника
+      localStorage.setItem("id", JSON.stringify(employeeId));
+      localStorage.setItem("adminId", JSON.stringify(employeeId));
+      localStorage.setItem("uid", JSON.stringify(employeeUid));
+      localStorage.setItem("accountType", JSON.stringify(role));
+      localStorage.setItem("userstatus", JSON.stringify(role));
+      localStorage.setItem("currentUser", JSON.stringify(employee));
+
+      // Проверяем сохранение в консоли
+      console.log("Успешное сохранение в localStorage:", {
+        id: localStorage.getItem("id"),
+        adminId: localStorage.getItem("adminId"),
+        uid: localStorage.getItem("uid"),
+        accountType: localStorage.getItem("accountType"),
+      });
+
+      if (role === "padmin") {
         navigate("/padmin", { replace: true });
-      } else if (employee.userstatus === "cleaning") {
+      } else if (role === "cleaning") {
         navigate("/cleaning", { replace: true });
-      } else if (employee.userstatus === "chef") {
+      } else if (role === "chef") {
         navigate("/cook", { replace: true });
+      } else if (role === "admin") {
+        navigate("/admin", { replace: true });
       }
     } catch (error) {
       console.error(error);

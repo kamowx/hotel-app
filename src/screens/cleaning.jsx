@@ -23,10 +23,15 @@ function Cleaning() {
       const id = String(savedId).replaceAll('"', "");
       const userResponse = await axios.get(`${USERS_URL}/${id}`);
       const currentEmployee = userResponse.data;
+      const status = String(currentEmployee.userstatus || "").trim().toLowerCase();
 
-      if (currentEmployee.userstatus !== "cleaning") {
-        if (currentEmployee.userstatus === "padmin") {
+      if (status !== "cleaning") {
+        if (status === "padmin") {
           navigate("/padmin", { replace: true });
+        } else if (status === "chef") {
+          navigate("/cook", { replace: true });
+        } else if (status === "admin") {
+          navigate("/admin", { replace: true });
         } else {
           navigate("/staffsignin", { replace: true });
         }
@@ -80,6 +85,11 @@ function Cleaning() {
 
   const logout = () => {
     localStorage.removeItem("id");
+    localStorage.removeItem("adminId");
+    localStorage.removeItem("uid");
+    localStorage.removeItem("accountType");
+    localStorage.removeItem("userstatus");
+    localStorage.removeItem("currentUser");
     navigate("/staffsignin", { replace: true });
   };
 

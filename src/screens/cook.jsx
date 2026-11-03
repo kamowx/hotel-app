@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const FOOD_URL = "https://6ae6edba56b2ee1e543ff943.mockapi.io/foodorders";
-
 const USERS_URL = "https://6adcd03ffa5e73d4ab2dba7b.mockapi.io/data";
 
 function Cook() {
@@ -16,39 +15,57 @@ function Cook() {
   const logout = () => {
     localStorage.removeItem("uid");
     localStorage.removeItem("id");
+    localStorage.removeItem("adminId");
     localStorage.removeItem("accountType");
+    localStorage.removeItem("userstatus");
+    localStorage.removeItem("currentUser");
 
-    navigate("/Cooksignin");
+    navigate("/staffsignin");
   };
 
   // Проверка пользователя
   useEffect(() => {
     const checkUser = async () => {
       try {
-        const savedUid = localStorage.getItem("uid");
         const savedId = localStorage.getItem("id");
 
-        if (!savedUid || !savedId) {
-          navigate("/signin");
+        if (!savedId) {
+          navigate("/staffsignin");
           return;
         }
 
-        const uid = String(savedUid).replaceAll('"', "");
         const id = String(savedId).replaceAll('"', "");
 
         const response = await axios.get(USERS_URL);
 
         const currentUser = response.data.find(
-          (item) => String(item.uid) === uid && String(item.id) === id,
+          (item) => String(item.id) === id,
         );
 
-        if (!currentUser || currentUser.userstatus !== "chef") {
-          navigate("/signin");
+        if (!currentUser) {
+          navigate("/staffsignin");
+          return;
+        }
+
+        const status = String(currentUser.userstatus || currentUser.role || "")
+          .trim()
+          .toLowerCase();
+
+        if (status !== "chef") {
+          if (status === "padmin") {
+            navigate("/padmin");
+          } else if (status === "cleaning") {
+            navigate("/cleaning");
+          } else if (status === "admin") {
+            navigate("/admin");
+          } else {
+            navigate("/staffsignin");
+          }
           return;
         }
       } catch (error) {
         console.log("Ошибка проверки пользователя:", error);
-        navigate("/signin");
+        navigate("/staffsignin");
       }
     };
 
@@ -124,14 +141,14 @@ function Cook() {
             <span>Заказы</span>
           </div>
 
-          <a className="i1" href="/Cookpreparing">
+          <a className="i1" href="/cookpreparing">
             <div className="cook-menu-item">
               <i className="fa-solid fa-fire-burner"></i>
               <span>Готовятся</span>
             </div>
           </a>
 
-          <a className="i1" href="/Cookready">
+          <a className="i1" href="/cookready">
             <div className="cook-menu-item">
               <i className="fa-solid fa-circle-check"></i>
               <span>Готовые блюда</span>
