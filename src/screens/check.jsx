@@ -32,7 +32,6 @@ function Check() {
 
       const uid = String(savedUid).replaceAll('"', "");
 
-      // Получаем пользователей из data
       const usersResponse = await axios.get(USERS_URL);
 
       const currentUser = usersResponse.data.find(
@@ -45,10 +44,8 @@ function Check() {
         return;
       }
 
-      // Сохраняем данные пользователя, включая check
       setUser(currentUser);
 
-      // Получаем заказы
       const ordersResponse = await axios.get(FOOD_URL);
 
       const myOrders = ordersResponse.data
@@ -69,7 +66,7 @@ function Check() {
     setPaymentMethod("Карта");
   };
 
-  // Закрываем окно
+  // Закрываем окно оплаты
   const closePayment = () => {
     if (paying) return;
 
@@ -96,25 +93,12 @@ function Check() {
 
     setPaying(true);
 
+    const oldBalance = currentBalance;
     const newBalance =
-      paymentMethod === "Карта" ? currentBalance - total : currentBalance;
+      paymentMethod === "Карта" ? oldBalance - total : oldBalance;
 
     try {
-      // Проверяем актуальный статус заказа
-      const orderResponse = await axios.get(`${FOOD_URL}/${selectedOrder.id}`);
-
-      if (orderResponse.data.status !== "Едет") {
-        alert("Этот заказ уже обработан");
-
-        setOrders((prev) =>
-          prev.filter((item) => String(item.id) !== String(selectedOrder.id)),
-        );
-
-        setSelectedOrder(null);
-        return;
-      }
-
-      // Если оплата картой — обновляем баланс в data
+      // Если оплата картой — списываем деньги с баланса
       if (paymentMethod === "Карта") {
         const updatedUser = {
           ...user,
@@ -128,7 +112,7 @@ function Check() {
 
       // Меняем статус заказа
       const updatedOrder = {
-        ...orderResponse.data,
+        ...selectedOrder,
         status: "Получено",
         paymentMethod: paymentMethod,
         paidAmount: total,
@@ -138,11 +122,11 @@ function Check() {
       try {
         await axios.put(`${FOOD_URL}/${selectedOrder.id}`, updatedOrder);
       } catch (error) {
-        // Если заказ не обновился, возвращаем баланс
+        // Если заказ не обновился, возвращаем деньги на баланс
         if (paymentMethod === "Карта") {
           const restoredUser = {
             ...user,
-            check: currentBalance,
+            check: oldBalance,
           };
 
           await axios.put(`${USERS_URL}/${user.id}`, restoredUser);
